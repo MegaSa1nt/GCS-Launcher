@@ -1,0 +1,34 @@
+<head>
+	<meta charset="utf-8">
+	<title>GreenCatsServer!</title>
+	<script src="script.js"></script>
+	<script src="res/jsz.js"></script>
+	<link async="" rel="stylesheet" href="res/style.css">
+	<link async="" rel="stylesheet" href="res/main.css">
+</head>
+<body oncontextmenu="return false;"><div class="mahbody">
+	<div data-tauri-drag-region class="titlebar">
+	  <div class="titlebar-button" id="titlebar-minimize">
+		<img src="res/svg/min.svg" width="10px" alt="Свернуть"/>
+	  </div>
+	  <div class="titlebar-button-close" id="titlebar-close">
+		<img src="res/svg/x.svg" width="10px" alt="Закрыть" />
+	  </div>
+	</div>
+	<div class="maindiv">
+		<h1 id="ph1">Загрузка...</h1>
+		<h3 id="text"></h3>
+		<div class="prdiv" id="prdiv" style="opacity:0">
+			<div class="prtext"><p class="prp" id="ploaded"></p><p class="prp" id="ptxt"></p><p class="prp" id="pmax"></p></div>
+			<progress id="progress" style="transition:0.2s" value="100" max="100"></progress>
+		</div>
+	</div>
+	<script>
+		const appWindow = window.__TAURI__.window.appWindow;
+		document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
+		document.getElementById('titlebar-close').addEventListener('click', () => appWindow.close());
+		const text = document.getElementById("ph1");
+		window.__TAURI__.window.appWindow.setFocus();
+		setTimeout(function(){clientUpdate();}, 1);
+	</script>
+</div></body>
