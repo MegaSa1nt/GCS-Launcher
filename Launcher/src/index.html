@@ -81,7 +81,7 @@
 	</div>
 	<button type="button" style="opacity:1;transition:0.3s" title="Вход" onclick="show()" id="lbtn" class="login"><img id="licon" class="playicon" width="35px" src="res/svg/login.svg"></button>
 	<button type="button" style="opacity:0;visibility:hidden;transition:0.3s;top: 35px;left: auto;right: 5px;" title="Уведомления" onclick="show('n')" id="nbtn" class="login">
-		<div class="nfcircle" id="mainnfcircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px" id="circle5"></div>
+		<div class="nfcircle" id="mainnfcircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div>
 		<img class="playicon" width="20px" src="res/svg/bell.svg">
 	</button>
 	<div id="div" class="dropdown-menu">
@@ -94,20 +94,34 @@
 	</div>
 	<div class="maindiv">
 		<h1>Здравствуй, <text id="user" style="padding:0;font-weight: 900;">гость</text>!</h1>
-		<p id="bruh">Добро пожаловать на GreenCatsServer!</p>
-		<h3 id="text"></h3>
+		<p id="bruh">Добро пожаловать на <text onclick="window.__TAURI__.shell.open('https://gcs.icu/')" style="color: #3EE667; cursor: pointer;">GreenCatsServer</text>!</p>
+		<h3 id="text" style="color: gray"></h3>
 		<div class="prdiv" id="prdiv" style="opacity:0">
 			<div class="prtext"><p class="prp" id="ploaded">0 МБ</p><p class="prp" id="ptxt">Загрузка...</p><p class="prp" id="pmax">310.1 МБ</p></div>
 			<progress id="progress" style="transition:0.2s" value="100" max="100"></progress>
 		</div>
-		<button id="pbtn" style="border-radius: 500px;" onclick="play()"><div id="playdiv" class="play dl"><img id="pimg" width="100px" src="res/svg/play.svg"></div></button>
+		<button id="pbtn" style="border-radius: 500px;" onclick="play()"><div id="playdiv" class="play"><img class="dl" id="pimg" width="100px" src="res/svg/play.svg"></div></button>
 	</div>
 	<script>
 		window.dontupdate = window.dontplayagain = false;
+		cook = [];
+		cookie = document.cookie.split(";");
+		cookie.forEach((penis) => {
+			variable = penis.split("=");
+			cook[variable[0].trim()] = variable[1];
+		});
+		if(!window.localStorage.modmenu) document.getElementById("gdhmno").click();
+		else document.getElementById("gdhmyes").click();
+		if(window.localStorage.closeorhide == 'false') document.getElementById("clienthide").click();
+		else document.getElementById("clientclose").click();
+		if(window.localStorage.usenf == 'true') document.getElementById("usenf").click();
+		else document.getElementById("nousenf").click();
 		document.getElementById("clienthide").addEventListener("change", function() {window.localStorage.closeorhide = 'false';})
 		document.getElementById("clientclose").addEventListener("change", function() {window.localStorage.closeorhide = 'true';})
 		document.getElementById("nousenf").addEventListener("change", function() {window.localStorage.usenf = 'false';})
 		document.getElementById("usenf").addEventListener("change", function() {window.localStorage.usenf = 'true';})
+		document.getElementById("gdhmyes").addEventListener("change", function() {window.localStorage.modmenu = true;})
+		document.getElementById("gdhmno").addEventListener("change", function() {window.localStorage.modmenu = false;})
 		if(!window.localStorage.usenf) window.localStorage.usenf = 'true';
 		if(!window.localStorage.closeorhide) window.localStorage.usenf = 'false';
 		if(!window.oldtext) window.oldtext = '';
@@ -133,22 +147,8 @@
 		setInterval(function(){updateNotifies()}, 90000);
 		window.__TAURI__.window.appWindow.setFocus();
 		window.__TAURI__.fs.exists("GCS-Updater.exe").then((result) => {if(result) window.__TAURI__.fs.removeFile("GCS-Updater.exe")});
-		document.getElementById("gdhmyes").addEventListener("change", function() {document.cookie = "gdhm=1; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";})
-		document.getElementById("gdhmno").addEventListener("change", function() {document.cookie = "gdhm=0; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";})
-		cook = [];
-		cookie = document.cookie.split(";");
-		cookie.forEach((penis) => {
-			variable = penis.split("=");
-			cook[variable[0].trim()] = variable[1];
-		});
-		if(cook["gdhm"] == 0) document.getElementById("gdhmno").click();
-		else document.getElementById("gdhmyes").click();
-		if(window.localStorage.closeorhide == 'false') document.getElementById("clienthide").click();
-		else document.getElementById("clientclose").click();
-		if(window.localStorage.usenf == 'true') document.getElementById("usenf").click();
-		else document.getElementById("nousenf").click();
 		tm = timeConverter(cook["client"]);
-		if(tm != "1 января 1970") document.getElementById("time").innerHTML = tm;
+		if(tm != "1 января 1970" && tm != 'NaN undefined NaN') document.getElementById("time").innerHTML = tm;
 		f = window.__TAURI__.app.getVersion();
 		f.then(e=>{document.getElementById("ver").innerHTML = e})
 		setInterval(function() {

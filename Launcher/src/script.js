@@ -2,7 +2,6 @@ gDs = "https://gcs.icu"; // Your GDPS link to dashboard (doesn't work with defau
 const wait = ms => new Promise(r => setTimeout(r, ms));
 function update(ask = false, err = '') {
  	cook = [];
- 	document.getElementById("playdiv").classList.remove("no-gdps");
  	sd = new XMLHttpRequest();
  	sd.open("GET", gDs+"/download/updater.php", true);
  	sd.onload = function () {
@@ -23,12 +22,12 @@ function update(ask = false, err = '') {
 				}
 				document.getElementById("pbtn").setAttribute("onclick", "update(false, '-1')");
 				document.getElementById("pimg").setAttribute("src", "res/svg/dl.svg");
-				document.getElementById("playdiv").classList.remove("dl");
+				document.getElementById("pimg").classList.remove("dl");
 			} else {
 				window.dontupdate = true;
 				document.getElementById("pbtn").setAttribute("onclick", "javascript:void");
 				document.getElementById("pimg").setAttribute("src", "res/svg/load.svg");
-				document.getElementById("playdiv").classList.add("spin");
+				document.getElementById("pimg").classList.add("spin");
 				if(cookupdate == 0 || err == -1) text.innerHTML = "Установка игры...";
 				else text.innerHTML = "Обновление игры...";
 				dl = new XMLHttpRequest();
@@ -65,7 +64,6 @@ function update(ask = false, err = '') {
 								plsdata = zip.files[filename].async('uint8array').then(async function (plsdatapls) {
 									await checkGameAwait();
 									await zipFile(plsdatapls, filename);
-									console.log('пост принял');
 									window.gc();
 									l++;
 									prog.value = l;
@@ -74,7 +72,7 @@ function update(ask = false, err = '') {
 									else document.getElementById("ploaded").innerHTML = l +" файлов";
 									if(l >= Object.keys(zip.files).length) {
 										window.gc();
-										if(cook["gdhm"] == 0) {
+										if(!window.localStorage.modmenu) {
 											window.__TAURI__.fs.removeDir(".GDHM", {recursive: true});
 											window.__TAURI__.fs.removeDir("locales", {recursive: true});
 											window.__TAURI__.fs.removeDir("ffmpeg", {recursive: true});
@@ -95,8 +93,8 @@ function update(ask = false, err = '') {
 										text.innerHTML = "";
 										window.__TAURI__.window.appWindow.requestUserAttention(2);
 										document.getElementById("pbtn").setAttribute("onclick", "play()");
-										document.getElementById("playdiv").classList.add("dl");
-										document.getElementById("playdiv").classList.remove("spin");
+										document.getElementById("pimg").classList.add("dl");
+										document.getElementById("pimg").classList.remove("spin");
 										let permissionGranted = window.__TAURI__.notification.isPermissionGranted();
 										if(!permissionGranted) {
 										  const permission = window.__TAURI__.notification.requestPermission();
@@ -152,7 +150,6 @@ function zipFile(fileData, filename) {
 }
 function clientUpdate(ask = false) {
 	cook = [];
-	document.getElementById("playdiv").classList.remove("no-gdps");
 	sd = new XMLHttpRequest();
 	sd.open("GET", gDs+"/download/updater.php", true);
 	sd.onload = function () {
@@ -162,19 +159,19 @@ function clientUpdate(ask = false) {
 			variable = penis.split("=");
 			cook[variable[0].trim()] = variable[1];
 		});
-		if(result.client && result.client > cook["client"]) {
+		if((result.client && result.client > cook["client"]) && cook['client'] != 0) {
 			if(ask) {
 				text.innerHTML = "Обновление клиента!";
 				document.getElementById("pbtn").setAttribute("onclick", "clientUpdate()");
 				document.getElementById("pimg").setAttribute("src", "res/svg/dl.svg");
-				document.getElementById("playdiv").classList.remove("dl");
+				document.getElementById("pimg").classList.remove("dl");
 				if(window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Обновление клиента!", body: "Вышла новая версия клиента, скорее устанавливай обновление!", icon: "res/kitty.png"});
 			} else {
 				window.dontupdate = true;
 				document.getElementById("pbtn").setAttribute("onclick", "javascript:void");
 				document.getElementById("pimg").setAttribute("src", "res/svg/load.svg");
-				document.getElementById("playdiv").classList.remove("dl");
-				document.getElementById("playdiv").classList.add("spin");
+				document.getElementById("pimg").classList.remove("dl");
+				document.getElementById("pimg").classList.add("spin");
 				text.innerHTML = "Обновление клиента...";
 				dl = new XMLHttpRequest();
 				dl.open("GET", gDs+"/download/updater.php?dl=updater", true);
@@ -211,7 +208,10 @@ function clientUpdate(ask = false) {
 				}
 				dl.send();
 			}
-		} else update(true);
+		} else {
+			if(cook["client"] == 0) document.cookie = "client="+result.client+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+			update(true);
+		}
 	}
 	sd.send();
 }
@@ -239,7 +239,6 @@ function updateUser() {
 		color = cook["color"];
 		id = cook["id"];
 		auth = cook["auth"];
-		warn = cook["warn"];
 		document.getElementById("lbtn").setAttribute("onclick", "settings()");
 		document.getElementById("licon").setAttribute("src", "res/svg/gear.svg");
 		document.getElementById("licon").setAttribute("title", "Настройки");
@@ -263,7 +262,7 @@ function updateUser() {
 			} else logoutbtn();
 			document.getElementById("loaddiv").style.opacity = "0";
 			document.getElementById("loaddiv").style.visibility = "hidden";
-			if(typeof warn == "undefined") {
+			if(typeof window.localStorage.warn == "undefined") {
 				document.getElementById("warndiv").style.opacity = "1";
 				document.getElementById("warndiv").style.visibility = "initial";
 			}
@@ -279,6 +278,10 @@ function updateUser() {
 		document.getElementById("user").style.color = "rgb(255,255,255)";
 		document.getElementById("loaddiv").style.opacity = "0";
 		document.getElementById("loaddiv").style.visibility = "hidden";
+		if(typeof window.localStorage.warn == "undefined") {
+			document.getElementById("warndiv").style.opacity = "1";
+			document.getElementById("warndiv").style.visibility = "initial";
+		}
 	}
 	if(!window.dontupdate) clientUpdate(true);
 }
@@ -320,13 +323,9 @@ function loginbtn() {
 function play() {
 	if(!window.dontplayagain) {
 		text.innerHTML = "Загрузка...";
-		exists = window.__TAURI__.fs.exists("GreenCatsServer.exe").then((result) => {
-			success = result;
-			if(success && !window.dontplayagain) {
-				window.__TAURI__.shell.open("GreenCatsServer.exe");
-			} else {
-				if(!window.dontupdate) update(true, "-1");
-			}
+		exists = window.__TAURI__.fs.exists("GreenCatsServer.exe").then((success) => {
+			if(success && !window.dontplayagain) window.__TAURI__.shell.open("GreenCatsServer.exe");
+			else if(!window.dontupdate) update(true, "-1");
 		});
 	}
 }
@@ -385,7 +384,7 @@ async function sendArrayBufferToRust(path, arrayBuffer) {
 }
 function warning(answer) {
 	if(answer) {
-		document.cookie = "warn=1; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+		window.localStorage.warn = true;
 		document.getElementById("warndiv").style.opacity = "0";
 		document.getElementById("warndiv").style.visibility = "hidden";
 	} else window.__TAURI__.process.exit(0);

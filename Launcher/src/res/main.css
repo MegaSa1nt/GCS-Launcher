@@ -36,8 +36,8 @@ p {
 .play {
     display: flex;
     justify-content: center;
-	width: max-content;
-	padding: 115px;
+	width: 360px;
+	height: 360px;
 	background: #3EE667;
 	border-radius: 500px;
 	box-shadow: 0px 0px 20px 0px black;
@@ -134,7 +134,7 @@ p {
     width: 97%;
 }
 .dl {
-	padding: 100px 111px 100px 120px;
+	margin-left: 10px;
 }
 .prtext {
 	display: flex;
@@ -348,6 +348,8 @@ input[type=radio]:checked {
 .profile {
 	width: auto;
 	margin-top: 0px;
+	transition: 0.3s;
+	cursor: pointer;
 }
 .loadingnotify {
 	margin: 20px 0px;
@@ -410,13 +412,16 @@ h2 {
     left: -5px;
 }
 .nfgood {
-	border-left: 2px solid #bbffbb;
+	border-left: 3px solid #bbffbb;
+	border-right: 3px solid #bbffbb;
 }
 .nfbad {
-    border-left: 2px solid #ffbbbb;
+    border-left: 3px solid #ffbbbb;
+    border-right: 3px solid #ffbbbb;
 }
 .nfmiddle {
-	border-left: 2px solid #ffffbb;
+	border-left: 3px solid #ffffbb;
+	border-right: 3px solid #ffffbb;
 }
 .prp#ploaded {
 	text-align: left;
@@ -425,5 +430,5 @@ h2 {
 	text-align: right;
 }
 .profile:hover {
-	background: #47494e;
+	background: #303134;
 }
