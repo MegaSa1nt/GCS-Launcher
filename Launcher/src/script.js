@@ -499,7 +499,7 @@ function updateNotifies() {
 								nfborder = 'good';
 							} else {
 								nname.innerHTML = 'Вашу заявку отклонили';
-								np.innerHTML = 'Владелец клана <b>'+notify.action.v2.clan+'</b> отклюнил вашу заявку на вступление! 😥';
+								np.innerHTML = 'Владелец клана <b>'+notify.action.v2.clan+'</b> отклонил вашу заявку на вступление! 😥';
 								nfborder = 'bad';
 							}
 							break;
@@ -642,7 +642,7 @@ function detailedNotify(id) {
 						break;
 					case '6':
 						if(dnf.action.v1 == 1) conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> принял вашу заявку на вступление в клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
-						else conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> отклюнил вашу заявку на вступление в клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
+						else conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> отклонил вашу заявку на вступление в клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
 						break;
 					default:
 						conp.innerHTML = 'Это всё ещё неизвестное для вашей версии клиента уведомление. Может, стоит обновиться?';
