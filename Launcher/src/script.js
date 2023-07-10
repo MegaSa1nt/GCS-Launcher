@@ -220,6 +220,7 @@ function updateUser() {
 	updateOnlineStatus();
 	if(condition.length && condition == 'offline') {
 		document.getElementById("nointernet").style.opacity = "1";
+		document.getElementById("nointernet").style.visibility = "initial";
 		setTimeout(function(){updateUser();}, 5000);
 		return;
 	}
@@ -283,6 +284,8 @@ function updateUser() {
 			document.getElementById("warndiv").style.visibility = "initial";
 		}
 	}
+	document.getElementById("nointernet").style.opacity = "0";
+	document.getElementById("nointernet").style.visibility = "hidden";
 	if(!window.dontupdate) clientUpdate(true);
 }
 function logoutbtn() {
@@ -465,6 +468,27 @@ function updateNotifies() {
 								}
 							}
 							break;
+						case '3':
+							nname.innerHTML = 'Кто-то подал заявку в ваш клан';
+							np.innerHTML = 'Один из игроков подал заявку в ваш клан <b>'+notify.action.v2+'</b>! 😊';
+							nfborder = 'middle';
+							break;
+						case '4':
+							if(notify.action.v1 == '1') {
+								nname.innerHTML = 'Кто-то присоединился к клану';
+								np.innerHTML = 'Один из игроков присоединился к вашему клану <b>'+notify.action.v2+'</b>! 😱';
+								nfborder = 'good';
+							} else {
+								nname.innerHTML = 'Кто-то вышел из клана';
+								np.innerHTML = 'Один из участников клана <b>'+notify.action.v2+'</b> покинул его! 😔';
+								nfborder = 'bad';
+							}
+							break;
+						case '5':
+							nname.innerHTML = 'Вас исключили из клана';
+							np.innerHTML = 'Вы были исключены из клана <b>'+notify.action.v2+'</b> его владельцем! 😔';
+							nfborder = 'bad';
+							break;
 						default:
 							nname.innerHTML = 'Неизвестное уведомление';
 							np.innerHTML = 'Вы получили уведомление, которое не поддерживается вашей версией клиента 🤔';
@@ -534,7 +558,6 @@ function updateNotifies() {
 }
 function detailedNotify(id) {
 	notifydiv = document.getElementById('notifies');
-	
 	if(document.cookie.length) {
 		cookie = document.cookie.split(";");
 		cookie.forEach((penis) => {
@@ -563,6 +586,7 @@ function detailedNotify(id) {
 			if(id == 'all') updateNotifies();
 			else {
 				ldiv.remove();
+				conp = licon = '';
 				detaileddiv = document.createElement('div');
 				detaileddiv.id = 'dn'+id;
 				detaileddiv.classList.add('detaileddiv');
@@ -573,32 +597,43 @@ function detailedNotify(id) {
 				switch(dnf.action.type) {
 					case '1':
 						if(dnf.action.v3 == 0) {
-							conp.innerHTML = 'Модератор <b style="cursor:pointer" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> снял оценку с вашего уровня <b>'+dnf.action.v1.name+'</b>!';
+							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> снял оценку с вашего уровня <b>'+dnf.action.v1.name+'</b>!';
 							licon = document.createElement('img');
 							licon.setAttribute('src', 'res/faces/'+dnf.action.v4+'/'+dnf.action.v2+'.png');
 						} else {
-							conp.innerHTML = 'Модератор <b style="cursor:pointer" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> оценил ваш уровень <b>'+dnf.action.v1.name+'</b> на <b>'+dnf.action.v3+'</b> звёзд!';
+							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> оценил ваш уровень <b>'+dnf.action.v1.name+'</b> на <b>'+dnf.action.v3+'</b> звёзд!';
 							licon = document.createElement('img');
 							licon.setAttribute('src', 'res/faces/'+dnf.action.v4+'/'+dnf.action.v3+'.png');
 						}
 						licon.setAttribute('width', '50px');
-						content.append(conp);
-						content.append(licon);
 						break;
 					case '2':
 						where = ['вас в топе игроков', 'вас в топе строителей', 'вам публикацию уровней'];
 						if(dnf.action.v3 == 0) {
-							conp.innerHTML = 'Модератор <b style="cursor:pointer" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> разблокировал '+where[dnf.action.v1-1]+' по причине "<b>'+b64(dnf.action.v2)+'</b>"!';
+							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> разблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
 						} else {
-							conp.innerHTML = 'Модератор <b style="cursor:pointer" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> заблокировал '+where[dnf.action.v1-1]+' по причине "<b>'+b64(dnf.action.v2)+'</b>"!';
+							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> заблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
 						}
-						content.append(conp);
+						break;
+					case '3':
+						conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> подал заявку в ваш клан <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'/settings&pending")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!<br>Может, это новый участник?';
+						break;
+					case '4':
+						if(dnf.action.v1 == 1) {
+							conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> присоединился к вашему клану <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!';
+						} else {
+							conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> вышел из вашего клана <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!';
+						}
+						break;
+					case '5':
+						conp.innerHTML = 'Вы были исключены из клана <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> его владельцем <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> '+timeConverter(dnf.action.v3)+'!';
 						break;
 					default:
 						conp.innerHTML = 'Это всё ещё неизвестное для вашей версии клиента уведомление. Может, стоит обновиться?';
-						content.append(conp);
 						break;
 				}
+				content.append(conp);
+				if(typeof licon != "undefined") content.append(licon);
 				detaileddiv.append(content);
 				ntcircle = document.getElementById('circle'+id);
 				if(ntcircle != null) {

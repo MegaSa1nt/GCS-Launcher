@@ -27,8 +27,8 @@
 				<h2>При закрытии клиента</h2>
 				<div class="radios"><span><input id="clienthide" type="radio" name="clientcl" value="1"><text>Скрывать в трей</text></span></input>
 				<span><input type="radio" id="clientclose" name="clientcl" value="0"><text>Закрывать</text></input></span></div>
-				<h2>Уведомления</h2>
-				<div class="radios"><span><input id="usenf" type="radio" name="notifies" value="1"><text>Использовать</text></span></input>
+				<h2>Системные уведомления</h2>
+				<div class="radios"><span><input id="usenf" type="radio" name="notifies" value="1"><text>Включить</text></span></input>
 				<span><input type="radio" id="nousenf" name="notifies" value="0"><text>Отключить</text></input></span></div>
 			</div>
 		</div>
@@ -40,7 +40,10 @@
 
 <div id="loaddiv" class="fillbg">
 	<div class="loadsvg">
-		<p id="nointernet" style="opacity:0;transition: 0.3s;font-size: 25px;margin-top: 10px;color: white;">Проверьте ваше подключение к интернету...</p>
+		<div id="nointernet" style="opacity:0; visibility: hidden;  transition: 0.3s; display: flex; flex-wrap: wrap; justify-content: center;">
+			<p style="font-size: 25px;margin-top: 10px;color: white;">Проверьте ваше подключение к интернету...</p>
+			<button class="btn-primary btn-success btn-play" onclick="play()">Играть</button>
+		</div>
 		<img class="spin" width="50px" src="res/svg/loading.svg">
 		<img  width="300px" src="res/svg/sleeping.svg">
 	</div>
