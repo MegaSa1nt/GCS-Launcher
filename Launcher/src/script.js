@@ -416,8 +416,11 @@ function updateNotifies() {
 	notifies.onload = function () {
 		nf = JSON.parse(notifies.response);
 		if(nf.success) {
+			if((window.oldNotifies.last === nf.last) && (window.oldNotifies.counts.new == nf.counts.new)) return;
+			window.oldNotifies = nf;
 			if(nf.notifies.length > 0) {
 				notifydiv.innerHTML = '';
+				notifyNames = [];
 				nf.notifies.forEach(notify => {
 					ncard = document.createElement("div");
 					ncard.classList.add('notifycard');
@@ -470,24 +473,35 @@ function updateNotifies() {
 							break;
 						case '3':
 							nname.innerHTML = 'Кто-то подал заявку в ваш клан';
-							np.innerHTML = 'Один из игроков подал заявку в ваш клан <b>'+notify.action.v2+'</b>! 😊';
+							np.innerHTML = 'Один из игроков подал заявку в ваш клан <b>'+notify.action.v2.clan+'</b>! 😊';
 							nfborder = 'middle';
 							break;
 						case '4':
 							if(notify.action.v1 == '1') {
 								nname.innerHTML = 'Кто-то присоединился к клану';
-								np.innerHTML = 'Один из игроков присоединился к вашему клану <b>'+notify.action.v2+'</b>! 😱';
+								np.innerHTML = 'Один из игроков присоединился к вашему клану <b>'+notify.action.v2.clan+'</b>! 😱';
 								nfborder = 'good';
 							} else {
 								nname.innerHTML = 'Кто-то вышел из клана';
-								np.innerHTML = 'Один из участников клана <b>'+notify.action.v2+'</b> покинул его! 😔';
+								np.innerHTML = 'Один из участников клана <b>'+notify.action.v2.clan+'</b> покинул его! 😔';
 								nfborder = 'bad';
 							}
 							break;
 						case '5':
 							nname.innerHTML = 'Вас исключили из клана';
-							np.innerHTML = 'Вы были исключены из клана <b>'+notify.action.v2+'</b> его владельцем! 😔';
+							np.innerHTML = 'Вы были исключены из клана <b>'+notify.action.v2.clan+'</b> его владельцем! 😔';
 							nfborder = 'bad';
+							break;
+						case '6':
+							if(notify.action.v1 == '1') {
+								nname.innerHTML = 'Вашу заявку приняли';
+								np.innerHTML = 'Владелец клана <b>'+notify.action.v2.clan+'</b> принял вашу заявку на вступление! 😀';
+								nfborder = 'good';
+							} else {
+								nname.innerHTML = 'Вашу заявку отклонили';
+								np.innerHTML = 'Владелец клана <b>'+notify.action.v2.clan+'</b> отклюнил вашу заявку на вступление! 😥';
+								nfborder = 'bad';
+							}
 							break;
 						default:
 							nname.innerHTML = 'Неизвестное уведомление';
@@ -503,6 +517,7 @@ function updateNotifies() {
 						ncircle.id = 'circle'+notify.ID;
 						nname.append(ncircle);
 					}
+					notifyNames.push({nname: nname.innerHTML.replace(/\<[^<>]*\>/g, "").trim(), np: np.innerHTML.replace(/\<[^<>]*\>/g, "").trim()})
 					ncard.append(nname);
 					ncard.append(np);
 					ncom = document.createElement("div");
@@ -542,8 +557,11 @@ function updateNotifies() {
 			document.getElementById("notifycount").innerHTML = '<i>'+nf.counts.all+' всего, '+newcount+'</i>'
 			if(nf.last > window.localStorage.last && nf.counts.new > 0) {
 				if(nf.counts.new > 1) notifytitle = 'Новые уведомления!';
-				else notifytitle = 'Новое уведомление!';
-				if(window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Новое уведомление!", body: newcount, icon: "res/kitty.png"});
+				else {
+					notifytitle = notifyNames[0].nname;
+					newcount = notifyNames[0].np;
+				}
+				if(window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: notifytitle, body: newcount, icon: "res/kitty.png"});
 			}
 			if(nf.counts.new > 0) document.getElementById('mainnfcircle').style.display = 'block';
 			else document.getElementById('mainnfcircle').style.display = 'none';
@@ -609,24 +627,22 @@ function detailedNotify(id) {
 						break;
 					case '2':
 						where = ['вас в топе игроков', 'вас в топе строителей', 'вам публикацию уровней'];
-						if(dnf.action.v3 == 0) {
-							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> разблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
-						} else {
-							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> заблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
-						}
+						if(dnf.action.v3 == 0) conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> разблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
+						else conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> заблокировал '+where[dnf.action.v1-1]+' по причине <b>'+b64(dnf.action.v2)+'</b>!';
 						break;
 					case '3':
-						conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> подал заявку в ваш клан <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'/settings&pending")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!<br>Может, это новый участник?';
+						conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> подал заявку в ваш клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'/settings&pending")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!<br>Может, это новый участник?';
 						break;
 					case '4':
-						if(dnf.action.v1 == 1) {
-							conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> присоединился к вашему клану <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!';
-						} else {
-							conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> вышел из вашего клана <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> '+timeConverter(dnf.action.v3)+'!';
-						}
+						if(dnf.action.v1 == 1) conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> присоединился к вашему клану <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
+						else conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> вышел из вашего клана <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
 						break;
 					case '5':
-						conp.innerHTML = 'Вы были исключены из клана <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2+'")\'>'+dnf.action.v2+'</b> его владельцем <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> '+timeConverter(dnf.action.v3)+'!';
+						conp.innerHTML = 'Вы были исключены из клана <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> его владельцем <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> '+timeConverter(dnf.time)+'!';
+						break;
+					case '6':
+						if(dnf.action.v1 == 1) conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> принял вашу заявку на вступление в клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
+						else conp.innerHTML = 'Игрок <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> отклюнил вашу заявку на вступление в клан <b style="cursor: pointer; color: #'+dnf.action.v2.color+';" onclick=\'window.__TAURI__.shell.open("'+gDs+'/clan/'+dnf.action.v2.ID+'")\'>'+dnf.action.v2.clan+'</b> '+timeConverter(dnf.time)+'!';
 						break;
 					default:
 						conp.innerHTML = 'Это всё ещё неизвестное для вашей версии клиента уведомление. Может, стоит обновиться?';
