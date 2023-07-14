@@ -4,8 +4,8 @@
 
 Чтобы собрать лаунчер:
 1. Установи всё, что нужно [**Tauri**](https://tauri.app) — [**Prerequisites**](https://tauri.app/v1/guides/getting-started/prerequisites)
-2. В главной папке проекта (*или в папке **src-tauri***) введи в консоль `npm run tauri dev` и начинай разрабатывать
-3. Для сборки лаунчера введи `npm run tauri build`
+2. В главной папке проекта (*или в папке **src-tauri***) введи в консоль `npm update`
+3. Для сборки лаунчера введи `npm run tauri build`, для проверки того, что написал — `npm run tauri dev`
 
 
 **Текущая версия клиента — 1.3.3**
