@@ -159,7 +159,7 @@ function clientUpdate(ask = false) {
 			variable = penis.split("=");
 			cook[variable[0].trim()] = variable[1];
 		});
-		if((result.client && result.client > cook["client"]) && cook['client'] != 0) {
+		if(((result.client && result.client > cook["client"]) && cook['client'] != 0) || result.version != window.appVer) {
 			if(ask) {
 				text.innerHTML = "Обновление клиента!";
 				document.getElementById("pbtn").setAttribute("onclick", "clientUpdate()");
@@ -199,6 +199,7 @@ function clientUpdate(ask = false) {
 							document.getElementById("pmax").innerHTML = "";
 							prog.value = 0;
 							window.__TAURI__.shell.open("GCS-Updater.exe").then(res=>{
+								window.__TAURI__.invoke('cgcsv', {ver: result.version});
 								window.dontupdate = false;
 								prog.value = prog.max;
 								window.__TAURI__.process.exit(0);
@@ -217,13 +218,14 @@ function clientUpdate(ask = false) {
 }
 function updateUser() {
 	cook = [];
-	updateOnlineStatus();
-	if(condition.length && condition == 'offline') {
+	let internetTImeout = setTimeout(function() {
 		document.getElementById("nointernet").style.opacity = "1";
 		document.getElementById("nointernet").style.visibility = "initial";
-		setTimeout(function(){updateUser();}, 5000);
+		document.getElementById("nointernet").style.display = "flex";
+		updateUser();
+		clearTimeout(internetTImeout);
 		return;
-	}
+	}, 10000);
 	document.getElementById("loaddiv").style.opacity = "1";
 	document.getElementById("loaddiv").style.visibility = "initial";
 	if(document.cookie.length) {
@@ -267,6 +269,10 @@ function updateUser() {
 				document.getElementById("warndiv").style.opacity = "1";
 				document.getElementById("warndiv").style.visibility = "initial";
 			}
+			clearTimeout(internetTImeout);
+			document.getElementById("nointernet").style.opacity = "0";
+			document.getElementById("nointernet").style.visibility = "hidden";
+			document.getElementById("nointernet").style.display = "none";
 		}
 		chk.send();
 	} else {
@@ -283,9 +289,11 @@ function updateUser() {
 			document.getElementById("warndiv").style.opacity = "1";
 			document.getElementById("warndiv").style.visibility = "initial";
 		}
+		clearTimeout(internetTImeout);
+		document.getElementById("nointernet").style.opacity = "0";
+		document.getElementById("nointernet").style.visibility = "hidden";
+		document.getElementById("nointernet").style.display = "none";
 	}
-	document.getElementById("nointernet").style.opacity = "0";
-	document.getElementById("nointernet").style.visibility = "hidden";
 	if(!window.dontupdate) clientUpdate(true);
 }
 function logoutbtn() {
@@ -398,9 +406,6 @@ function openDir(dir) {
 			window.__TAURI__.shell.open(r);
 		})
 	}
-}
-function updateOnlineStatus() {
-    condition = navigator.onLine ? "online" : "offline";
 }
 function updateNotifies() {
 	notifydiv = document.getElementById('notifies');

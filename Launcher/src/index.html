@@ -40,7 +40,7 @@
 
 <div id="loaddiv" class="fillbg">
 	<div class="loadsvg">
-		<div id="nointernet" style="opacity:0; visibility: hidden;  transition: 0.3s; display: flex; flex-wrap: wrap; justify-content: center;">
+		<div id="nointernet" style="opacity:0; visibility: hidden;  transition: 0.3s; display: none; flex-wrap: wrap; justify-content: center;">
 			<p style="font-size: 25px;margin-top: 10px;color: white;">Проверьте ваше подключение к интернету...</p>
 			<button class="btn-primary btn-success btn-play" onclick="play()">Играть</button>
 		</div>
@@ -156,8 +156,6 @@
 		});
 		const text = document.getElementById("text");
 		const ltext = document.getElementById("ltext");
-		window.addEventListener('online',  updateOnlineStatus);
-		window.addEventListener('offline', updateOnlineStatus);
 		setTimeout(function(){updateUser();}, 1);
 		setInterval(function(){updateUser()}, 1800000);
 		setInterval(function(){updateNotifies()}, 90000);
@@ -166,7 +164,10 @@
 		tm = timeConverter(cook["client"]);
 		if(tm != "1 января 1970" && tm != 'NaN undefined NaN') document.getElementById("time").innerHTML = tm;
 		f = window.__TAURI__.app.getVersion();
-		f.then(e=>{document.getElementById("ver").innerHTML = e})
+		f.then(ve=>{
+			document.getElementById("ver").innerHTML = ve;
+			window.appVer = ve;
+		})
 		setInterval(function() {
 			checkProcess('GreenCatsServer.exe').then(r => {
 				window.dontplayagain = r;
