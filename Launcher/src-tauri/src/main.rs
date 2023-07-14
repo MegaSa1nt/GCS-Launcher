@@ -6,6 +6,26 @@ use tauri::{CustomMenuItem, SystemTray, SystemTrayMenu, SystemTrayEvent, SystemT
 use tauri::Manager;
 use sysinfo::{System, SystemExt};
 
+use std::io;
+use std::path::Path;
+use winreg::enums::*;
+use winreg::RegKey;
+
+fn change_gcs_version(ver: String) -> io::Result<()> {
+    let hkcu = RegKey::predef(HKEY_CURRENT_USER);
+    let path = Path::new("Software").join("Microsoft").join("Windows").join("CurrentVersion").join("Uninstall").join("GCS-Client");
+    let (key, _disp) = hkcu.create_subkey(&path)?;
+    key.set_value("DisplayVersion", &ver)?;
+    key.set_value("Publisher", &"MegaSa1nt")?;
+    Ok(())
+}
+
+#[tauri::command]
+fn cgcsv(ver: String) -> Result<(), String> {
+	let _ = change_gcs_version(ver);
+	Ok(())
+}
+
 #[tauri::command]
 fn append_chunk_to_file(path: String, chunk: Vec<u8>) -> Result<(), String> {
     let mut file = OpenOptions::new()
@@ -35,7 +55,7 @@ fn main() {
 	  .add_item(hide);
 	let tray = SystemTray::new().with_menu(tray_menu);
 	tauri::Builder::default()
-		.invoke_handler(tauri::generate_handler![append_chunk_to_file, check_processes])
+		.invoke_handler(tauri::generate_handler![append_chunk_to_file, check_processes, cgcsv])
 		.system_tray(tray)
 		.on_system_tray_event(|app, event| match event {
 			SystemTrayEvent::LeftClick {
