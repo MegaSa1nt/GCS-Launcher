@@ -41,7 +41,7 @@ p {
 	background: #3EE667;
 	border-radius: 500px;
 	box-shadow: 0px 0px 20px 0px black;
-	transition: 0.3s;
+	transition: var(--anim-hover);
 	cursor: pointer;
 }
 .playicon {
@@ -73,6 +73,7 @@ p {
 .dropdown-menu {
 	left: 53px;
 	top: 15px;
+	transition: var(--anim-menu);
 }
 .btn-primary {
 	margin-bottom: 10px;
@@ -100,7 +101,7 @@ p {
   height: 25px;
   margin: 3px;
   margin-left: 0px;
-  transition: 0.3s;
+  transition: var(--anim-hover);
   cursor: pointer;
   border-radius: 2.5px;
 }
@@ -170,10 +171,10 @@ p {
 .fillbg {
     width: 100%;
     height: 100%;
-    z-index: 1;
+    z-index: 2;
     position: absolute;
     background: #00000000;
-	transition: 0.3s;
+	transition: var(--anim-settings);
 	backdrop-filter: blur(2.5px);
 	border-radius: 15px;
 }
@@ -239,6 +240,7 @@ progress::-webkit-progress-value {
 }
 .form {
 	box-shadow: 0 0 5px 0px #000000aa;
+	border-radius: 20px;
 }
 progress {
   background: #090909;
@@ -270,7 +272,7 @@ input[type=radio]:checked {
     justify-content: flex-start;
     flex-direction: column;
     align-items: center;
-    background: #181a1b;
+    background: #121212;
     padding: 15px 0px 15px 15px;
     border-radius: 30px;
     max-height: 70vh;
@@ -330,11 +332,6 @@ input[type=radio]:checked {
 .notifycircle {
 	filter: invert(30%) sepia(84%) saturate(874%) hue-rotate(324deg) brightness(116%) contrast(85%);
 }
-.notifies::-webkit-scrollbar-thumb {
-   background-color: #373A3F;
-   border-radius: 100px;
-   border: 4px solid #181a1b;
-}
 .clickformore {
 	font-style: italic !important;
 }
@@ -348,7 +345,7 @@ input[type=radio]:checked {
 .profile {
 	width: auto;
 	margin-top: 0px;
-	transition: 0.3s;
+	transition: var(--anim-hover);
 	cursor: pointer;
 }
 .loadingnotify {
@@ -366,7 +363,7 @@ input[type=radio]:checked {
 }
 .setform {
 	margin: 0px;
-	margin-bottom: 10px;
+	width: 69.2vw;
 }
 .settitle {
     color: white;
@@ -397,7 +394,7 @@ h2 {
 	padding: 10px 10px 10px 0px;
 	border-top-right-radius: 500px;
 	border-bottom-right-radius: 500px;
-	transition: 0.3s;
+	transition: var(--anim-hover);
 	cursor: pointer;
 	color: #c0c0c0;
 }
@@ -431,4 +428,327 @@ h2 {
 }
 .profile:hover {
 	background: #303134;
+}
+.btn-queue {
+	position: absolute;
+	right: 10px;
+	bottom: 10px;
+	background: #29282c;
+	border-radius: 256px;
+	width: 50px;
+	height: 50px;
+	display: flex;
+	justify-content: center;
+	transition: var(--anim-hover);
+	cursor: pointer;
+}
+.btn-queue:hover {
+	background: #303134;
+	.nfcircle {border: 3px solid #303134;}
+}
+.queuediv {
+	position: absolute;
+	right: 10px;
+	bottom: 70px;
+	display: flex;
+	background: #181a1b;
+	border-radius: 15px;
+	width: 400px;
+	height: max-content;
+	min-height: 178px;
+	z-index: 1;
+	transform: translateX(105%);
+   transition: var(--anim-queue);
+   padding: 7px;
+   grid-gap: 5px;
+   flex-direction: column;
+}
+.queuediv.show {
+	transform: translateX(0%);
+}
+.queuelist {
+	height: max-content;
+	background: #121212;
+	padding: 7px;
+	border-radius: 10px;
+	display: flex;
+   align-items: center;
+   grid-gap: 5px;
+   position: relative;
+}
+.queuename {
+	display: flex;
+   flex-direction: column;
+   align-items: flex-start;
+   width: 100%;
+   grid-gap: 2px;
+}
+.queuename h2 {
+	font-size: 13px;
+	margin: 0px;
+	display: flex;
+}
+.queuename h3 {
+	font-size: 13px;
+	margin: 0px;
+}
+.queuename progress {
+	margin: 0px;
+	height: 10px;
+}
+.btn-queue-menu {
+	background: #29282c;
+	border-radius: 256px;
+	width: 30px;
+   height: 30px;
+	display: flex;
+	justify-content: center;
+	transition: 0.2s;
+	cursor: pointer;
+	align-items: center;
+}
+.btn-queue-menu img {
+	width: 14px;
+}
+.queuebtns {
+	display: flex;
+    align-items: center;
+    grid-gap: 3px;
+}
+.btn-queue-menu:hover {
+	background: #303134;
+}
+.btn-queue .nfcircle {
+  top: 7px;
+  left: 4px;
+  border: 3px solid #29282c;
+  transition: 0.2s;
+}
+.queuediv h4 {
+    color: gray;
+    width: 96.5%;
+    text-align: center;
+    font-size: 15px;
+    position: absolute;
+    bottom: 7px;
+    margin: 0px;
+    font-style: italic;
+}
+.qcircle {
+	border: 3px solid #121212;
+   border-radius: 500px;
+}
+.queuebtns .dropdown-menu {
+   right: 0px;
+   left: auto;
+   bottom: 50px;
+   top: auto;
+   padding: .5rem 0;
+   background: #29282c;
+	width: 93%;
+	transition: var(--anim-menu);
+	transform: translateX(120%);
+}
+.queuebtns .dropdown-item {
+	display: flex;
+   align-items: center;
+   width: 92%;
+}
+.queuebtns .dropdown-item .icon {
+	background: #141414;
+}
+.queuebtns .dropdown-menu.mods {
+   bottom: 75px;
+}
+.setdiv {
+	margin: 0px;
+   width: 77vw;
+   display: flex;
+   justify-content: flex-start;
+   flex-direction: column;
+   align-items: center;
+   background: #121212;
+   padding: 15px 0px 15px 15px;
+   border-radius: 30px;
+   overflow: hidden;
+   overflow-y: scroll;
+	grid-gap: 15px;
+	height: 70vh;
+	position: relative;
+}
+.slider {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 75%; 
+   height: 10px; 
+   background: #121212; 
+   outline: none; 
+   -webkit-transition: .2s; 
+   transition: opacity .2s;
+	border-radius: 999px;
+}
+.slider::-webkit-slider-thumb {
+   -webkit-appearance: none;
+   appearance: none;
+   width: 15px;
+   height: 15px;
+   background: #fff; 
+   cursor: pointer;
+	border-radius: 999px;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #373A3F;
+    border-radius: 100px;
+    border: 4px solid #121212;
+}
+.sliders {
+	justify-content: space-between;
+	grid-gap: 7px;
+	align-items: center;
+}
+.nointernet {
+	opacity: 0;
+	visibility: hidden;
+	transition: var(--anim-settings);
+	display: none;
+	flex-wrap: wrap;
+	justify-content: center;
+	grid-gap: 10px;
+}
+.nointernet .btn-primary {
+	width: max-content;
+	font-size: 30px;
+   padding: 14px 40px;
+   visibility: hidden;
+}
+.settings-menu {
+	display: flex;
+	width: 79vw;
+	justify-content: flex-start;
+   align-items: center;
+   transition: var(--anim-pages);
+}
+.settings-menus {
+	display: flex;
+	justify-content: flex-start;
+   align-items: center;
+   grid-gap: 79vw;
+}
+.settings-menu.first {
+	transform: translateX(0%);
+}
+.settings-menu.second {
+	transform: translateX(-200%);
+}
+.settings-buttons button {
+	color: #c0c0c0;
+	font-size: 18px;
+	display: grid;
+	grid-gap: 1.5px;
+	transition: var(--anim-pages);
+	cursor: pointer;
+}
+.settings-buttons {
+	margin-bottom: 8px;
+	display: flex;
+	grid-gap: 5px;
+}
+.settings-buttons button span {
+	background: #787878;
+	width: 100%;
+	height: 2px;
+   display: block;
+   border-radius: 500px;
+   transition: var(--anim-pages);
+}
+.settings-buttons button.first.active, .settings-buttons button.second.active {
+	color: white;
+	font-weight: 700;
+}
+.settings-buttons button.first.active span ,.settings-buttons button.second.active span {
+	background: #3EE667;
+	height: 3px;
+}
+.loginstg:hover p {
+	color: white;
+}
+.loginstg p {
+	transition: var(--anim-hover);
+}
+.settings-buttons button:hover {
+	color: white;
+	transition: var(--anim-hover);
+}
+.profilepic {
+	font-size: 20px;
+	margin: 0px;
+	width: max-content;
+}
+.profilestats {
+	display: flex;
+	width: 100%;
+	height: max-content;
+	align-items: center;
+	justify-content: space-around;
+}
+.profileposts {
+	overflow-wrap: anywhere;
+   display: flex;
+   border-radius: 30px;
+   flex-wrap: wrap;
+   max-height: 45vh;
+   height: max-content;
+   width: 100%;
+   background: #141414;
+   padding: 10px;
+   grid-gap: 5px;
+}
+.profileform {
+	grid-gap: 7px;
+	padding: 7px 20px 10px 20px;
+}
+.profilenick {
+	margin: 0px;
+}
+.profilepost {
+	padding: 10px 13px;
+   width: 100%;
+   border-radius: 20px;
+   background: #29282c;
+   grid-gap: 10px;
+   display: flex;
+   flex-direction: column;
+}
+.profilepoststats {
+	display: flex;
+	align-items: center;
+}
+.profilemsg {
+	margin: 0px;
+}
+.comments.post {
+	margin: 0px;
+}
+.blockview {
+	position: absolute;
+    top: 0px;
+    left: 0px;
+    background: #0000009c;
+    width: 97%;
+    height: 93%;
+    margin: 15px 0px 15px 15px;
+    border-radius: 15px;
+    backdrop-filter: blur(2px);
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    flex-wrap: wrap;
+	z-index: 1;
+}
+.blockview h1 {
+	position: static;
+}
+.queuebtns .dropdown-menu.show {
+	transform: translateX(0%);
 }

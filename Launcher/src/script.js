@@ -1,6 +1,247 @@
 gDs = "https://gcs.icu"; // Your GDPS link to dashboard (doesn't work with default Cvolton's dashboard)
 const wait = ms => new Promise(r => setTimeout(r, ms));
+function newUpdate(ask = false, part = false) {
+	if(window.dontupdate) return;
+	updateQueue = [];
+	updateQueueFunction();
+	fetch('https://gcs.icu/download/updater.php?v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+		window.gcs = gcs;
+		if(gcs.success) {
+			if(gcs.game.version != window.localStorage.v2version) {
+				window.localStorage.v2version = gcs.game.version;
+				return newUpdate(ask, part);
+			}
+			if(!part) {
+				if(gcs.game.windows.game > window.localStorage.v2wgame) updateQueue.push('wgame');
+				if(gcs.game.windows[window.modmenu] > window.localStorage.v2modmenu) updateQueue.push('w'+window.modmenu);
+				if(gcs.client.windows.time > window.localStorage.v2cw || gcs.client.windows.version != window.appVer) updateQueue.push('cw');
+				if(gcs.game.windows[window.modmenu] == 0) uninstallMods();
+			} else {
+				if(part == 'game') updateQueue.push('wgame');
+				else if(part == 'cw') updateQueue.push('cw');
+				else if(part == 'mods') updateQueue.push(window.modmenu);
+				else updateQueue.push(part);
+			}
+			if(updateQueue.length > 0) {
+				document.getElementById('mainqueuecircle').style.display = 'flex';
+				if(updateQueue.includes('wgame')) {
+					document.getElementById('queue-gcs-notify-circle').style.display = 'flex';
+					document.getElementById('queue-gcs-update').style.display = 'flex';
+				}
+				if(window.localStorage.v2version != 3) {
+					if((updateQueue.includes('wmods') || updateQueue.includes('wmo') || updateQueue.includes('whm')) && window.isinstalled) {
+						document.getElementById('queue-mods-notify-circle').style.display = 'flex';
+						document.getElementById('queue-mods-update').style.display = 'flex';
+					}
+				}
+				if(updateQueue.includes('cw')) {
+					document.getElementById('queue-client-notify-circle').style.display = 'flex';
+					document.getElementById('queue-client-update').style.display = 'flex';
+				}
+				if(ask) {
+					document.getElementById("pbtn").setAttribute("onclick", "newUpdate()");
+					document.getElementById("pimg").setAttribute("src", "res/svg/dl.svg");
+					document.getElementById("pimg").classList.remove("dl");
+					if(window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Что-то нужно обновить!", body: "Лаунчер нашёл обновление чего-то, скорее проверь, что там!", icon: "res/kitty.png"});
+				} else {
+					window.dontupdate = true;
+					if(!window.localStorage.v2is22) uninstall();
+					document.getElementById("pbtn").setAttribute("onclick", "newUpdate()");
+					document.getElementById("pimg").setAttribute("src", "res/svg/load.svg");
+					document.getElementById("pimg").classList.remove("dl");
+					document.getElementById("pimg").classList.add("spin");
+					allMenuBtns = document.querySelectorAll('[button-type]');
+					allMenuBtns.forEach(e => {e.style.display = "none"});
+					menus = document.querySelectorAll("[div-type='menu']");
+					menus.forEach(i => {i.classList.remove("show");});
+					jsZip = new JSZip();
+					window.updatingPart = true;
+					function dlPart(partName) {
+						return new Promise(r => {
+							window.updatingPart = true;
+							if(partName == 'cw') {
+								fetch('https://gcs.icu/download/updater.php?v='+window.localStorage.v2version+'&dl=cu').then(response => {
+									listName = 'client';
+									pbar = document.getElementById('queue-'+listName+'-progress');
+									if(pbar.tagName != 'PROGRESS') {
+										progpls = document.createElement('progress');
+										progpls.id = 'queue-'+listName+'-progress';
+										progpls.title = 'Загрузка';
+										pbar.replaceWith(progpls);
+										pbar = progpls;
+									}
+									const contentLength = response.headers.get('content-length');
+									let loaded = 0;
+									pbar.value = 0;
+									pbar.max = contentLength;
+									return new Response(
+										new ReadableStream({
+											start(controller) {
+												const reader = response.body.getReader();
+												read();
+												function read() {
+													reader.read().then((progressEvent) => {  
+														if(progressEvent.done) {
+															controller.close();
+															return; 
+														}
+														loaded += progressEvent.value.byteLength;
+														pbar.value = loaded;
+														controller.enqueue(progressEvent.value);
+														read();
+													})
+												}
+											}
+										})
+									);
+								}).then(response => response.arrayBuffer()).then(async (file) => {
+									await zipFile(new Uint8Array(file), 'GCS-Updater.exe');
+									window.__TAURI__.shell.open("GCS-Updater.exe").then(res=>{
+										window.localStorage.v2cw = gcs.client.windows.time;
+										window.__TAURI__.invoke('cgcsv', {ver: gcs.client.version});
+										window.dontupdate = false;
+										window.updatingPart = false;
+										window.__TAURI__.process.exit(0);
+									});
+								});
+							} else fetch('https://gcs.icu/download/updater.php?v='+window.localStorage.v2version+'&dl='+partName).then(response => {
+								if(partName == 'wgame') listName = 'gcs';
+								else listName = 'mods';
+								pbar = document.getElementById('queue-'+listName+'-progress');
+								if(pbar.tagName != 'PROGRESS') {
+									progpls = document.createElement('progress');
+									progpls.id = 'queue-'+listName+'-progress';
+									progpls.title = 'Загрузка';
+									pbar.replaceWith(progpls);
+									pbar = progpls;
+								}
+								const contentLength = response.headers.get('content-length');
+								let loaded = 0;
+								pbar.value = 0;
+								pbar.max = contentLength;
+								return new Response(
+									new ReadableStream({
+										start(controller) {
+											const reader = response.body.getReader();
+											read();
+											function read() {
+												reader.read().then((progressEvent) => {  
+													if(progressEvent.done) {
+														controller.close();
+														return; 
+													}
+													loaded += progressEvent.value.byteLength;
+													pbar.value = loaded;
+													controller.enqueue(progressEvent.value);
+													read();
+												})
+											}
+										}
+									})
+								);
+							})
+							.then(response => response.arrayBuffer()).then(async (file) => {
+								l = 0;
+								await fullZip(file, partName);
+								window.gc();
+								r(true);
+							});
+						});
+					}
+					function fullZip(files, partName) {
+						return new Promise(r => {
+							if(partName == 'wgame') listName = 'gcs';
+							else listName = 'mods';
+							pbar = document.getElementById('queue-'+listName+'-progress');
+							if(pbar.tagName != 'PROGRESS') {
+								progpls = document.createElement('progress');
+								progpls.id = 'queue-'+listName+'-progress';
+								pbar.replaceWith(progpls);
+								pbar = progpls;
+							}
+							pbar.title = 'Распаковка';
+							pbar.value = 0;
+							jsZip.loadAsync(files).then(function (zip) {
+								window.filesLol = [];
+								window.filesTrue = [];
+								fileCount = -1;
+								function fuckingPlease() {
+									fileCount++;
+									delete filename;
+									delete fileShift;
+									filename = Object.keys(zip.files)[fileCount];
+									window.filesLol.push(filename);
+									plsdata = zip.files[filename].async('uint8array').then(async function (plsdatapls) {
+										await checkGameAwait();
+										zipFile(plsdatapls, filename).then(g => {
+											l++;
+											pbar.value = l;
+											pbar.max = Object.keys(zip.files).length;
+											window.gc();
+											if(l >= Object.keys(zip.files).length) {
+												window.dontupdate = false;
+												window.updatingPart = false;
+												document.getElementById('queue-'+listName+'-notify-circle').style.display = 'none';
+												if(partName == 'wgame') {
+													window.localStorage.v2wgame = gcs.game.windows.game;
+													document.getElementById('queue-gcs-update').style.display = 'none';
+												} else {
+													partName = 'wmods';
+													window.localStorage.v2modmenu = gcs.game.windows[window.modmenu];
+													document.getElementById('queue-mods-update').style.display = 'none';
+													window.localStorage.modmenu = part;
+												}
+												updateQueueFunction();
+												window.__TAURI__.fs.writeTextFile(partName+".json", JSON.stringify(window.filesLol), {dir: 22});
+												r(true);
+												return true;
+											} else fuckingPlease();
+										}).catch(e => {
+											console.log("[FAIL] "+filename+", "+e);
+										});
+									});
+								}
+								fuckingPlease();
+							});
+						});
+					}
+					async function runParts() {
+						partName = await updateQueue.shift();
+						await dlPart(partName);
+						text.innerHTML = '';
+						if(updateQueue.length > 0) runParts();
+						else {
+							window.updatingPart = false;
+							window.gc();
+							updateNoModsVar();
+							updateQueueFunction();
+							if(!window.localStorage.v2is22) window.localStorage.v2is22 = true;
+							document.getElementById('mainqueuecircle').style.display = 'none';
+							document.getElementById("pbtn").setAttribute("onclick", "play()");
+							document.getElementById("pimg").setAttribute("src", "res/svg/play.svg");
+							document.getElementById("pimg").classList.add("dl");
+							document.getElementById("pimg").classList.remove("spin");
+							allMenuBtns = document.querySelectorAll('[button-type]');
+							allMenuBtns.forEach(e => {e.style.display = "flex"});
+							menus = document.querySelectorAll("[div-type='menu']");
+							menus.forEach(i => {i.classList.remove("show");});
+							window.__TAURI__.window.appWindow.requestUserAttention(2);
+							let permissionGranted = window.__TAURI__.notification.isPermissionGranted();
+							if(!permissionGranted) {
+								const permission = window.__TAURI__.notification.requestPermission();
+								permissionGranted = permission === 'granted';
+							}
+							if(permissionGranted && window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Всё установлено!", body: "Хей, игрок! Игра была успешно установлена! Приятной игры :)", icon: "res/kitty.png"});
+						}
+					}
+					runParts();
+				}
+			} else document.getElementById('mainqueuecircle').style.display = 'none';
+		} else return false;
+	});
+}
 function update(ask = false, err = '') {
+	return false;
  	cook = [];
  	sd = new XMLHttpRequest();
  	sd.open("GET", gDs+"/download/updater.php", true);
@@ -63,46 +304,47 @@ function update(ask = false, err = '') {
 								else document.getElementById("pmax").innerHTML = Object.keys(zip.files).length+" файлов";
 								plsdata = zip.files[filename].async('uint8array').then(async function (plsdatapls) {
 									await checkGameAwait();
-									await zipFile(plsdatapls, filename);
-									window.gc();
-									l++;
-									prog.value = l;
-									if(l % 10 == 1) document.getElementById("ploaded").innerHTML = l +" файл";
-									else if(l % 10 > 1 && l % 10 < 5 && l % 10 != 0) document.getElementById("ploaded").innerHTML = l +" файла";
-									else document.getElementById("ploaded").innerHTML = l +" файлов";
-									if(l >= Object.keys(zip.files).length) {
+									await zipFile(plsdatapls, filename).then(d => {
 										window.gc();
-										if(!window.localStorage.modmenu) {
-											window.__TAURI__.fs.removeDir(".GDHM", {recursive: true});
-											window.__TAURI__.fs.removeDir("locales", {recursive: true});
-											window.__TAURI__.fs.removeDir("ffmpeg", {recursive: true});
-											window.__TAURI__.fs.removeFile("ToastedMarshmellow.dll");
-											window.__TAURI__.fs.removeFile("RoastedMarshmellow.dll");
-											window.__TAURI__.fs.removeFile("libGLESv2.dll");
-											window.__TAURI__.fs.removeFile("resources.pak");
-											window.__TAURI__.fs.removeFile("icudtl.dat");
-											window.__TAURI__.fs.removeFile("msacm32.dll");
-											window.__TAURI__.fs.removeFile("chrome_elf.dll");
-											window.__TAURI__.fs.removeFile("chrome_100_percent.pak");
-											window.__TAURI__.fs.removeFile("chrome_200_percent.pak");
-											window.__TAURI__.fs.removeFile("client.exe");
-										}
-										window.dontupdate = false;
-										document.getElementById("pimg").setAttribute("src", "res/svg/play.svg");
-										document.getElementById("prdiv").style.opacity="0";
-										text.innerHTML = "";
-										window.__TAURI__.window.appWindow.requestUserAttention(2);
-										document.getElementById("pbtn").setAttribute("onclick", "play()");
-										document.getElementById("pimg").classList.add("dl");
-										document.getElementById("pimg").classList.remove("spin");
-										let permissionGranted = window.__TAURI__.notification.isPermissionGranted();
-										if(!permissionGranted) {
-										  const permission = window.__TAURI__.notification.requestPermission();
-										  permissionGranted = permission === 'granted';
-										}
-										if(permissionGranted && window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Игра установлена!", body: "Хей, игрок! Игра была успешно установлена! Приятной игры :)", icon: "res/kitty.png"})
-										document.cookie = "update="+result.time+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
-									}
+										l++;
+										prog.value = l;
+										if(l % 10 == 1) document.getElementById("ploaded").innerHTML = l +" файл";
+										else if(l % 10 > 1 && l % 10 < 5 && l % 10 != 0) document.getElementById("ploaded").innerHTML = l +" файла";
+										else document.getElementById("ploaded").innerHTML = l +" файлов";
+										if(l >= Object.keys(zip.files).length) {
+											window.gc();
+											if(!window.localStorage.modmenu) {
+												window.__TAURI__.fs.removeDir(".GDHM", {recursive: true});
+												window.__TAURI__.fs.removeDir("locales", {recursive: true});
+												window.__TAURI__.fs.removeDir("ffmpeg", {recursive: true});
+												window.__TAURI__.fs.removeFile("ToastedMarshmellow.dll");
+												window.__TAURI__.fs.removeFile("RoastedMarshmellow.dll");
+												window.__TAURI__.fs.removeFile("libGLESv2.dll");
+												window.__TAURI__.fs.removeFile("resources.pak");
+												window.__TAURI__.fs.removeFile("icudtl.dat");
+												window.__TAURI__.fs.removeFile("msacm32.dll");
+												window.__TAURI__.fs.removeFile("chrome_elf.dll");
+												window.__TAURI__.fs.removeFile("chrome_100_percent.pak");
+												window.__TAURI__.fs.removeFile("chrome_200_percent.pak");
+												window.__TAURI__.fs.removeFile("client.exe");
+											}
+											window.dontupdate = false;
+											document.getElementById("pimg").setAttribute("src", "res/svg/play.svg");
+											document.getElementById("prdiv").style.opacity="0";
+											text.innerHTML = "";
+											window.__TAURI__.window.appWindow.requestUserAttention(2);
+											document.getElementById("pbtn").setAttribute("onclick", "play()");
+											document.getElementById("pimg").classList.add("dl");
+											document.getElementById("pimg").classList.remove("spin");
+											let permissionGranted = window.__TAURI__.notification.isPermissionGranted();
+											if(!permissionGranted) {
+											  const permission = window.__TAURI__.notification.requestPermission();
+											  permissionGranted = permission === 'granted';
+											}
+											if(permissionGranted && window.localStorage.usenf == 'true') window.__TAURI__.notification.sendNotification({title: "Игра установлена!", body: "Хей, игрок! Игра была успешно установлена! Приятной игры :)", icon: "res/kitty.png"})
+											document.cookie = "update="+result.time+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+										} else rr(true);
+									});
 								});
 							}
 						})
@@ -117,7 +359,7 @@ function update(ask = false, err = '') {
 }
 function checkGameAwait() {
 	return new Promise(async function(r) {
-		while(window.dontplayagain) await wait(2001);
+		while(window.dontplayagain) await wait(1000);
 		r(true);
 	});
 }
@@ -131,20 +373,34 @@ function zipFile(fileData, filename) {
 			else pstr = plol[i];
 		}
 		window.__TAURI__.fs.createDir(pstr, {recursive: true});
-		prog.value = l;
-		if(l % 10 == 1) document.getElementById("ploaded").innerHTML = l +" файл";
-		else if(l % 10 > 1 && l % 10 < 5 && l % 10 != 0) document.getElementById("ploaded").innerHTML = l +" файла";
-		else document.getElementById("ploaded").innerHTML = l +" файлов";
 		if(fileData.length < 5242880) {
 			window.__TAURI__.fs.writeBinaryFile(filename, fileData).then(r => {
 				window.gc();
 				resolve(r);
 			}).catch(e => {
-				resolve(false);
+				resolve(e);
 			});
 		} else {
 			arrayb = fileData.buffer;
-			resolve(sendArrayBufferToRust(filename, arrayb));
+			window.__TAURI__.fs.removeFile(filename).then(a => {
+				fileCheck = sendArrayBufferToRust(filename, arrayb);
+				if(fileCheck) resolve(true);
+				else {
+					window.__TAURI__.fs.removeFile(filename).then(a => {
+						fileCheck = sendArrayBufferToRust(filename, arrayb);
+						resolve(fileCheck);
+					})
+				}
+			}).catch(e => {
+				fileCheck = sendArrayBufferToRust(filename, arrayb);
+				if(fileCheck) resolve(true);
+				else {
+					window.__TAURI__.fs.removeFile(filename).then(a => {
+						fileCheck = sendArrayBufferToRust(filename, arrayb);
+						resolve(fileCheck);
+					});
+				}
+			});
 		}
     })
 }
@@ -221,6 +477,7 @@ function updateUser() {
 	let internetTImeout = setTimeout(function() {
 		document.getElementById("nointernet").style.opacity = "1";
 		document.getElementById("nointernet").style.visibility = "initial";
+		if(window.localStorage.v2wgame > 0) document.getElementById("nibtn").style.visibility = "initial";
 		document.getElementById("nointernet").style.display = "flex";
 		updateUser();
 		clearTimeout(internetTImeout);
@@ -250,7 +507,7 @@ function updateUser() {
 		document.getElementById("div").classList.remove("show");
 		chk = new XMLHttpRequest();
 		chk.open("GET", gDs+"/login/api.php?auth="+auth, true);
-		chk.onload = function () {
+		chk.onload = async function () {
 			result = JSON.parse(chk.response);
 			if(result.success) {
 				document.getElementById("user").innerHTML = result.user;
@@ -263,6 +520,8 @@ function updateUser() {
 				document.cookie = "color="+result.color+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 				updateNotifies();
 			} else logoutbtn();
+			await updateParts();
+			if(!window.dontupdate) newUpdate(true);
 			document.getElementById("loaddiv").style.opacity = "0";
 			document.getElementById("loaddiv").style.visibility = "hidden";
 			if(typeof window.localStorage.warn == "undefined") {
@@ -273,6 +532,7 @@ function updateUser() {
 			document.getElementById("nointernet").style.opacity = "0";
 			document.getElementById("nointernet").style.visibility = "hidden";
 			document.getElementById("nointernet").style.display = "none";
+			document.getElementById("nibtn").style.visibility = "hidden";
 		}
 		chk.send();
 	} else {
@@ -283,6 +543,8 @@ function updateUser() {
 		document.getElementById("user").style.cursor = "auto";
 		document.getElementById("user").setAttribute("onclick", '');
 		document.getElementById("user").style.color = "rgb(255,255,255)";
+		updateParts();
+		if(!window.dontupdate) newUpdate(true);
 		document.getElementById("loaddiv").style.opacity = "0";
 		document.getElementById("loaddiv").style.visibility = "hidden";
 		if(typeof window.localStorage.warn == "undefined") {
@@ -294,7 +556,6 @@ function updateUser() {
 		document.getElementById("nointernet").style.visibility = "hidden";
 		document.getElementById("nointernet").style.display = "none";
 	}
-	if(!window.dontupdate) clientUpdate(true);
 }
 function logoutbtn() {
 	document.cookie = "user=no; path=/; expires=Fri, 31 Dec 0000 23:59:59 GMT";
@@ -336,7 +597,11 @@ function play() {
 		text.innerHTML = "Загрузка...";
 		exists = window.__TAURI__.fs.exists("GreenCatsServer.exe").then((success) => {
 			if(success && !window.dontplayagain) window.__TAURI__.shell.open("GreenCatsServer.exe");
-			else if(!window.dontupdate) update(true, "-1");
+			else {
+				window.localStorage.v2wgame = 0;
+				updateQueueFunction();
+				if(!window.dontupdate) newUpdate(true);
+			}
 		});
 	}
 }
@@ -697,6 +962,454 @@ function checkProcess(process) {
 			resolve(true);
 		}).catch(e => {
 			resolve(false);
+		})
+	})
+}
+function queue() {
+	menus = document.querySelectorAll("[div-type='menu']");
+	menus.forEach(i => {i.classList.remove("show");});
+	document.getElementById('queuediv').classList.toggle('show');
+}
+function random(min, max) {
+	return Math.floor(Math.random() * (max - min + 1) + min);
+}
+function changeLine(isReturn = false) {
+	lines = ['Когда-нибудь нас будут обожать...',
+	'Пойти купить ружьё и стрелять в толпу!..',
+	'И вперёд, по новой жить, и вперёд, по новой...',
+	'Выйди из комнаты, сделай вперед шаг...',
+	'Это наше новое скандальное видео!..',
+	'Ты любишь фанк, детка, рубашечки в клетку...',
+	'Нарисуй мне улыбку на моей кислой мордашке...',
+	'Ты слышишь: застучали двери, кто теперь поверит?..',
+	'Самый лучший друг, мой самый лучший друг...',
+	'Ну давай, подписывай пьяный контракт!..',
+	'Добрый Санта, прочитай моё письмо...',
+	'Что достаточно всего прикосновения...',
+	'Кто все эти люди, чтоб учить меня жить?..',
+	'Песня про любовь для рабочего района...',
+	'Всех, кроме нас, всех, кроме нас!..',
+	'Здесь переменами станем мы!..',
+	'А по ночам я вижу сны...',
+	'Не смейте рушить их хрупкий мир!..',
+	'Устрой дестрой, порядок — это отстой!..',
+	'Про нас никто не вспомнит...',
+	'Снова нас догонит любовь и на куски разорвёт!..',
+	'И ничего не случится со мной!..',
+	'Разрушь этот скучный порядок вещей!..',
+	'Дайте мне ещё одну минуту...',
+	'Не повторится мгновение счастья, мне данное свыше...',
+	'Кто, если не мы? Никого нет, кроме нас!..',
+	'Ледники растают — восполнится Иордан...',
+	'Прячет ли дождик беззвучные слезы?..',
+	'Мы с тобой весь мир по кругу излазим...',
+	'Тогда заберите мое доброе сердце...',
+	'Маленькое и хрупкое счастье...',
+	'Девочка плачет, сердце разбито...',
+	'Над моими попытками замедлиться...',
+	'Русский Христос идёт! Русский Христос грядёт!..',
+	'Видишь света столб ослепительный?..'];
+	rnum = random(0, lines.length-1)
+	if(!isReturn) document.getElementById('randomline').innerHTML = lines[rnum];
+	else return lines[rnum];
+}
+function updateQueueFunction() {
+	for(const part in window.update_parts) {
+		queue_divs = [];
+		queue_part = window.update_parts[part];
+		queue_divs.card = document.getElementById(queue_part.id);
+		queue_divs.progress = document.getElementById(queue_part.id+"-progress");
+		queue_divs.button = document.getElementById(queue_part.id+"-menu");
+		queue_divs.time = window.localStorage["v2"+queue_part.variable];
+		if(queue_divs.progress.tagName != "H3") {
+			queue_divs.h3 = document.createElement('h3');
+			queue_divs.h3.id = queue_part.id+'-progress';
+			queue_divs.progress.replaceWith(queue_divs.h3);
+			queue_divs.progress = queue_divs.h3;
+		}
+		if(queue_divs.time == 0) {
+			queue_divs.progress.innerHTML = "Не установлено";
+			queue_divs.button.style.display = "none";
+		}
+		else queue_divs.progress.innerHTML = 'От: <b>'+timeConverter(queue_divs.time)+'</b>';
+	}
+	document.getElementById('queue-mods-menu-replace-'+window.modmenu).style.display = "none";
+	/*
+	gcslist = document.getElementById('queue-gcs-progress');
+	modslist = document.getElementById('queue-mods-progress');
+	clientlist = document.getElementById('queue-client-progress');
+	if(gcslist.tagName != 'H3') {
+		replacegcs = document.createElement('h3');
+		replacegcs.id = 'queue-gcs-progress';
+		gcslist.replaceWith(replacegcs);
+		gcslist = replacegcs;
+	}
+	if(modslist.tagName != 'H3') {
+		replacemods = document.createElement('h3');
+		replacemods.id = 'queue-mods-progress';
+		modslist.replaceWith(replacemods);
+		modslist = replacemods;
+	}
+	if(clientlist.tagName != 'H3') {
+		replaceclient = document.createElement('h3');
+		replaceclient.id = 'queue-client-progress';
+		clientlist.replaceWith(replaceclient);
+		clientlist = replaceclient;
+	}
+	clienttime = timeConverter(window.localStorage.v2cw);
+	clientlist.innerHTML = 'От <b>'+clienttime+'</b>';
+	if(window.localStorage.v2wgame > 0) {
+		gcstime = timeConverter(window.localStorage.v2wgame);
+		gcslist.innerHTML = 'От <b>'+gcstime+'</b>';
+		document.getElementById('queue-gcs-menu-reinstall').style.display = 'flex';
+		document.getElementById('queue-gcs-menu-delete').style.display = 'flex';
+		document.getElementById('queue-gcs-menu-install').style.display = 'none';
+		document.getElementById('queue-gcs-menu').style.display = 'flex';
+	} else {
+		gcslist.innerHTML = 'Не установлена';
+		modslist.innerHTML = 'Игра не установлена';
+		if(!window.updatingPart) {
+			document.getElementById('queue-gcs-update').style.display = 'flex';
+			document.getElementById('queue-gcs-menu').style.display = 'none';
+			document.getElementById('queue-mods-menu').style.display = 'none';
+			document.getElementById('queue-gcs-menu-reinstall').style.display = 'none';
+			document.getElementById('queue-gcs-menu-delete').style.display = 'none';
+			document.getElementById('queue-gcs-menu-install').style.display = 'flex';
+		}
+		window.isinstalled = false;
+		window.nomods = true;
+	}
+	if(window.localStorage.v2modmenu > 0) {
+		window.nomods = false;
+		document.getElementById("queue-mods-menu-replace-"+window.modmenu).style.display = "none";
+	} else {
+		window.nomods = true;
+		updateNoModsVar();
+		if(!window.updatingPart) {
+			document.getElementById('queue-mods-menu').style.display = 'none';
+			document.getElementById('queue-mods-update').style.display = 'flex';
+		}
+		return modslist.innerHTML = 'Моды не установлены';
+	}
+	if(!window.updatingPart) document.getElementById('queue-mods-menu').style.display = 'flex';
+	//modslist.innerHTML = '<b>'+modsname+'</b>: <b>'+modstime+'</b>';
+	document.getElementById('queue-mods-menu').style.display = 'flex';
+	*/
+}
+function showMenu(menuName) {
+	if(window.updatingPart) return;
+	menus = document.querySelectorAll("[div-type='menu']");
+	menus.forEach(i => {if(i.id != menuName+'-menu-div') i.classList.remove("show");});
+	document.getElementById(menuName+'-menu-div').classList.toggle('show');
+}
+function replaceMods(part) {
+	window.updatingPart = true;
+	allMenuBtns = document.querySelectorAll('[button-type]');
+	allMenuBtns.forEach(e => {e.style.display = "none"});
+	menus = document.querySelectorAll("[div-type='menu']");
+	menus.forEach(i => {i.classList.remove("show");});
+	window.__TAURI__.path.appDataDir().then(ad => {
+		window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+			if(a) {
+				window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+					gcs = JSON.parse(partFiles);
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+					window.__TAURI__.fs.removeFile(ad+"wmods.json");
+				});
+			} else {
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+				});
+			}
+			newUpdate(false, part);
+		});
+	});
+}
+function reinstall(part) {
+	window.updatingPart = true;
+	if(part == 'game') {
+		allMenuBtns = document.querySelectorAll('[button-type]');
+		allMenuBtns.forEach(e => {e.style.display = "none"});
+		menus = document.querySelectorAll("[div-type='menu']");
+		menus.forEach(i => {i.classList.remove("show");});
+		window.__TAURI__.path.appDataDir().then(ad => {
+			window.__TAURI__.fs.exists(ad+"wgame.json").then(a => {
+				if(a) {
+					window.__TAURI__.fs.readTextFile(ad+"wgame.json").then(partFiles => {
+						gcs = JSON.parse(partFiles);
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: false});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+						window.__TAURI__.fs.removeFile(ad+"wmods.json");
+					});
+				} else {
+					fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: false});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+					});
+				}
+				newUpdate(false, 'wgame');
+			});
+		});
+	} else if(part == 'cw') {
+		allMenuBtns = document.querySelectorAll('[button-type]');
+		allMenuBtns.forEach(e => {e.style.display = "none"});
+		menus = document.querySelectorAll("[div-type='menu']");
+		menus.forEach(i => {i.classList.remove("show");});
+		newUpdate(false, 'cw');
+	} else {
+		allMenuBtns = document.querySelectorAll('[button-type]');
+		allMenuBtns.forEach(e => {e.style.display = "none"});
+		menus = document.querySelectorAll("[div-type='menu']");
+		menus.forEach(i => {i.classList.remove("show");});
+		window.__TAURI__.path.appDataDir().then(ad => {
+			window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+				if(a) {
+					window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+						gcs = JSON.parse(partFiles);
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+						window.__TAURI__.fs.removeFile(ad+"wmods.json");
+					});
+				} else {
+					fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+					});
+				}
+				newUpdate(false, window.modmenu);
+			});
+		});
+	}
+}
+function uninstall() {
+	if(window.updatingPart) return;
+	window.updatingPart = true;
+	allMenuBtns = document.querySelectorAll('[button-type]');
+	allMenuBtns.forEach(e => {e.style.display = "none"});
+	menus = document.querySelectorAll("[div-type='menu']");
+	menus.forEach(i => {i.classList.remove("show");});
+	window.__TAURI__.path.appDataDir().then(ad => {
+		window.__TAURI__.fs.exists(ad+"wgame.json").then(a => {
+			if(a) {
+				window.__TAURI__.fs.readTextFile(ad+"wgame.json").then(partFiles => {
+					gcs = JSON.parse(partFiles);
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+					window.__TAURI__.fs.removeFile(ad+"wgame.json");
+				});
+			} else {
+				fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+				});
+			}
+			window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+				if(a) {
+					window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+						gcs = JSON.parse(partFiles);
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+						window.__TAURI__.fs.removeFile(ad+"wmods.json");
+					});
+				} else {
+					fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+						for(const file in gcs) {
+							if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+							else window.__TAURI__.fs.removeFile(gcs[file]);
+						}
+					});
+				}
+				window.localStorage.v2wgame = 0;
+				window.localStorage.v2wmo = 0;
+				window.localStorage.v2wmods = 0;
+				window.localStorage.v2whm = 0;
+				window.localStorage.v2modmenu = 0;
+				newUpdate(true);
+			});
+		});
+	})
+}
+function uninstallMods() {
+	if(window.updatingPart) return;
+	window.updatingPart = true;
+	allMenuBtns = document.querySelectorAll('[button-type]');
+	allMenuBtns.forEach(e => {e.style.display = "none"});
+	menus = document.querySelectorAll("[div-type='menu']");
+	menus.forEach(i => {i.classList.remove("show");});
+	window.__TAURI__.path.appDataDir().then(ad => {
+		window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+			if(a) {
+				window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+					gcs = JSON.parse(partFiles);
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+					window.__TAURI__.fs.removeFile(ad+"wmods.json");
+				});
+			} else {
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.removeDir(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.removeFile(gcs[file]);
+					}
+				});
+			}
+			window.localStorage.v2wmo = 0;
+			window.localStorage.v2wmods = 0;
+			window.localStorage.v2whm = 0;
+			window.localStorage.v2modmenu = 0;
+			updateQueueFunction();
+		});
+	});
+}
+function updateNoModsVar() {
+	if(window.nomods) return window.modmenu = "nomods";
+	window.modmenu = window.localStorage.modmenu;
+	modsMenu = document.querySelectorAll('[menu-type="queue-mods"]');
+	modsMenu.forEach(e => {e.style.display = "flex"});
+}
+function updateAnimations() {
+	animStyle = document.getElementById("animations");
+	animStyle.innerHTML = `* {
+		--anim-settings: ${window.localStorage.animsettings}s;
+		--anim-queue: ${window.localStorage.animqueue}s;
+		--anim-menu: ${window.localStorage.animmenu}s;
+		--anim-hover: ${window.localStorage.animhover}s;
+		--anim-pages: ${window.localStorage.animpages}s;
+	}`;
+	as = ''; if(window.localStorage.animsettings > 0 && window.localStorage.animsettings != 1) as = "ы"; if(window.localStorage.animsettings == 1) as = 'а';
+	aq = ''; if(window.localStorage.animqueue > 0 && window.localStorage.animqueue != 1) aq = "ы"; if(window.localStorage.animqueue == 1) aq = 'а';
+	am = ''; if(window.localStorage.animmenu > 0 && window.localStorage.animmenu != 1) am = "ы"; if(window.localStorage.animmenu == 1) am = 'а';
+	ah = ''; if(window.localStorage.animhover > 0 && window.localStorage.animhover != 1) ah = "ы"; if(window.localStorage.animhover == 1) ah = 'а';
+	ah = ''; if(window.localStorage.animpages > 0 && window.localStorage.animpages != 1) ah = "ы"; if(window.localStorage.animpages == 1) ah = 'а';
+	document.getElementById("anim-settings-text").innerHTML = window.localStorage.animsettings+' секунд'+as;
+	document.getElementById("anim-queue-text").innerHTML = window.localStorage.animqueue+' секунд'+aq;
+	document.getElementById("anim-menu-text").innerHTML = window.localStorage.animmenu+' секунд'+am;
+	document.getElementById("anim-hover-text").innerHTML = window.localStorage.animhover+' секунд'+ah;
+	document.getElementById("anim-pages-text").innerHTML = window.localStorage.animpages+' секунд'+ah;
+}
+function changePage(page) {
+	settingsMenu = document.getElementById('settings-menu');
+	settingsButtons = []
+	settingsButtons.first = document.getElementById('settings-menu-first');
+	settingsButtons.second = document.getElementById('settings-menu-second');
+	settingsMenu.classList = "settings-menu "+page;
+	document.querySelector(".settings-buttons button.active").classList.remove('active');
+	settingsButtons[page].classList = page+" active";
+}
+function updateParts() {
+	queuediv = document.getElementById('queuediv');
+	window.update_parts = [];
+	return new Promise(r => {
+		fetch('https://gcs.icu/download/parts.php?v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+			console.log(gcs);
+			if(gcs.success) {
+				queuediv.innerHTML = "";
+				for(const i in gcs.update_parts) {
+					update_divs = [];
+					update_part = gcs.update_parts[i];
+					window.update_parts.push(update_part);
+					// Вся карточка
+					update_divs.queuelist = document.createElement('div');
+					update_divs.queuelist.classList.add("queuelist");
+					update_divs.queuelist.id = update_part.id;
+					// Иконка
+					update_divs.img = document.createElement('img');
+					update_divs.img.src = update_part.icon;
+					update_divs.img.setAttribute("width", "35px");
+					// Текст (название и дата последнего обновления)
+					update_divs.queuename = document.createElement("div");
+					update_divs.queuename.classList.add("queuename");
+					update_divs.queuename.h2 = document.createElement('h2');
+					update_divs.queuename.h2.id = update_part.id+"-name";
+					update_divs.queuename.h2.innerHTML = update_part.name;
+					update_divs.queuename.h2.notify = document.createElement("div");
+					update_divs.queuename.h2.notify.classList.add("qcircle");
+					update_divs.queuename.h2.notify.style.display = "none";
+					update_divs.queuename.h2.notify.id = update_part.id + "-notify-circle";
+					update_divs.queuename.h2.notify.img = document.createElement("img");
+					update_divs.queuename.h2.notify.img.src = "res/svg/circle.svg";
+					update_divs.queuename.h2.notify.img.classList.add("notifycircle");
+					update_divs.queuename.h2.notify.img.setAttribute("width", "8px");
+					update_divs.queuename.h2.notify.append(update_divs.queuename.h2.notify.img);
+					update_divs.queuename.h2.append(update_divs.queuename.h2.notify);
+					update_divs.queuename.h3 = document.createElement("h3");
+					update_divs.queuename.h3.id = update_part.id+"-progress";
+					update_divs.queuename.h3.innerHTML = "Не установлено";
+					update_divs.queuename.append(update_divs.queuename.h2, update_divs.queuename.h3);
+					// Кнопки
+					update_divs.queuebtns = document.createElement('div');
+					update_divs.queuebtns.classList.add("queuebtns");
+					for(const btns in update_part.buttons) {
+						update_button = update_part.buttons[btns];
+						update_divs.button = document.createElement("button");
+						update_divs.button.classList.add("btn-queue-menu");
+						update_divs.button.title = update_button.name;
+						update_divs.button.id = update_part.id + "-" + update_button.id;
+						update_divs.button.setAttribute("button-type", "queue-button");
+						update_divs.button.setAttribute("button-mode", update_button.id);
+						update_divs.button.setAttribute('onclick', update_button.function);
+						update_divs.button.img = document.createElement("img");
+						update_divs.button.img.src = update_button.icon;
+						update_divs.button.append(update_divs.button.img);
+						update_divs.queuebtns.append(update_divs.button);
+					}
+					// Менюшки
+					update_divs.menudiv = document.createElement("div");
+					update_divs.menudiv.classList.add("dropdown-menu");
+					update_divs.menudiv.id = update_part.id+"-menu-div";
+					update_divs.menudiv.setAttribute("div-type", "menu");
+					for(const menus in update_part.menu_buttons) {
+						update_menu = update_part.menu_buttons[menus];
+						console.log(update_menu);
+						update_divs.menubutton = document.createElement("button");
+						update_divs.menubutton.setAttribute("menu-type", update_part.id);
+						update_divs.menubutton.classList.add("dropdown-item");
+						update_divs.menubutton.id = update_part.id + "-" + update_menu.id;
+						update_divs.menubutton.setAttribute("onclick", update_menu.function);
+						update_divs.menubutton.icondiv = document.createElement("div");
+						update_divs.menubutton.icondiv.classList.add("icon");
+						update_divs.menubutton.icondiv.img = document.createElement("img");
+						update_divs.menubutton.icondiv.img.src = update_menu.icon;
+						update_divs.menubutton.icondiv.img.style.margin = "0px 5px";
+						update_divs.menubutton.icondiv.img.setAttribute("width", "16px");
+						update_divs.menubutton.icondiv.append(update_divs.menubutton.icondiv.img);
+						update_divs.menubutton.append(update_divs.menubutton.icondiv);
+						update_divs.menubutton.innerHTML += update_menu.name;
+						update_divs.menudiv.append(update_divs.menubutton);
+					}
+					update_divs.queuebtns.append(update_divs.menudiv);
+					
+					// Соединяем всё вместе
+					update_divs.queuelist.append(update_divs.img);
+					update_divs.queuelist.append(update_divs.queuename);
+					update_divs.queuelist.append(update_divs.queuebtns);
+					queuediv.append(update_divs.queuelist);
+				}
+				queuediv.innerHTML += "<h4 id='randomline'>"+changeLine(true)+"</h4>";
+				r(true);
+			}
 		})
 	})
 }

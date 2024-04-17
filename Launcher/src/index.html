@@ -7,32 +7,79 @@
 	<link async="" rel="stylesheet" href="res/main.css">
 </head>
 <body oncontextmenu="return false;">
-
 <div id="stgdiv" class="fillbg" style="opacity:0;visibility:hidden">
 	<div class="loadsvg" style="flex-direction: column;">
 		<button style="left: 12.5;top: 12.5" type="button" title="Закрыть настройки" onclick="settings()" class="login"><img class="playicon" width="30px" src="res/svg/x.svg"></button>
 		<h1>Настройки</h1>
-		<div class="form setform">
-			<div class="settings">
-				<p class="settitle">Сервер</p>
-				<h2>Загружать клиент</h2>
-				<div class="radios"><span><input id="gdhmyes" type="radio" name="gdhm" value="1"><text>С GDHM</text></span></input>
-				<span><input type="radio" id="gdhmno" name="gdhm" value="0"><text>Без GDHM</text></input></span></div>
-			</div>
-			<button type="button" class="loginstg" style="margin-bottom:5px" title="Папка с игрой" onclick="openDir('res')"><p>Открыть папку с игрой</p><img class="playicon" width="25px" src="res/svg/folder.svg"></button>
+		<div class="settings-buttons">
+			<button id="settings-menu-first" class="first active" onclick="changePage('first')">Лаунчер<span></span></button>
+			<button id="settings-menu-second" class="second" onclick="changePage('second')">Профиль<span></span></button>
 		</div>
-		<div class="form setform">
-			<div class="settings">
-				<p class="settitle">Клиент</p>
-				<h2>При закрытии клиента</h2>
-				<div class="radios"><span><input id="clienthide" type="radio" name="clientcl" value="1"><text>Скрывать в трей</text></span></input>
-				<span><input type="radio" id="clientclose" name="clientcl" value="0"><text>Закрывать</text></input></span></div>
-				<h2>Системные уведомления</h2>
-				<div class="radios"><span><input id="usenf" type="radio" name="notifies" value="1"><text>Включить</text></span></input>
-				<span><input type="radio" id="nousenf" name="notifies" value="0"><text>Отключить</text></input></span></div>
+		<div id="settings-menu" class="settings-menu first">
+			<div class="settings-menus">
+				<div class="setdiv">
+					<div class="form setform">
+						<div class="settings">
+							<p class="settitle">Сервер</p>
+						</div>
+						<button type="button" class="loginstg" style="margin-bottom:5px" title="Папка с игрой" onclick="openDir('res')"><p>Открыть папку с игрой</p><img class="playicon" width="25px" src="res/svg/folder.svg"></button>
+					</div>
+					<div class="form setform">
+						<div class="settings">
+							<p class="settitle">Лаунчер</p>
+							<h2>При закрытии лаунчера</h2>
+							<div class="radios"><span><input id="clienthide" type="radio" name="clientcl" value="1"><text>Скрывать в трей</text></span></input>
+							<span><input type="radio" id="clientclose" name="clientcl" value="0"><text>Закрывать</text></input></span></div>
+							<h2>Системные уведомления</h2>
+							<div class="radios"><span><input id="usenf" type="radio" name="notifies" value="1"><text>Включить</text></span></input>
+							<span><input type="radio" id="nousenf" name="notifies" value="0"><text>Отключить</text></input></span></div>
+						</div>
+					</div>
+					<div class="form setform">
+						<div class="settings">
+							<p class="settitle">Анимации</p>
+							<h2>Открытие полноэкранных разделов</h2>
+							<div class="radios sliders"><input class="slider" id="anim-settings-slider" type="range" min="0" max="1000"></input><text id="anim-settings-text">1</text></div>
+							<h2>Открытие списка загрузок</h2>
+							<div class="radios sliders"><input class="slider" id="anim-queue-slider" type="range" min="0" max="1000"></input><text id="anim-queue-text">1</text></div>
+							<h2>Открытие менюшек</h2>
+							<div class="radios sliders"><input class="slider" id="anim-menu-slider" type="range" min="0" max="1000"></input><text id="anim-menu-text">1</text></div>
+							<h2>Изменение цвета при перекрытии</h2>
+							<div class="radios sliders"><input class="slider" id="anim-hover-slider" type="range" min="0" max="1000"></input><text id="anim-hover-text">1</text></div>
+							<h2>Перелистывание страниц</h2>
+							<div class="radios sliders"><input class="slider" id="anim-pages-slider" type="range" min="0" max="1000"></input><text id="anim-pages-text">1</text></div>
+						</div>
+					</div>
+					<button type="button" class="loginstg" title="Выход" onclick="logoutbtn()"><p>Выйти из аккаунта</p><img class="playicon" width="25px" src="res/svg/login.svg"></button>
+				</div>
+				<div class="setdiv">
+				<div class="blockview"><img width="150px" src="res/svg/lock.svg"></img></div>
+					<div class="form setform profileform">
+						<p class="settitle">Sa1ntSosetHui</p>
+						<div class="form-control profilestats">
+							<p class="profilepic">391 <img src="res/svg/star.svg"></p>
+							<p class="profilepic">4666 <img src="res/svg/gem.svg"></p>
+							<p class="profilepic">55 <img src="res/svg/coins.svg"></p>
+							<p class="profilepic">24 <img src="res/svg/coins.svg"></p>
+							<p class="profilepic">9 <img src="res/svg/dragon.svg"></p>
+							<p class="profilepic" >8 <img src="res/svg/cp.svg"></p>
+						</div>
+						<div class="profileposts">
+							<div class="profilepost">
+								<div class="profilepoststats">
+									<h2 class="profilenick">Sa1ntSosetHui</h2>
+									<p style="text-align:right">
+										<img src="res/svg/like.svg"> <text style="color:gray">0</text> | <img src="res/svg/dislike.svg">  <text style="color:gray">0</text>
+									</p>
+								</div>
+								<p class="profilemsg">Ягнёнок</p>
+								<div><h3 class="comments post">03.10</h3></div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
-		<button type="button" class="loginstg" title="Выход" onclick="logoutbtn()"><p>Выйти из аккаунта</p><img class="playicon" width="25px" src="res/svg/login.svg"></button>
 	</div>
 	<div class="ver"><h3><b><span id="time">26 октября 2006</span></b></h3><h3><b><span id="ver">1.2.0</span></b></h3></div>
 	<span class="loading"></span>
@@ -40,9 +87,9 @@
 
 <div id="loaddiv" class="fillbg">
 	<div class="loadsvg">
-		<div id="nointernet" style="opacity:0; visibility: hidden;  transition: 0.3s; display: none; flex-wrap: wrap; justify-content: center;">
+		<div class="nointernet" id="nointernet">
 			<p style="font-size: 25px;margin-top: 10px;color: white;">Проверьте ваше подключение к интернету...</p>
-			<button class="btn-primary btn-success btn-play" onclick="play()">Играть</button>
+			<button id="nibtn" class="btn-primary btn-success btn-play" onclick="play()">Играть</button>
 		</div>
 		<img class="spin" width="50px" src="res/svg/loading.svg">
 		<img  width="300px" src="res/svg/sleeping.svg">
@@ -66,9 +113,12 @@
 	<div class="loadsvg warntext" style="flex-direction: column;">
 		<h1>Предупреждение</h1><br>
 		<p><b>Привет, игрок!</b></p>
-		<p>Будь аккуратнее: игра установится в ту же папку, где находится клиент.</p><br>
-		<p><i>Ты уверен, что поместил клиент в нужную тебе папку?</i></p><br>
-		<div class="warnbtn"><button type="button" onclick="warning(true)" class="btn-primary btn-success">Да, пусти меня!</button><button type="button" onclick="warning(false)" style="width:70%" class="btn-primary btn-size">Подожди, я перемещу...</button></div>
+		<p>Будь аккуратнее: игра установится в ту же папку, где находится лаунчер.</p><br>
+		<p><i>Ты уверен, что поместил лаунчер в нужную тебе папку?</i></p><br>
+		<div class="warnbtn">
+			<button type="button" onclick="warning(true)" class="btn-primary btn-success">Да, пусти меня!</button>
+			<button type="button" onclick="warning(false)" style="width:70%" class="btn-primary btn-size">Подожди, я перемещу...</button>
+		</div>
 	</div>
 	<span class="loading"></span>
 </div>
@@ -82,8 +132,8 @@
 		<img src="res/svg/x.svg" width="10px" alt="Закрыть" />
 	  </div>
 	</div>
-	<button type="button" style="opacity:1;transition:0.3s" title="Вход" onclick="show()" id="lbtn" class="login"><img id="licon" class="playicon" width="35px" src="res/svg/login.svg"></button>
-	<button type="button" style="opacity:0;visibility:hidden;transition:0.3s;top: 35px;left: auto;right: 5px;" title="Уведомления" onclick="show('n')" id="nbtn" class="login">
+	<button type="button" style="opacity:1;transition:var(--anim-settings)" title="Вход" onclick="show()" id="lbtn" class="login"><img id="licon" class="playicon" width="35px" src="res/svg/login.svg"></button>
+	<button type="button" style="opacity:0;visibility:hidden;transition:var(--anim-settings);top: 35px;left: auto;right: 5px;" title="Уведомления" onclick="show('n')" id="nbtn" class="login">
 		<div class="nfcircle" id="mainnfcircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div>
 		<img class="playicon" width="20px" src="res/svg/bell.svg">
 	</button>
@@ -103,12 +153,74 @@
 			<div class="prtext"><p class="prp" id="ploaded">0 МБ</p><p class="prp" id="ptxt">Загрузка...</p><p class="prp" id="pmax">310.1 МБ</p></div>
 			<progress id="progress" style="transition:0.2s" value="100" max="100"></progress>
 		</div>
+		<div id="queuediv" class="queuediv">
+			<div class="queuelist">
+				<img width="39.63px" src="res/svg/pc.svg"></img>
+				<div class="queuename">
+					<h2>Лаунчер<div class="qcircle" id="clientqueuecircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div></h2>
+					<h3 id="queue-client-progress">От <b>26 апреля 2023</b></h3>
+				</div>
+				<div class="queuebtns">
+					<button class="btn-queue-menu" title="Обновить лаунчер" id="queue-client-update" style="display: none" onclick="reinstall('cw');"><img src="res/svg/update.svg"></img></button>
+				</div>
+			</div>
+			<div class="queuelist">
+				<img width="35px" src="res/kitty.png"></img>
+				<div class="queuename">
+					<h2>GreenCatsServer<div class="qcircle" id="gcsqueuecircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div></h2>
+					<h3 id="queue-gcs-progress">От <b>20 августа 2020</b></h3>
+				</div>
+				<div class="queuebtns">
+					<button class="btn-queue-menu" title="Обновить GreenCatsServer" id="queue-gcs-update" style="display: none" onclick="reinstall('game');"><img src="res/svg/update.svg"></img></button>
+					<button class="btn-queue-menu" title="Действия" id="queue-gcs-menu" onclick="showMenu('gcs')"><img id="queue-gcs-btn" src="res/svg/menu.svg"></img></button>
+					<div id="queue-gcs-menu-div" class="dropdown-menu">
+						<button class="dropdown-item" id="queue-gcs-menu-reinstall" onclick="reinstall('game');"><div class="icon"><img src="res/svg/reinstall.svg" style="margin: 0px 5px;" width="20px"></div>Переустановить GreenCatsServer</button>
+						<button class="dropdown-item" id="queue-gcs-menu-install" onclick="reinstall('game');"><div class="icon"><img src="res/svg/update.svg" style="margin: 0px 5px;" width="16px"></div>Установить GreenCatsServer</button>
+						<button class="dropdown-item" id="queue-gcs-menu-delete" onclick="uninstall();"><div class="icon"><img src="res/svg/x.svg" style="margin: 0px 5px;" width="16px"></div>Удалить GreenCatsServer</button>
+					</div>
+				</div>
+			</div>
+			<div class="queuelist">
+			<div class="blockview" style="margin: 0;width: 100%;height: 100%;border-radius: 10px;"><img width="20px" src="res/svg/lock.svg"></img></div>
+				<img width="35px" src="res/svg/gear.svg"></img>
+				<div class="queuename">
+					<h2>Моды<div class="qcircle" id="modsqueuecircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div></h2>
+					<h3 id="queue-mods-progress"><b>Без МодМеню</b>, <b>20 августа 2020</b></h3>
+				</div>
+				<div class="queuebtns">
+					<button class="btn-queue-menu" title="Обновить моды" id="queue-mods-update" style="display: none" onclick="reinstall('mods');"><img src="res/svg/update.svg"></img></button>
+					<button class="btn-queue-menu" title="Действия" id="queue-mods-menu" onclick="showMenu('mods')"><img id="queue-mods-btn" src="res/svg/menu.svg"></img></button>
+					<div id="queue-mods-menu-div" class="dropdown-menu mods">
+						<button class="dropdown-item" id="queue-mods-menu-1btn" onclick="replaceMods('whm');"><div class="icon"><img src="res/svg/one.svg" style="margin: 0px 5px;" width="12px"></div>Заменить на GDHM</button>
+						<button class="dropdown-item" id="queue-mods-menu-2btn" onclick="replaceMods('wmo');"><div class="icon"><img src="res/svg/two.svg" style="margin: 0px 5px;" width="14px"></div>Заменить на MegaOverlay</button>
+						<button class="dropdown-item" id="queue-mods-menu-reinstall" onclick="reinstall('mods');"><div class="icon"><img src="res/svg/reinstall.svg" style="margin: 0px 5px;" width="20px"></div>Переустановить моды</button>
+					</div>
+				</div>
+			</div>
+			<h4 id='randomline'>Пойти купить ружьё и стрелять в толпу!..</h4>
+		</div>
 		<button id="pbtn" style="border-radius: 500px;" onclick="play()"><div id="playdiv" class="play"><img class="dl" id="pimg" width="100px" src="res/svg/play.svg"></div></button>
+		<button id="queuebtn" onclick="queue()" title="Список загрузок">
+			<div id="playdiv" class="btn-queue">
+				<div class="nfcircle" id="mainqueuecircle" style="display: none"><img src="res/svg/circle.svg" class="notifycircle" width="8px"></div>
+				<img width="25px" src="res/svg/update.svg">
+			</div>
+		</button>
 	</div>
+	<style id="animations">
+		* {
+			--anim-settings: 0.3s;
+			--anim-queue: 0.4s;
+			--anim-menu: 0.2s;
+			--anim-hover: 0.3s;
+			--anim-pages: 0.5s;
+		}
+	</style>
 	<script>
 		document.addEventListener('keydown', event => {
 			switch(event.key) {
 				case 'F5':
+				case 'Tab':
 					event.preventDefault();
 					return false;
 					break;
@@ -118,7 +230,43 @@
 			}
 			return true;
 		});
+		if(typeof window.localStorage.modmenu == 'undefined') window.localStorage.modmenu = 'mo';
+		if(typeof window.localStorage.v2cw == 'undefined') window.localStorage.v2cw = 0;
+		if(typeof window.localStorage.v2wgame == 'undefined') window.localStorage.v2wgame = 0;
+		if(typeof window.localStorage.v2wmods == 'undefined') window.localStorage.v2wmods = 0;
+		if(typeof window.localStorage.v2whm == 'undefined') window.localStorage.v2whm = 0;
+		if(typeof window.localStorage.v2wmo == 'undefined') window.localStorage.v2wmo = 0;
+		if(typeof window.localStorage.animsettings == 'undefined') window.localStorage.animsettings = 0.3;
+		if(typeof window.localStorage.animqueue == 'undefined') window.localStorage.animqueue = 0.4;
+		if(typeof window.localStorage.animmenu == 'undefined') window.localStorage.animmenu = 0.2;
+		if(typeof window.localStorage.animhover == 'undefined') window.localStorage.animhover = 0.3;
+		if(typeof window.localStorage.animpages == 'undefined') window.localStorage.animpages = 0.5;
+		if(typeof window.localStorage.v2version == 'undefined' && window.localStorage.v2wgame > 0) window.localStorage.v2version = 2;
+		if(typeof window.localStorage.v2version == 'undefined') window.localStorage.v2version = 3;
+		if(typeof window.localStorage.v2is22 == 'undefined') window.localStorage.v2is22 = false;
+		if(typeof window.localStorage.v2modmenu == 'undefined') window.localStorage.v2modmenu = 0;
+		if(window.localStorage.v2wmods > 0) {
+			window.localStorage.v2modmenu = window.localStorage.v2wmods;
+			window.localStorage.v2wmods = 0;
+		}
+		if(window.localStorage.v2whm > 0) {
+			window.localStorage.v2modmenu = window.localStorage.v2whm;
+			window.localStorage.v2whm = 0;
+		}
+		if(window.localStorage.v2wmo > 0) {
+			window.localStorage.v2modmenu = window.localStorage.v2wmo;
+			window.localStorage.v2wmo = 0;
+		}
+		var anim = [];
+		updateAnimations();
 		window.dontupdate = window.dontplayagain = false;
+		document.getElementById("anim-settings-slider").value = window.localStorage.animsettings*1000;
+		document.getElementById("anim-queue-slider").value = window.localStorage.animqueue*1000;
+		document.getElementById("anim-menu-slider").value = window.localStorage.animmenu*1000;
+		document.getElementById("anim-hover-slider").value = window.localStorage.animhover*1000;
+		document.getElementById("anim-pages-slider").value = window.localStorage.animpages*1000;
+		window.isinstalled = true;
+		window.nomods = false;
 		var cook = [];
 		window.oldNotifies = [];
 		cookie = document.cookie.split(";");
@@ -126,8 +274,9 @@
 			variable = penis.split("=");
 			cook[variable[0].trim()] = variable[1];
 		});
-		if(!window.localStorage.modmenu) document.getElementById("gdhmno").click();
-		else document.getElementById("gdhmyes").click();
+		if(cook['time'] && cook['time'] > window.localStorage.v2wgame) window.localStorage.v2wgame = cook['time'];
+		if(cook['client'] && cook['client'] > window.localStorage.v2cw) window.localStorage.v2cw = cook['client'];
+		if(window.localStorage.modmenu == 'true') window.localStorage.modmenu = 'hm';
 		if(window.localStorage.closeorhide == 'false') document.getElementById("clienthide").click();
 		else document.getElementById("clientclose").click();
 		if(window.localStorage.usenf == 'true') document.getElementById("usenf").click();
@@ -136,8 +285,11 @@
 		document.getElementById("clientclose").addEventListener("change", function() {window.localStorage.closeorhide = 'true';})
 		document.getElementById("nousenf").addEventListener("change", function() {window.localStorage.usenf = 'false';})
 		document.getElementById("usenf").addEventListener("change", function() {window.localStorage.usenf = 'true';})
-		document.getElementById("gdhmyes").addEventListener("change", function() {window.localStorage.modmenu = true;})
-		document.getElementById("gdhmno").addEventListener("change", function() {window.localStorage.modmenu = false;})
+		document.getElementById("anim-settings-slider").addEventListener("input", function(v) {window.localStorage.animsettings = v.target.value/1000; updateAnimations();})
+		document.getElementById("anim-queue-slider").addEventListener("input", function(v) {window.localStorage.animqueue = v.target.value/1000; updateAnimations();})
+		document.getElementById("anim-menu-slider").addEventListener("input", function(v) {window.localStorage.animmenu = v.target.value/1000; updateAnimations();})
+		document.getElementById("anim-hover-slider").addEventListener("input", function(v) {window.localStorage.animhover = v.target.value/1000; updateAnimations();})
+		document.getElementById("anim-pages-slider").addEventListener("input", function(v) {window.localStorage.animpages = v.target.value/1000; updateAnimations();})
 		if(!window.localStorage.usenf) window.localStorage.usenf = 'true';
 		if(!window.localStorage.closeorhide) window.localStorage.usenf = 'false';
 		if(!window.oldtext) window.oldtext = '';
@@ -146,8 +298,8 @@
 		document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 		document.getElementById('titlebar-close').addEventListener('click', () => {
 			if(window.localStorage.closeorhide == 'false') {
-				if(window.localStorage.firstHide != 'seen' && window.localStorage.usenf == 'false') {
-					window.__TAURI__.notification.sendNotification({title: "Клиент ушёл в трей!", body: 'Клиент находится в трее, откуда вы сможете его открыть или закрыть. Если мешает — загляните в настройки!', icon: "res/kitty.png"});
+				if(window.localStorage.firstHide != 'seen' && window.localStorage.usenf == 'true') {
+					window.__TAURI__.notification.sendNotification({title: "Лаунчер ушёл в трей!", body: 'Лаунчер находится в трее, откуда вы сможете его открыть или закрыть. Если мешает — загляните в настройки!', icon: "res/kitty.png"});
 					window.localStorage.firstHide = 'seen';
 				}
 				appWindow.hide();
@@ -156,12 +308,13 @@
 		});
 		const text = document.getElementById("text");
 		const ltext = document.getElementById("ltext");
+		updateNoModsVar();
 		setTimeout(function(){updateUser();}, 1);
 		setInterval(function(){updateUser()}, 1800000);
 		setInterval(function(){updateNotifies()}, 90000);
 		window.__TAURI__.window.appWindow.setFocus();
 		window.__TAURI__.fs.exists("GCS-Updater.exe").then((result) => {if(result) window.__TAURI__.fs.removeFile("GCS-Updater.exe")});
-		tm = timeConverter(cook["client"]);
+		tm = timeConverter(window.localStorage.v2cw);
 		if(tm != "1 января 1970" && tm != 'NaN undefined NaN') document.getElementById("time").innerHTML = tm;
 		f = window.__TAURI__.app.getVersion();
 		f.then(ve=>{
@@ -186,6 +339,8 @@
 					text.style.color = window.oldcolor;
 				}
 			})
-		}, 2000);
+		}, 1000);
+		changeLine();
 	</script>
-</div></body>
+</div>
+</body>

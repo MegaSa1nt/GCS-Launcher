@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "GCS-Client",
-    "version": "1.3.4"
+    "version": "1.5.0"
   },
   "tauri": {
 	"systemTray": {
@@ -78,8 +78,8 @@
     },
     "bundle": {
       "active": true,
-	  "shortDescription": "Клиент для GreenCatsServer.",
-	  "longDescription": "Клиент для GreenCatsServer.",
+	  "shortDescription": "Лаунчер для GreenCatsServer.",
+	  "longDescription": "Лаунчер для GreenCatsServer.",
 	  "copyright": "GreenCatsServer",
 	  "publisher": "MegaSa1nt, GreenCatsServer",
       "icon": [

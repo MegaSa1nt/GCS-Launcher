@@ -47,8 +47,8 @@ fn check_processes(process: String) -> Result<(), String> {
 }
 
 fn main() {
-	let quit = CustomMenuItem::new("open".to_string(), "Открыть");
-	let hide = CustomMenuItem::new("quit".to_string(), "Закрыть");
+	let quit = CustomMenuItem::new("open".to_string(), "Открыть клиент");
+	let hide = CustomMenuItem::new("quit".to_string(), "Закрыть клиент");
 	let tray_menu = SystemTrayMenu::new()
 	  .add_item(quit)
 	  .add_native_item(SystemTrayMenuItem::Separator)
