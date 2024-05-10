@@ -7,7 +7,7 @@
 `SvelteKit`
 `Vite`
 
-Рантайм для (Type/Java)Script
+Рантайм для (Type/Java)Script:
 `Bun`
 
 Бэкэнд:
