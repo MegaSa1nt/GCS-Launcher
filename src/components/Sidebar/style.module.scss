@@ -1,0 +1,46 @@
+.sidebar {
+    padding: 0 20px 0 20px;
+
+	height: 100%;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	
+	background-color: #00000015;
+	border-right: solid 1px #FFFFFF20;
+}
+
+.button {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	width: fit-content;
+	height: fit-content;
+	padding: 14px;
+	
+	background-color: #242424;
+	
+	border-radius: 15px;
+
+    transition: all .15s;
+}
+
+.button:active {
+    scale: 95%;
+}
+
+.buttonsSidebar {
+	display: flex;
+	flex-direction: column;
+	gap: 35px;
+}
+
+.button svg {
+    transition: all .15s;
+}
+
+.active {
+    stroke: #139CFF; 
+}
