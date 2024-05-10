@@ -1,14 +1,17 @@
-@import '@fontsource/fira-mono';
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
 
 :root {
-	--font-body: Arial, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--font-body: 'SF Pro Display', sans-serif;
 	--font-mono: 'Fira Mono', monospace;
 	--color-bg: #131313;
 	--color-text: #FFFFFF;
 	--color-text-primary: #FFFFFF80;
-	font-family: var(--font-body);
 	color: var(--color-text);
+	font-family: var(--font-body);
+	font-weight: 400;
+
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
 }
 
 * {
@@ -30,4 +33,20 @@ body {
 
 .content {
 	padding: 58px;
+}
+
+:global(.anim) {
+	animation: fadein .75s 0s backwards;
+}
+
+@keyframes fadein {
+	0% {
+		opacity: 0;
+		transform: translateY(-1.19vw);
+	}
+}
+
+.title {
+	font-size: 36px;
+	font-weight: 600;
 }

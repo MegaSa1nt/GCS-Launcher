@@ -8,7 +8,9 @@
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
-1 Страница
+<div class={style.title}>
+	EronDonDonServer
+</div>
 
 <style>
 
