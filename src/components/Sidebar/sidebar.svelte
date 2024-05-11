@@ -14,11 +14,11 @@
     };
     
     let homeColor = getButtonColor("/")
-    let aboutColor = getButtonColor("/about")
+    let updaterColor = getButtonColor("/update")
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/")
-        aboutColor = getButtonColor("/about")
+        updaterColor = getButtonColor("/update")
     }
 
     page.subscribe(() => {
@@ -31,8 +31,8 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} stroke-width={2.25} />
         </a>
-		<a class={style.button} href="/about">
-			<Upload color={aboutColor} className="active" size={30} stroke-width={2.25} />
+		<a class={style.button} href="/update">
+			<Upload color={updaterColor} className="active" size={30} stroke-width={2.25} />
         </a>
 	</div>
 </div>

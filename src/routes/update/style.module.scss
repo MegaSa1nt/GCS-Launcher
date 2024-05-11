@@ -1,0 +1,41 @@
+.updaterBlock {
+    display: flex;
+
+    width: 100%;
+
+    padding: 24px 24px 17px 24px;
+    background-color: #D9D9D907;
+}
+
+.button {
+    padding: 22px;
+    width: max-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000015;
+    border: solid 1px #FFFFFF10;
+    border-radius: 15px; 
+}
+
+.head {
+    display: flex;
+    gap: 14px;
+}
+
+.textContent {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.title {
+    font-weight: 700;
+    font-size: 36px;
+}
+
+.description {
+    opacity: 50%;
+    font-weight: 500;
+    font-size: 20px;
+}

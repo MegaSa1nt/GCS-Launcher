@@ -34,9 +34,6 @@
 	</div>
 </div>
 
-
-
-
 <style>
 
 </style>
