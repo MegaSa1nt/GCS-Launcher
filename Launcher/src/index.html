@@ -1,7 +1,6 @@
 <head>
 	<meta charset="utf-8">
 	<title>GreenCatsServer!</title>
-	<script src="script.js"></script>
 	<script src="res/jsz.js"></script>
 	<link async="" rel="stylesheet" href="res/style.css">
 	<link async="" rel="stylesheet" href="res/main.css">
@@ -13,7 +12,7 @@
 		<h1>Настройки</h1>
 		<div class="settings-buttons">
 			<button id="settings-menu-first" class="first active" onclick="changePage('first')">Лаунчер<span></span></button>
-			<button id="settings-menu-second" class="second" onclick="changePage('second')">Профиль<span></span></button>
+			<button id="settings-menu-second" class="second" title="Пока закрыто :)" <!--onclick="changePage('second')"-->Профиль<span></span></button>
 		</div>
 		<div id="settings-menu" class="settings-menu first">
 			<div class="settings-menus">
@@ -39,15 +38,44 @@
 						<div class="settings">
 							<p class="settitle">Анимации</p>
 							<h2>Открытие полноэкранных разделов</h2>
-							<div class="radios sliders"><input class="slider" id="anim-settings-slider" type="range" min="0" max="1000"></input><text id="anim-settings-text">1</text></div>
+							<div class="radios sliders">
+								<span class="slider-span">
+									<input class="slider" id="anim-settings-slider" type="range" min="0" max="1000"></input>
+									<button class="clickable" onclick="resetAnimation('settings')"><img src="res/svg/reinstall.svg" width="17px"></button>
+								</span>
+								<text id="anim-settings-text">1</text>
+							</div>
 							<h2>Открытие списка загрузок</h2>
-							<div class="radios sliders"><input class="slider" id="anim-queue-slider" type="range" min="0" max="1000"></input><text id="anim-queue-text">1</text></div>
+							<div class="radios sliders">
+								<span class="slider-span">
+									<input class="slider" id="anim-queue-slider" type="range" min="0" max="1000"></input>
+									<button class="clickable" onclick="resetAnimation('queue')"><img src="res/svg/reinstall.svg" width="17px"></button>
+								</span>
+								<text id="anim-queue-text">1</text>
+							</div>
 							<h2>Открытие менюшек</h2>
-							<div class="radios sliders"><input class="slider" id="anim-menu-slider" type="range" min="0" max="1000"></input><text id="anim-menu-text">1</text></div>
+							<div class="radios sliders">
+								<span class="slider-span">
+									<input class="slider" id="anim-menu-slider" type="range" min="0" max="1000"></input>
+									<button class="clickable" onclick="resetAnimation('menu')"><img src="res/svg/reinstall.svg" width="17px"></button>
+								</span><text id="anim-menu-text">1</text>
+							</div>
 							<h2>Изменение цвета при перекрытии</h2>
-							<div class="radios sliders"><input class="slider" id="anim-hover-slider" type="range" min="0" max="1000"></input><text id="anim-hover-text">1</text></div>
+							<div class="radios sliders">
+								<span class="slider-span">
+									<input class="slider" id="anim-hover-slider" type="range" min="0" max="1000"></input>
+									<button class="clickable" onclick="resetAnimation('hover')"><img src="res/svg/reinstall.svg" width="17px"></button>
+								</span>
+								<text id="anim-hover-text">1</text>
+							</div>
 							<h2>Перелистывание страниц</h2>
-							<div class="radios sliders"><input class="slider" id="anim-pages-slider" type="range" min="0" max="1000"></input><text id="anim-pages-text">1</text></div>
+							<div class="radios sliders">
+								<span class="slider-span">
+									<input class="slider" id="anim-pages-slider" type="range" min="0" max="1000"></input>
+									<button class="clickable" onclick="resetAnimation('pages')"><img src="res/svg/reinstall.svg" width="17px"></button>
+								</span>
+								<text id="anim-pages-text">1</text>
+							</div>
 						</div>
 					</div>
 					<button type="button" class="loginstg" title="Выход" onclick="logoutbtn()"><p>Выйти из аккаунта</p><img class="playicon" width="25px" src="res/svg/login.svg"></button>
@@ -216,131 +244,6 @@
 			--anim-pages: 0.5s;
 		}
 	</style>
-	<script>
-		document.addEventListener('keydown', event => {
-			switch(event.key) {
-				case 'F5':
-				case 'Tab':
-					event.preventDefault();
-					return false;
-					break;
-				case 'Enter':
-					if(document.getElementById("div").classList.contains('show')) document.getElementById("loginbutton").click();
-					break;
-			}
-			return true;
-		});
-		if(typeof window.localStorage.modmenu == 'undefined') window.localStorage.modmenu = 'mo';
-		if(typeof window.localStorage.v2cw == 'undefined') window.localStorage.v2cw = 0;
-		if(typeof window.localStorage.v2wgame == 'undefined') window.localStorage.v2wgame = 0;
-		if(typeof window.localStorage.v2wmods == 'undefined') window.localStorage.v2wmods = 0;
-		if(typeof window.localStorage.v2whm == 'undefined') window.localStorage.v2whm = 0;
-		if(typeof window.localStorage.v2wmo == 'undefined') window.localStorage.v2wmo = 0;
-		if(typeof window.localStorage.animsettings == 'undefined') window.localStorage.animsettings = 0.3;
-		if(typeof window.localStorage.animqueue == 'undefined') window.localStorage.animqueue = 0.4;
-		if(typeof window.localStorage.animmenu == 'undefined') window.localStorage.animmenu = 0.2;
-		if(typeof window.localStorage.animhover == 'undefined') window.localStorage.animhover = 0.3;
-		if(typeof window.localStorage.animpages == 'undefined') window.localStorage.animpages = 0.5;
-		if(typeof window.localStorage.v2version == 'undefined' && window.localStorage.v2wgame > 0) window.localStorage.v2version = 2;
-		if(typeof window.localStorage.v2version == 'undefined') window.localStorage.v2version = 3;
-		if(typeof window.localStorage.v2is22 == 'undefined') window.localStorage.v2is22 = false;
-		if(typeof window.localStorage.v2modmenu == 'undefined') window.localStorage.v2modmenu = 0;
-		if(window.localStorage.v2wmods > 0) {
-			window.localStorage.v2modmenu = window.localStorage.v2wmods;
-			window.localStorage.v2wmods = 0;
-		}
-		if(window.localStorage.v2whm > 0) {
-			window.localStorage.v2modmenu = window.localStorage.v2whm;
-			window.localStorage.v2whm = 0;
-		}
-		if(window.localStorage.v2wmo > 0) {
-			window.localStorage.v2modmenu = window.localStorage.v2wmo;
-			window.localStorage.v2wmo = 0;
-		}
-		var anim = [];
-		updateAnimations();
-		window.dontupdate = window.dontplayagain = false;
-		document.getElementById("anim-settings-slider").value = window.localStorage.animsettings*1000;
-		document.getElementById("anim-queue-slider").value = window.localStorage.animqueue*1000;
-		document.getElementById("anim-menu-slider").value = window.localStorage.animmenu*1000;
-		document.getElementById("anim-hover-slider").value = window.localStorage.animhover*1000;
-		document.getElementById("anim-pages-slider").value = window.localStorage.animpages*1000;
-		window.isinstalled = true;
-		window.nomods = false;
-		var cook = [];
-		window.oldNotifies = [];
-		cookie = document.cookie.split(";");
-		cookie.forEach((penis) => {
-			variable = penis.split("=");
-			cook[variable[0].trim()] = variable[1];
-		});
-		if(cook['time'] && cook['time'] > window.localStorage.v2wgame) window.localStorage.v2wgame = cook['time'];
-		if(cook['client'] && cook['client'] > window.localStorage.v2cw) window.localStorage.v2cw = cook['client'];
-		if(window.localStorage.modmenu == 'true') window.localStorage.modmenu = 'hm';
-		if(window.localStorage.closeorhide == 'false') document.getElementById("clienthide").click();
-		else document.getElementById("clientclose").click();
-		if(window.localStorage.usenf == 'true') document.getElementById("usenf").click();
-		else document.getElementById("nousenf").click();
-		document.getElementById("clienthide").addEventListener("change", function() {window.localStorage.closeorhide = 'false';})
-		document.getElementById("clientclose").addEventListener("change", function() {window.localStorage.closeorhide = 'true';})
-		document.getElementById("nousenf").addEventListener("change", function() {window.localStorage.usenf = 'false';})
-		document.getElementById("usenf").addEventListener("change", function() {window.localStorage.usenf = 'true';})
-		document.getElementById("anim-settings-slider").addEventListener("input", function(v) {window.localStorage.animsettings = v.target.value/1000; updateAnimations();})
-		document.getElementById("anim-queue-slider").addEventListener("input", function(v) {window.localStorage.animqueue = v.target.value/1000; updateAnimations();})
-		document.getElementById("anim-menu-slider").addEventListener("input", function(v) {window.localStorage.animmenu = v.target.value/1000; updateAnimations();})
-		document.getElementById("anim-hover-slider").addEventListener("input", function(v) {window.localStorage.animhover = v.target.value/1000; updateAnimations();})
-		document.getElementById("anim-pages-slider").addEventListener("input", function(v) {window.localStorage.animpages = v.target.value/1000; updateAnimations();})
-		if(!window.localStorage.usenf) window.localStorage.usenf = 'true';
-		if(!window.localStorage.closeorhide) window.localStorage.usenf = 'false';
-		if(!window.oldtext) window.oldtext = '';
-		if(!window.oldcolor) window.oldcolor = '';
-		const appWindow = window.__TAURI__.window.appWindow;
-		document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
-		document.getElementById('titlebar-close').addEventListener('click', () => {
-			if(window.localStorage.closeorhide == 'false') {
-				if(window.localStorage.firstHide != 'seen' && window.localStorage.usenf == 'true') {
-					window.__TAURI__.notification.sendNotification({title: "Лаунчер ушёл в трей!", body: 'Лаунчер находится в трее, откуда вы сможете его открыть или закрыть. Если мешает — загляните в настройки!', icon: "res/kitty.png"});
-					window.localStorage.firstHide = 'seen';
-				}
-				appWindow.hide();
-			}
-			else appWindow.close();
-		});
-		const text = document.getElementById("text");
-		const ltext = document.getElementById("ltext");
-		updateNoModsVar();
-		setTimeout(function(){updateUser();}, 1);
-		setInterval(function(){updateUser()}, 1800000);
-		setInterval(function(){updateNotifies()}, 90000);
-		window.__TAURI__.window.appWindow.setFocus();
-		window.__TAURI__.fs.exists("GCS-Updater.exe").then((result) => {if(result) window.__TAURI__.fs.removeFile("GCS-Updater.exe")});
-		tm = timeConverter(window.localStorage.v2cw);
-		if(tm != "1 января 1970" && tm != 'NaN undefined NaN') document.getElementById("time").innerHTML = tm;
-		f = window.__TAURI__.app.getVersion();
-		f.then(ve=>{
-			document.getElementById("ver").innerHTML = ve;
-			window.appVer = ve;
-		})
-		setInterval(function() {
-			checkProcess('GreenCatsServer.exe').then(r => {
-				window.dontplayagain = r;
-				if(text.innerHTML != "Игра запущена!" && text.innerHTML != "Закройте игру!" && text.innerHTML != "Загрузка...") window.oldtext = text.innerHTML;
-				if(text.style.color != "rgb(187, 255, 187)" && text.style.color != "rgb(255, 187, 187)") window.oldcolor = text.style.color;
-				if(r) {
-					if(!window.dontupdate) {
-						text.innerHTML = "Игра запущена!";
-						text.style.color = "#bbffbb";
-					} else {
-						text.innerHTML = "Закройте игру!";
-						text.style.color = "#ffbbbb";
-					}
-				} else {
-					text.innerHTML = window.oldtext;
-					text.style.color = window.oldcolor;
-				}
-			})
-		}, 1000);
-		changeLine();
-	</script>
 </div>
+<script src="script.js"></script>
 </body>

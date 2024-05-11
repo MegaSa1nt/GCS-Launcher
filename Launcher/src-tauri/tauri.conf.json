@@ -2,125 +2,59 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "devPath": "../src",
-    "distDir": "../src",
-    "withGlobalTauri": true
+    "frontendDist": "../src"
   },
-  "package": {
-    "productName": "GCS-Client",
-    "version": "1.5.0"
+  "bundle": {
+    "active": true,
+    "shortDescription": "Лаунчер для GreenCatsServer.",
+    "longDescription": "Лаунчер для GreenCatsServer.",
+    "copyright": "GreenCatsServer",
+    "publisher": "MegaSa1nt, GreenCatsServer",
+    "icon": [
+      "icons/lil.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper",
+        "silent": false
+      },
+      "nsis": {
+        "installerIcon": "icons/updater.ico",
+        "languages": [
+          "English"
+        ],
+        "displayLanguageSelector": false
+      },
+      "allowDowngrades": false
+    },
+    "targets": "all"
   },
-  "tauri": {
-	"systemTray": {
-      "iconPath": "icons/lil.ico",
-      "iconAsTemplate": true
-    },
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": true,
-		"execute": true,
-        "sidecar": true,
-        "open": false
-      },
-	  "notification": {
-        "all": true
-      },
-	  "fs": {
-		"scope": ["**"],
-        "all": true, 
-        "readFile": true,
-        "writeFile": true,
-        "readDir": true,
-        "copyFile": true,
-        "createDir": true,
-        "removeDir": true,
-        "removeFile": true,
-        "renameFile": true,
-        "exists": true
-      },
-	  "path": {
-        "all": true
-      },
-	  "process": {
-        "all": true
-      },
-	  "window": {
-        "all": true, 
-        "create": true, 
-        "center": true,
-        "requestUserAttention": true,
-        "setResizable": true,
-        "setTitle": true,
-        "minimize": true,
-        "unminimize": true,
-        "show": true,
-        "hide": true,
-        "close": true,
-        "setDecorations": true,
-        "setAlwaysOnTop": true,
-        "setSize": true,
-        "setMinSize": true,
-        "setMaxSize": true,
-        "setPosition": true,
-        "setFullscreen": true,
-        "setFocus": true,
-        "setIcon": true,
-        "setSkipTaskbar": true,
-        "setCursorGrab": true,
-        "setCursorVisible": true,
-        "setCursorIcon": true,
-        "setCursorPosition": true,
-        "setIgnoreCursorEvents": true,
-        "startDragging": true,
-        "print": true
-      }
-    },
-    "bundle": {
-      "active": true,
-	  "shortDescription": "Лаунчер для GreenCatsServer.",
-	  "longDescription": "Лаунчер для GreenCatsServer.",
-	  "copyright": "GreenCatsServer",
-	  "publisher": "MegaSa1nt, GreenCatsServer",
-      "icon": [
-	    "icons/lil.ico"
-      ],
-      "identifier": "sa1nt.gcs",
-      "targets": "all",
-	  "windows": {
-		  "webviewInstallMode": { 
-			"type": "embedBootstrapper",
-			"silent": false 
-		  },
-		  "nsis" : {
-			  "installerIcon": "icons/updater.ico",
-			  "languages": [
-				"English"
-			  ],
-			  "displayLanguageSelector": false
-		  },
-		  "allowDowngrades": false
-	  }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "productName": "GCS-Client",
+  "version": "1.5.0",
+  "identifier": "sa1nt.gcs",
+  "plugins": {},
+  "app": {
     "windows": [
       {
-		"transparent": true,
+        "transparent": true,
         "fullscreen": false,
         "resizable": false,
         "title": "GreenCatsServer!",
         "width": 720,
         "height": 680,
-		"fileDropEnabled": false,
-		"center": true,
-		"theme": "Dark",
-		"decorations": false
+        "center": true,
+        "theme": "Dark",
+        "decorations": false,
+		"additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection --disable-web-security"
       }
-    ]
+    ],
+    "withGlobalTauri": true,
+    "security": {
+		"assetProtocol": {
+		  "enable": true,
+		  "scope": ["**"]
+		},
+		"csp": null
+	}
   }
 }
