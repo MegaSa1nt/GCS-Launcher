@@ -12,7 +12,7 @@
 		<h1>Настройки</h1>
 		<div class="settings-buttons">
 			<button id="settings-menu-first" class="first active" onclick="changePage('first')">Лаунчер<span></span></button>
-			<button id="settings-menu-second" class="second" title="Пока закрыто :)" <!--onclick="changePage('second')"-->Профиль<span></span></button>
+			<button id="settings-menu-second" class="second" onclick="changePage('second')">Профиль<span></span></button>
 		</div>
 		<div id="settings-menu" class="settings-menu first">
 			<div class="settings-menus">
@@ -153,10 +153,10 @@
 
 <div class="mahbody">
 	<div data-tauri-drag-region class="titlebar">
-	  <div class="titlebar-button" id="titlebar-minimize">
+	  <div class="title-button titlebar-button" id="titlebar-minimize">
 		<img src="res/svg/min.svg" width="10px" alt="Свернуть"/>
 	  </div>
-	  <div class="titlebar-button-close" id="titlebar-close">
+	  <div class="title-button titlebar-button-close" id="titlebar-close">
 		<img src="res/svg/x.svg" width="10px" alt="Закрыть" />
 	  </div>
 	</div>

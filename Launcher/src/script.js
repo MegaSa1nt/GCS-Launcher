@@ -77,7 +77,7 @@ if(!window.localStorage.usenf) window.localStorage.usenf = 'true';
 if(!window.localStorage.closeorhide) window.localStorage.usenf = 'false';
 if(!window.oldtext) window.oldtext = '';
 if(!window.oldcolor) window.oldcolor = '';
-const appWindow = window.__TAURI__.window.getCurrent();
+const appWindow = window.__TAURI__.window.getCurrentWindow();
 document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 document.getElementById('titlebar-close').addEventListener('click', () => {
 	if(window.localStorage.closeorhide == 'false') {
@@ -366,6 +366,7 @@ function newUpdate(ask = false, part = false) {
 		} else return false;
 	});
 }
+/*
 function update(ask = false, err = '') {
 	return false;
  	cook = [];
@@ -483,6 +484,7 @@ function update(ask = false, err = '') {
 	}
 	sd.send();
 }
+*/
 function checkGameAwait() {
 	return new Promise(async function(r) {
 		while(window.dontplayagain) await wait(1000);
@@ -522,6 +524,7 @@ function zipFile(fileData, filename) {
 		});
     })
 }
+/*
 function clientUpdate(ask = false) {
 	cook = [];
 	sd = new XMLHttpRequest();
@@ -590,6 +593,7 @@ function clientUpdate(ask = false) {
 	}
 	sd.send();
 }
+*/
 function updateUser() {
 	cook = [];
 	let internetTImeout = setTimeout(function() {
@@ -901,6 +905,7 @@ function updateNotifies() {
 							nfborder = 'middle';
 							break;
 					}
+					
 					if(notify.checked == '0') {
 						ncircle = document.createElement('img');
 						ncircle.setAttribute('src', 'res/svg/circle.svg');
@@ -1006,14 +1011,20 @@ function detailedNotify(id) {
 				conp = document.createElement('p');
 				switch(dnf.action.type) {
 					case '1':
+						starsArray = {'0': 'stars', '1': 'featured', '2': 'epic', '3': 'legendary', '4': 'mythic'};
+						starsIcon = starsArray[dnf.action.v4];
+						diffArray = {'0': 'na', '1': 'auto', '2': 'easy', '3': 'normal', '4': 'hard', '5': 'hard', '6': 'harder', '7': 'harder', '8': 'insane', '9': 'insane', '10': 'demon-hard'};
+						diffIcon = diffArray[dnf.action.v3];
 						if(dnf.action.v3 == 0) {
 							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> снял оценку с вашего уровня <b>'+dnf.action.v1.name+'</b>!';
 							licon = document.createElement('img');
-							licon.setAttribute('src', 'res/faces/'+dnf.action.v4+'/'+dnf.action.v2+'.png');
+							licon.classList.add('diff-icon');
+							licon.setAttribute('src', 'https://gcs.icu/WTFIcons/difficulties/'+starsIcon+'/'+diffIcon+'.png');
 						} else {
 							conp.innerHTML = 'Модератор <b style="cursor: pointer; color: #007bff;" onclick=\'window.__TAURI__.shell.open("'+gDs+'/profile/'+dnf.mod.accountID+'")\'>'+dnf.mod.username+'</b> оценил ваш уровень <b>'+dnf.action.v1.name+'</b> на <b>'+dnf.action.v3+'</b> звёзд!';
 							licon = document.createElement('img');
-							licon.setAttribute('src', 'res/faces/'+dnf.action.v4+'/'+dnf.action.v3+'.png');
+							licon.classList.add('diff-icon');
+							licon.setAttribute('src', 'https://gcs.icu/WTFIcons/difficulties/'+starsIcon+'/'+diffIcon+'.png');
 						}
 						licon.setAttribute('width', '50px');
 						break;

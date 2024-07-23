@@ -91,6 +91,7 @@ p {
   right: 0;
   z-index: 3;
   width: 93%;
+  app-region: drag;
 }
 .titlebar-button,
 .titlebar-button-close {
@@ -759,4 +760,11 @@ h2 {
 }
 .clickable {
 	cursor: pointer;
+}
+.diff-icon {
+	width: 100px;
+	margin: -10px;
+}
+.title-button {
+	app-region: none;
 }
