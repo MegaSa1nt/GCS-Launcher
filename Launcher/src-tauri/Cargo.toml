@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "2.0.0-beta", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-beta", features = [ "protocol-asset", "devtools", "tray-icon", "image-ico"] }
+tauri = { version = "2.0.0-beta", features = [ "devtools", "protocol-asset", "devtools", "tray-icon", "image-ico"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sysinfo = "0.29.0"

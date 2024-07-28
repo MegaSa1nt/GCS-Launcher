@@ -12,6 +12,45 @@
     "app:default",
     "resources:default",
     "menu:default",
-    "tray:default"
+    "tray:default",
+    "fs:default",
+    "notification:default",
+    "window:allow-set-focus",
+    "window:allow-minimize",
+    "window:allow-close",
+    "window:allow-set-progress-bar",
+    "window:allow-show",
+    "window:allow-hide",
+    "window:allow-request-user-attention",
+	{
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-remove",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-read-file",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-write-file",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-mkdir",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-read-text-file",
+      "allow": [{ "path": "**" }]
+    },
+	{
+      "identifier": "fs:allow-write-text-file",
+      "allow": [{ "path": "**" }]
+    },
+	"process:default",
+	"shell:default"
   ]
 }

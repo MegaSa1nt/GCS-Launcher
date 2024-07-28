@@ -8,12 +8,6 @@ use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
 };
-#[derive(Clone, serde::Serialize)]
-struct Payload {
-  args: Vec<String>,
-  cwd: String,
-}
-
 use std::io;
 use std::path::Path;
 use std::path::PathBuf;
