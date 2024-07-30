@@ -81,29 +81,39 @@
 					<button type="button" class="loginstg" title="Выход" onclick="logoutbtn()"><p>Выйти из аккаунта</p><img class="playicon" width="25px" src="res/svg/login.svg"></button>
 				</div>
 				<div class="setdiv">
-				<div class="blockview"><img width="150px" src="res/svg/lock.svg"></img></div>
 					<div class="form setform profileform">
-						<p class="settitle">Sa1ntSosetHui</p>
+						<p class="settitle"  id="profile-username">Sa1ntSosetHui</p>
 						<div class="form-control profilestats">
-							<p class="profilepic">391 <img src="res/svg/star.svg"></p>
-							<p class="profilepic">4666 <img src="res/svg/gem.svg"></p>
-							<p class="profilepic">55 <img src="res/svg/coins.svg"></p>
-							<p class="profilepic">24 <img src="res/svg/coins.svg"></p>
-							<p class="profilepic">9 <img src="res/svg/dragon.svg"></p>
-							<p class="profilepic" >8 <img src="res/svg/cp.svg"></p>
+							<p class="profilepic" id="profile-stars-p"><text id="profile-stars-text"></text> <img style="height: 20px; filter: invert(92%) sepia(13%) saturate(1355%) hue-rotate(5deg) brightness(106%) contrast(105%);" src="res/svg/star-black.svg"></p>
+							<p class="profilepic" id="profile-moons-p"><text id="profile-moons-text"></text> <img style="height: 20px; filter: invert(63%) sepia(32%) saturate(1038%) hue-rotate(190deg) brightness(101%) contrast(101%);" src="res/svg/moon-black.svg"></p>
+							<p class="profilepic" id="profile-diamonds-p"><text id="profile-diamonds-text"></text> <img style="height: 20px; filter: invert(88%) sepia(25%) saturate(496%) hue-rotate(110deg) brightness(105%) contrast(104%);" src="res/svg/gem-black.svg"></p>
+							<p class="profilepic" id="profile-gold-coins-p"><text id="profile-gold-coins-text"></text> <img style="height: 20px; filter: invert(98%) sepia(85%) saturate(1021%) hue-rotate(330deg) brightness(109%) contrast(105%);" src="res/svg/coins-black.svg"></p>
+							<p class="profilepic" id="profile-user-coins-p"><text id="profile-user-coins-text"></text> <img style="height: 20px;" src="res/svg/coins.svg"></p>
+							<p class="profilepic" id="profile-demons-p"><text id="profile-demons-text"></text> <img style="height: 20px; filter: invert(90%) sepia(47%) saturate(6027%) hue-rotate(290deg) brightness(107%) contrast(101%);" src="res/svg/dragon-black.svg"></p>
+							<p class="profilepic" id="profile-creator-points-p"><text id="profile-creator-points-text"></text> <img style="height: 20px;" src="res/svg/cp.svg"></p>
 						</div>
-						<div class="profileposts">
-							<div class="profilepost">
-								<div class="profilepoststats">
-									<h2 class="profilenick">Sa1ntSosetHui</h2>
-									<p style="text-align:right">
-										<img src="res/svg/like.svg"> <text style="color:gray">0</text> | <img src="res/svg/dislike.svg">  <text style="color:gray">0</text>
-									</p>
-								</div>
-								<p class="profilemsg">Ягнёнок</p>
-								<div><h3 class="comments post">03.10</h3></div>
+						<div class="form-control icon-kit">
+							<div class="icon-kit-div">
+								<img id="profile-icon-cube" src="https://gdicon.oat.zone/icon.png?type=cube&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-cube" style="opacity: 0;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-ship" src="https://gdicon.oat.zone/icon.png?type=ship&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-ship" style="opacity: 0; animation-delay: 100ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-ball" src="https://gdicon.oat.zone/icon.png?type=ball&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-ball" style="opacity: 0; animation-delay: 150ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-ufo" src="https://gdicon.oat.zone/icon.png?type=ufo&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-ufo" style="opacity: 0; animation-delay: 200ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-wave" src="https://gdicon.oat.zone/icon.png?type=wave&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-wave" style="opacity: 0; animation-delay: 250ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-robot" src="https://gdicon.oat.zone/icon.png?type=robot&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy"class="icon-kit-icon icon-robot" style="opacity: 0; animation-delay: 300ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-spider" src="https://gdicon.oat.zone/icon.png?type=spider&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-spider" style="opacity: 0; animation-delay: 350ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-swing" src="https://gdicon.oat.zone/icon.png?type=swing&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-swing" style="opacity: 0; animation-delay: 400ms;">
+							</div><div class="icon-kit-div">
+								<img id="profile-icon-jetpack" src="https://gdicon.oat.zone/icon.png?type=jetpack&amp;value=1&amp;color1=0&amp;color2=3" loading="lazy" class="icon-kit-icon icon-jetpack" style="opacity: 0; animation-delay: 450ms;">
 							</div>
 						</div>
+						<div class="profileposts" id="profile-posts-div"></div>
 					</div>
 				</div>
 			</div>
@@ -219,8 +229,6 @@
 					<button class="btn-queue-menu" title="Обновить моды" id="queue-mods-update" style="display: none" onclick="reinstall('mods');"><img src="res/svg/update.svg"></img></button>
 					<button class="btn-queue-menu" title="Действия" id="queue-mods-menu" onclick="showMenu('mods')"><img id="queue-mods-btn" src="res/svg/menu.svg"></img></button>
 					<div id="queue-mods-menu-div" class="dropdown-menu mods">
-						<button class="dropdown-item" id="queue-mods-menu-1btn" onclick="replaceMods('whm');"><div class="icon"><img src="res/svg/one.svg" style="margin: 0px 5px;" width="12px"></div>Заменить на GDHM</button>
-						<button class="dropdown-item" id="queue-mods-menu-2btn" onclick="replaceMods('wmo');"><div class="icon"><img src="res/svg/two.svg" style="margin: 0px 5px;" width="14px"></div>Заменить на MegaOverlay</button>
 						<button class="dropdown-item" id="queue-mods-menu-reinstall" onclick="reinstall('mods');"><div class="icon"><img src="res/svg/reinstall.svg" style="margin: 0px 5px;" width="20px"></div>Переустановить моды</button>
 					</div>
 				</div>

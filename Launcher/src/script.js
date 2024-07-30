@@ -76,8 +76,9 @@ document.getElementById("anim-hover-slider").addEventListener("input", function(
 document.getElementById("anim-pages-slider").addEventListener("input", function(v) {window.localStorage.animpages = v.target.value/1000; updateAnimations();})
 if(!window.localStorage.usenf) window.localStorage.usenf = 'true';
 if(!window.localStorage.closeorhide) window.localStorage.usenf = 'false';
-if(!window.oldtext) window.oldtext = '';
-if(!window.oldcolor) window.oldcolor = '';
+window.oldtext = '';
+window.oldcolor = '';
+window.isLoggedIn = false;
 const appWindow = window.__TAURI__.window.getCurrentWindow();
 document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 document.getElementById('titlebar-close').addEventListener('click', () => {
@@ -435,6 +436,7 @@ function updateUser() {
 		chk.onload = async function () {
 			result = JSON.parse(chk.response);
 			if(result.success) {
+				window.isLoggedIn = true;
 				document.getElementById("user").innerHTML = result.user;
 				document.getElementById("user").setAttribute("onclick", 'window.__TAURI__.shell.open("'+gDs+'/profile/'+result.user+'")');
 				document.getElementById("user").style.color = "rgb("+result.color+")";
@@ -443,6 +445,7 @@ function updateUser() {
 				document.getElementById("nbtn").style.visibility = "initial";
 				document.cookie = "user="+result.user+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 				document.cookie = "color="+result.color+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+				updateProfileCard();
 				updateNotifies();
 			} else logoutbtn();
 			await updateParts();
@@ -483,6 +486,7 @@ function updateUser() {
 	}
 }
 function logoutbtn() {
+	window.isLoggedIn = false;
 	document.cookie = "user=no; path=/; expires=Fri, 31 Dec 0000 23:59:59 GMT";
 	document.cookie = "color=no; path=/; expires=Fri, 31 Dec 0000 23:59:59 GMT";
 	document.cookie = "id=no; path=/; expires=Fri, 31 Dec 0000 23:59:59 GMT";
@@ -503,12 +507,14 @@ function loginbtn() {
 	sd.onload = function () {
 		result = JSON.parse(sd.response);
 		if(result.success) {
+			window.isLoggedIn = true;
 			document.cookie = "user="+result.user+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 			document.cookie = "color="+result.color+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 			document.cookie = "id="+result.id+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 			document.cookie = "auth="+result.auth+"; path=/; expires=Fri, 31 Dec 9999 23:59:59 GMT";
 			updateUser();
 		} else {
+			window.isLoggedIn = false;
 			ltext.style.color = "#ffbbbb";
 			if(result.error == "-1") ltext.innerHTML = "Неверный пароль!";
 			if(result.error == "-2") ltext.innerHTML = "Активируйте аккаунт!";
@@ -568,25 +574,6 @@ function timeConverter(UNIX_timestamp, min = false) {
   }
   return time;
 }
-async function sendArrayBufferToRust(path, arrayBuffer) {
-  const chunkSize = 1024 * 1024 * 5; 
-  const numChunks = Math.ceil(arrayBuffer.byteLength / chunkSize);
-  for (let i = 0; i < numChunks; i++) {
-    const start = i * chunkSize;
-    const end = Math.min(start + chunkSize, arrayBuffer.byteLength);
-    const chunk = arrayBuffer.slice(start, end);
-	myfile = window.__TAURI__.core.invoke("append_chunk_to_file", chunk, {
-			headers: {
-				path: path
-			}
-		}).catch(e => {
-		return false;
-	});
-	if(!myfile) return false;
-	window.gc();
-  }
-  return true;
-}
 function warning(answer) {
 	if(answer) {
 		window.localStorage.warn = true;
@@ -602,6 +589,7 @@ function openDir(dir) {
 	}
 }
 function updateNotifies() {
+	if(!window.isLoggedIn) return;
 	notifydiv = document.getElementById('notifies');
 	if(document.cookie.length) {
 		cookie = document.cookie.split(";");
@@ -775,6 +763,7 @@ function updateNotifies() {
 	notifies.send();
 }
 function detailedNotify(id) {
+	if(!window.isLoggedIn) return;
 	notifydiv = document.getElementById('notifies');
 	if(document.cookie.length) {
 		cookie = document.cookie.split(";");
@@ -1193,7 +1182,6 @@ function updateParts() {
 	window.update_parts = [];
 	return new Promise(r => {
 		fetch('https://gcs.icu/download/parts.php?v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-			console.log(gcs);
 			if(gcs.success) {
 				queuediv.innerHTML = "";
 				for(const i in gcs.update_parts) {
@@ -1252,7 +1240,6 @@ function updateParts() {
 					update_divs.menudiv.setAttribute("div-type", "menu");
 					for(const menus in update_part.menu_buttons) {
 						update_menu = update_part.menu_buttons[menus];
-						console.log(update_menu);
 						update_divs.menubutton = document.createElement("button");
 						update_divs.menubutton.setAttribute("menu-type", update_part.id);
 						update_divs.menubutton.classList.add("dropdown-item");
@@ -1322,4 +1309,145 @@ function resetAnimation(animation) {
 }
 function getPercent(current, max) {
 	return Math.round((current / max) * 100);
+}
+function updateProfileCard() {
+	if(!window.isLoggedIn) return;
+	fetch('https://api.gcs.icu/profile.php?auth='+cook['auth']).then(response => response.json()).then((gcs) => {
+		if(gcs.success) {
+			profile = gcs.profile;
+			document.querySelector('#profile-username').innerHTML = profile.userName;
+			profileStars = document.querySelector('#profile-stars-p');
+			profileMoons = document.querySelector('#profile-moons-p');
+			profileDiamonds = document.querySelector('#profile-diamonds-p');
+			profileGoldCoins = document.querySelector('#profile-gold-coins-p');
+			profileUserCoins = document.querySelector('#profile-user-coins-p');
+			profileDemons = document.querySelector('#profile-demons-p');
+			profileCreatorPoints = document.querySelector('#profile-creator-points-p');
+			// Замена значений
+			emptyStats = 0;
+			document.querySelector('#profile-stars-text').innerHTML = profile.stats.stars;
+			if(profile.stats.stars == 0) {
+				emptyStats++;
+				profileStars.style.display = 'none';
+			}
+			document.querySelector('#profile-moons-text').innerHTML = profile.stats.moons;
+			if(profile.stats.moons == 0) {
+				emptyStats++;
+				profileMoons.style.display = 'none';
+			}
+			document.querySelector('#profile-diamonds-text').innerHTML = profile.stats.diamonds;
+			if(profile.stats.diamonds == 0) {
+				emptyStats++;
+				profileDiamonds.style.display = 'none';
+			}
+			document.querySelector('#profile-gold-coins-text').innerHTML = profile.stats.goldCoins;
+			if(profile.stats.goldCoins == 0) {
+				emptyStats++;
+				profileGoldCoins.style.display = 'none';
+			}
+			document.querySelector('#profile-user-coins-text').innerHTML = profile.stats.userCoins;
+			if(profile.stats.userCoins == 0) {
+				emptyStats++;
+				profileUserCoins.style.display = 'none';
+			}
+			document.querySelector('#profile-demons-text').innerHTML = profile.stats.demons;
+			if(profile.stats.demons == 0) {
+				emptyStats++;
+				profileDemons.style.display = 'none';
+			}
+			document.querySelector('#profile-creator-points-text').innerHTML = profile.stats.creatorPoints;
+			if(profile.stats.creatorPoints == 0) {
+				emptyStats++;
+				profileCreatorPoints.style.display = 'none';
+			}
+			document.querySelector('#profile-icon-cube').src = "https://gdicon.oat.zone/icon.png?type=cube&value=" + (profile.icons.cube != 0 ? profile.icons.cube : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-ship').src = "https://gdicon.oat.zone/icon.png?type=ship&value=" + (profile.icons.ship != 0 ? profile.icons.ship : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-ball').src = "https://gdicon.oat.zone/icon.png?type=ball&value=" + (profile.icons.ball != 0 ? profile.icons.ball : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-ufo').src = "https://gdicon.oat.zone/icon.png?type=ufo&value=" + (profile.icons.ufo != 0 ? profile.icons.ufo : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-wave').src = "https://gdicon.oat.zone/icon.png?type=wave&value=" + (profile.icons.wave != 0 ? profile.icons.wave : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-robot').src = "https://gdicon.oat.zone/icon.png?type=robot&value=" + (profile.icons.robot != 0 ? profile.icons.robot : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-spider').src = "https://gdicon.oat.zone/icon.png?type=spider&value=" + (profile.icons.spider != 0 ? profile.icons.spider : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-swing').src = "https://gdicon.oat.zone/icon.png?type=swing&value=" + (profile.icons.swing != 0 ? profile.icons.swing : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			document.querySelector('#profile-icon-jetpack').src = "https://gdicon.oat.zone/icon.png?type=jetpack&value=" + (profile.icons.jetpack != 0 ? profile.icons.jetpack : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
+			// Посты
+			profilePosts = document.getElementById('profile-posts-div');
+			for(const i in profile.posts) {
+				postDivs = [];
+				replyDivs = [];
+				post = profile.posts[i];
+				postDivs.postCardWithReply = document.createElement('div');
+				postDivs.postCardWithReply.classList.add('profilepostwithreply');
+				postDivs.postCard = document.createElement('div');
+				postDivs.postCard.classList.add('profilepost');
+				postDivs.postStats = document.createElement('div');
+				postDivs.postStats.classList.add('profilepoststats');
+				postDivs.postStatsUsername = document.createElement('h2');
+				postDivs.postStatsUsername.classList.add('profilenick');
+				postDivs.postStatsUsername.innerHTML = profile.userName;
+				postDivs.postStatsLikes = document.createElement('p');
+				postDivs.postStatsLikes.style = "text-align: right;";
+				postDivs.postStatsLikes.innerHTML = "<img src='res/svg/like.svg'> <text>" + post.likes + "</text> | <img src='res/svg/dislike.svg'> <text>" + post.dislikes + "</text>";
+				postDivs.postText = document.createElement('p');
+				postDivs.postText.classList.add('profilemsg');
+				postDivs.postText.innerHTML = post.post;
+				postDivs.postComments = document.createElement('div');
+				postDivs.postComments.classList.add('comments');
+				postDivs.postComments.style.margin = "0px";
+				postDivs.postCommentButton = document.createElement('button');
+				postDivs.postCommentButton.classList.add('btn-rendel');
+				postDivs.postCommentButton.classList.add('btn-reply');
+				postDivs.postCommentButton.setAttribute('onclick', 'showReplies(' + post.commentID + ')')
+				postDivs.postCommentButtonImg = document.createElement('img');
+				postDivs.postCommentButtonImg.src = "res/svg/comment-dots.svg";
+				postDivs.postCommentButtonImg.style.width = "20px";
+				postDivs.postCommentDate = document.createElement('h3');
+				postDivs.postCommentDate.classList.add('post');
+				postDivs.postCommentDate.innerHTML = timeConverter(post.timestamp);
+				if(post.replies.length > 0) {
+					postDivs.postReplies = document.createElement('div');
+					postDivs.postReplies.classList.add('profilereplies');
+					for(const j in post.replies) {
+						reply = post.replies[j];
+						replyDivs.postCard = document.createElement('div');
+						replyDivs.postCard.classList.add('profilepost');
+						replyDivs.postStats = document.createElement('div');
+						replyDivs.postStats.classList.add('profilepoststats');
+						replyDivs.postStatsUsername = document.createElement('h2');
+						replyDivs.postStatsUsername.classList.add('profilenick');
+						replyDivs.postStatsUsername.innerHTML = reply.account.userName;
+						replyDivs.postText = document.createElement('h3');
+						replyDivs.postText.classList.add('profilemsg');
+						replyDivs.postText.innerHTML = reply.text;
+						replyDivs.postCommentDate = document.createElement('h3');
+						replyDivs.postCommentDate.classList.add('comments');
+						replyDivs.postCommentDate.classList.add('post');
+						replyDivs.postCommentDate.innerHTML = timeConverter(post.timestamp);
+						if(j > 0) {
+							replyDivs.hr = document.createElement('hr');
+							replyDivs.hr.style = "width:100%";
+							postDivs.postReplies.append(replyDivs.hr);
+						}
+						replyDivs.postText.append(replyDivs.postCommentDate);
+						replyDivs.postStats.append(replyDivs.postStatsUsername);
+						replyDivs.postCard.append(replyDivs.postStats);
+						replyDivs.postText.append(replyDivs.postCommentDate);
+						replyDivs.postCard.append(replyDivs.postText);
+						postDivs.postReplies.append(replyDivs.postCard);
+					}
+				}
+				// Всё вместе
+				postDivs.postCommentButton.append(postDivs.postCommentButtonImg);
+				postDivs.postComments.append(postDivs.postCommentButton);
+				postDivs.postComments.append(postDivs.postCommentDate);
+				postDivs.postStats.append(postDivs.postStatsUsername);
+				postDivs.postStats.append(postDivs.postStatsLikes);
+				postDivs.postCard.append(postDivs.postStats);
+				postDivs.postCard.append(postDivs.postText);
+				postDivs.postCard.append(postDivs.postComments);
+				postDivs.postCardWithReply.append(postDivs.postCard);
+				if(typeof postDivs.postReplies != 'undefined') postDivs.postCardWithReply.append(postDivs.postReplies);
+				profilePosts.append(postDivs.postCardWithReply);
+			}
+		}
+	});
 }

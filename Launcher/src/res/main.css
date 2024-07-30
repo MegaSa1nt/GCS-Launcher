@@ -681,9 +681,12 @@ h2 {
 	transition: var(--anim-hover);
 }
 .profilepic {
-	font-size: 20px;
+	font-size: 19px;
 	margin: 0px;
 	width: max-content;
+	display: flex;
+    grid-gap: 5px;
+    align-items: center;
 }
 .profilestats {
 	display: flex;
@@ -697,12 +700,11 @@ h2 {
    display: flex;
    border-radius: 30px;
    flex-wrap: wrap;
-   max-height: 45vh;
    height: max-content;
    width: 100%;
    background: #141414;
    padding: 10px;
-   grid-gap: 5px;
+   grid-gap: 10px;
 }
 .profileform {
 	grid-gap: 7px;
@@ -726,9 +728,13 @@ h2 {
 }
 .profilemsg {
 	margin: 0px;
+	display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
 }
-.comments.post {
+.post {
 	margin: 0px;
+	font-size: 13px;
 }
 .blockview {
 	position: absolute;
@@ -767,4 +773,69 @@ h2 {
 }
 .title-button {
 	app-region: none;
+}
+.icon-kit {
+	display: flex;
+	width: 100%;
+	height: max-content;
+	justify-content: space-between;
+	margin-top:10px;
+	align-items: center;
+	border-radius: 20px;
+}
+.icon-kit-icon {
+	animation: fadeInAnimation ease 1s;
+	animation-iteration-count: 1;
+	animation-fill-mode: forwards;
+}
+.icon-kit-div {
+   width: 20%;
+   display: flex;
+   align-content: center;
+   justify-content: center;
+}
+.icon-ship {
+	height: 25px;
+}
+.icon-wave {
+	height: 25px;
+}
+.icon-cube,
+.icon-ball,
+.icon-ufo,
+.icon-robot,
+.icon-spider,
+.icon-swing,
+.icon-jetpack {
+	height: 35px;
+}
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+.btn-reply {
+	width: max-content;
+	padding: 7px;
+}
+.profilepostwithreply {
+	width: 100%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	grid-gap: 10px;
+}
+.profilereplies {
+	width: 90%;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	grid-gap: 5px;
+}
+.profilereplies .profilepost {
+	background: none;
+	padding: 10px;
 }
