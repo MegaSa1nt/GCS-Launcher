@@ -731,6 +731,8 @@ h2 {
 	display: flex;
     align-items: flex-end;
     justify-content: space-between;
+	font-style: normal;
+	color: #c0c0c0;
 }
 .post {
 	margin: 0px;
@@ -838,4 +840,18 @@ h2 {
 .profilereplies .profilepost {
 	background: none;
 	padding: 10px;
+}
+.reply-input {
+	border: none;
+    border-radius: 20px;
+    background: #201f23;
+}
+.reply-div {
+	display: flex;
+    align-items: center;
+    grid-gap: 5px;
+    width: 95%;
+}
+.reply-div input {
+	width: 100%;
 }

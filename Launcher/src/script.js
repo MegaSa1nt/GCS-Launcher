@@ -1403,6 +1403,21 @@ function updateProfileCard() {
 				postDivs.postCommentDate = document.createElement('h3');
 				postDivs.postCommentDate.classList.add('post');
 				postDivs.postCommentDate.innerHTML = timeConverter(post.timestamp);
+				postDivs.replyDiv = document.createElement('div');
+				postDivs.replyDiv.classList.add('reply-div');
+				postDivs.replyInput = document.createElement('input');
+				postDivs.replyInput.classList.add('form-control');
+				postDivs.replyInput.classList.add('reply-input');
+				postDivs.replyInput.setAttribute('type', 'text');
+				postDivs.replyInput.setAttribute('placeholder', 'Ответить...');
+				postDivs.replyInputButton = document.createElement('button');
+				postDivs.replyInputButton.classList.add('btn-rendel');
+				postDivs.replyInputButton.classList.add('btn-reply');
+				postDivs.replyInputButton.setAttribute('onclick', 'sendReply(' + post.commentID + ')')
+				postDivs.replyInputImg = document.createElement('img');
+				postDivs.replyInputImg.src = "res/svg/paper-plane.svg";
+				postDivs.replyInputImg.style.width = "17px";
+				postDivs.replyButton = document.createElement('button');
 				if(post.replies.length > 0) {
 					postDivs.postReplies = document.createElement('div');
 					postDivs.postReplies.classList.add('profilereplies');
@@ -1444,7 +1459,11 @@ function updateProfileCard() {
 				postDivs.postCard.append(postDivs.postStats);
 				postDivs.postCard.append(postDivs.postText);
 				postDivs.postCard.append(postDivs.postComments);
+				postDivs.replyInputButton.append(postDivs.replyInputImg);
+				postDivs.replyDiv.append(postDivs.replyInput);
+				postDivs.replyDiv.append(postDivs.replyInputButton);
 				postDivs.postCardWithReply.append(postDivs.postCard);
+				postDivs.postCardWithReply.append(postDivs.replyDiv);
 				if(typeof postDivs.postReplies != 'undefined') postDivs.postCardWithReply.append(postDivs.postReplies);
 				profilePosts.append(postDivs.postCardWithReply);
 			}
