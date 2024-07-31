@@ -1279,12 +1279,12 @@ function resetAnimation(animation) {
 			document.getElementById("anim-settings-text").innerHTML = window.localStorage.animsettings+' сек';
 			break;
 		case 'queue':
-			window.localStorage.animqueue = 0.3;
+			window.localStorage.animqueue = 0.4;
 			document.getElementById("anim-queue-slider").value = window.localStorage.animqueue * 1000;
 			document.getElementById("anim-queue-text").innerHTML = window.localStorage.animqueue+' сек';
 			break;
 		case 'menu':
-			window.localStorage.animmenu = 0.4;
+			window.localStorage.animmenu = 0.2;
 			document.getElementById("anim-menu-slider").value = window.localStorage.animmenu * 1000;
 			document.getElementById("anim-menu-text").innerHTML = window.localStorage.animmenu+' сек';
 			break;
@@ -1450,6 +1450,9 @@ function updateProfileCard() {
 						postDivs.postReplies.append(replyDivs.postCard);
 					}
 				}
+				postDivs.postReplyDiv = document.createElement('div');
+				postDivs.postReplyDiv.classList.add('reply-input-div');
+				postDivs.postReplyDiv.setAttribute('id', 'replydiv' + post.commentID);
 				// Всё вместе
 				postDivs.postCommentButton.append(postDivs.postCommentButtonImg);
 				postDivs.postComments.append(postDivs.postCommentButton);
@@ -1463,10 +1466,14 @@ function updateProfileCard() {
 				postDivs.replyDiv.append(postDivs.replyInput);
 				postDivs.replyDiv.append(postDivs.replyInputButton);
 				postDivs.postCardWithReply.append(postDivs.postCard);
-				postDivs.postCardWithReply.append(postDivs.replyDiv);
-				if(typeof postDivs.postReplies != 'undefined') postDivs.postCardWithReply.append(postDivs.postReplies);
+				postDivs.postReplyDiv.append(postDivs.replyDiv);
+				if(typeof postDivs.postReplies != 'undefined') postDivs.postReplyDiv.append(postDivs.postReplies);
+				postDivs.postCardWithReply.append(postDivs.postReplyDiv);
 				profilePosts.append(postDivs.postCardWithReply);
 			}
 		}
 	});
+}
+function showReplies(commentID) {
+	document.getElementById('replydiv' + commentID).classList.toggle('show');
 }
