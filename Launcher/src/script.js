@@ -80,6 +80,8 @@ window.oldtext = '';
 window.oldcolor = '';
 window.isLoggedIn = false;
 const appWindow = window.__TAURI__.window.getCurrentWindow();
+appWindow.setMaximizable(false);
+appWindow.setResizable(false);
 document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 document.getElementById('titlebar-close').addEventListener('click', () => {
 	if(window.localStorage.closeorhide == 'false') {
@@ -100,6 +102,7 @@ appWindow.setFocus();
 window.__TAURI__.fs.exists("GCS-Updater.exe").then((result) => {if(result) window.__TAURI__.fs.remove("GCS-Updater.exe")});
 tm = timeConverter(window.localStorage.v2cw);
 if(tm != "1 января 1970" && tm != 'NaN undefined NaN') document.getElementById("time").innerHTML = tm;
+if(tm == 'NaN undefined NaN') window.localStorage.v2cw = 0;
 f = window.__TAURI__.app.getVersion();
 f.then(ve=>{
 	document.getElementById("ver").innerHTML = ve;
@@ -140,7 +143,7 @@ function newUpdate(ask = false, part = false) {
 			}
 			if(!part) {
 				if(gcs.client.windows.time > window.localStorage.v2cw || gcs.client.windows.version != window.appVer) {
-					if(gcs.client.windows.version == window.appVer) window.localStorage.v2cw = gcs.client.windows.version;
+					if(gcs.client.windows.version == window.appVer) window.localStorage.v2cw = gcs.client.windows.time;
 					else updateQueue.push('cw');
 				}
 				if(gcs.game.windows.game > window.localStorage.v2wgame) updateQueue.push('wgame');
@@ -954,7 +957,7 @@ function updateQueueFunction() {
 		}
 		if(queue_divs.time == 0) {
 			queue_divs.progress.innerHTML = "Не установлено";
-			queue_divs.button.style.display = "none";
+			if(queue_divs.button != null) queue_divs.button.style.display = "none";
 		}
 		else queue_divs.progress.innerHTML = 'От: <b>'+timeConverter(queue_divs.time)+'</b>';
 	}
@@ -973,15 +976,15 @@ function replaceMods(part) {
 	menus = document.querySelectorAll("[div-type='menu']");
 	menus.forEach(i => {i.classList.remove("show");});
 	window.__TAURI__.path.appCacheDir().then(ad => {
-		window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
 					gcs = JSON.parse(partFiles);
 					for(const file in gcs) {
 						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
 						else window.__TAURI__.fs.remove(gcs[file]);
 					}
-					window.__TAURI__.fs.remove(ad+"wmods.json");
+					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
 				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
@@ -1002,27 +1005,25 @@ function reinstall(part) {
 		allMenuBtns.forEach(e => {e.style.display = "none"});
 		menus = document.querySelectorAll("[div-type='menu']");
 		menus.forEach(i => {i.classList.remove("show");});
-		window.__TAURI__.path.appCacheDir().then(ad => {
-			window.__TAURI__.fs.exists(ad+"wgame.json").then(a => {
-				if(a) {
-					window.__TAURI__.fs.readTextFile(ad+"wgame.json").then(partFiles => {
-						gcs = JSON.parse(partFiles);
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-						window.__TAURI__.fs.remove(ad+"wmods.json");
-					});
-				} else {
-					fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-					});
-				}
-				newUpdate(false, 'wgame');
-			});
+		window.__TAURI__.fs.exists("wgame.json", {baseDir: 16}).then(a => {
+			if(a) {
+				window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(partFiles => {
+					gcs = JSON.parse(partFiles);
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
+						else window.__TAURI__.fs.remove(gcs[file]);
+					}
+					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
+				});
+			} else {
+				fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
+						else window.__TAURI__.fs.remove(gcs[file]);
+					}
+				});
+			}
+			newUpdate(false, 'wgame');
 		});
 	} else if(part == 'cw') {
 		allMenuBtns = document.querySelectorAll('[button-type]');
@@ -1035,27 +1036,25 @@ function reinstall(part) {
 		allMenuBtns.forEach(e => {e.style.display = "none"});
 		menus = document.querySelectorAll("[div-type='menu']");
 		menus.forEach(i => {i.classList.remove("show");});
-		window.__TAURI__.path.appCacheDir().then(ad => {
-			window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
-				if(a) {
-					window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
-						gcs = JSON.parse(partFiles);
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-						window.__TAURI__.fs.remove(ad+"wmods.json");
-					});
-				} else {
-					fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-					});
-				}
-				newUpdate(false, window.modmenu);
-			});
+		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
+			if(a) {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
+					gcs = JSON.parse(partFiles);
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.remove(gcs[file]);
+					}
+					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
+				});
+			} else {
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+					for(const file in gcs) {
+						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
+						else window.__TAURI__.fs.remove(gcs[file]);
+					}
+				});
+			}
+			newUpdate(false, window.modmenu);
 		});
 	}
 }
@@ -1066,50 +1065,48 @@ function uninstall() {
 	allMenuBtns.forEach(e => {e.style.display = "none"});
 	menus = document.querySelectorAll("[div-type='menu']");
 	menus.forEach(i => {i.classList.remove("show");});
-	window.__TAURI__.path.appCacheDir().then(ad => {
-		window.__TAURI__.fs.exists(ad+"wgame.json").then(a => {
+	window.__TAURI__.fs.exists("wgame.json", {baseDir: 16}).then(a => {
+		if(a) {
+			window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(partFiles => {
+				gcs = JSON.parse(partFiles);
+				for(const file in gcs) {
+					if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
+					else window.__TAURI__.fs.remove(gcs[file]);
+				}
+				window.__TAURI__.fs.remove("wgame.json", {baseDir: 16});
+			});
+		} else {
+			fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+				for(const file in gcs) {
+					if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
+					else window.__TAURI__.fs.remove(gcs[file]);
+				}
+			});
+		}
+		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile(ad+"wgame.json").then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
 					gcs = JSON.parse(partFiles);
 					for(const file in gcs) {
 						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
 						else window.__TAURI__.fs.remove(gcs[file]);
 					}
-					window.__TAURI__.fs.remove(ad+"wgame.json");
+					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
 					for(const file in gcs) {
 						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
 						else window.__TAURI__.fs.remove(gcs[file]);
 					}
 				});
 			}
-			window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
-				if(a) {
-					window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
-						gcs = JSON.parse(partFiles);
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-						window.__TAURI__.fs.remove(ad+"wmods.json");
-					});
-				} else {
-					fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-						for(const file in gcs) {
-							if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-							else window.__TAURI__.fs.remove(gcs[file]);
-						}
-					});
-				}
-				window.localStorage.v2wgame = 0;
-				window.localStorage.v2wmo = 0;
-				window.localStorage.v2wmods = 0;
-				window.localStorage.v2whm = 0;
-				window.localStorage.v2modmenu = 0;
-				newUpdate(true);
-			});
+			window.localStorage.v2wgame = 0;
+			window.localStorage.v2wmo = 0;
+			window.localStorage.v2wmods = 0;
+			window.localStorage.v2whm = 0;
+			window.localStorage.v2modmenu = 0;
+			newUpdate(true);
 		});
 	})
 }
@@ -1121,15 +1118,15 @@ function uninstallMods() {
 	menus = document.querySelectorAll("[div-type='menu']");
 	menus.forEach(i => {i.classList.remove("show");});
 	window.__TAURI__.path.appCacheDir().then(ad => {
-		window.__TAURI__.fs.exists(ad+"wmods.json").then(a => {
+		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile(ad+"wmods.json").then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
 					gcs = JSON.parse(partFiles);
 					for(const file in gcs) {
 						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
 						else window.__TAURI__.fs.remove(gcs[file]);
 					}
-					window.__TAURI__.fs.remove(ad+"wmods.json");
+					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
 				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
@@ -1371,6 +1368,7 @@ function updateProfileCard() {
 			document.querySelector('#profile-icon-jetpack').src = "https://gdicon.oat.zone/icon.png?type=jetpack&value=" + (profile.icons.jetpack != 0 ? profile.icons.jetpack : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
 			// Посты
 			profilePosts = document.getElementById('profile-posts-div');
+			repliesCount = [];
 			for(const i in profile.posts) {
 				postDivs = [];
 				replyDivs = [];
@@ -1386,7 +1384,7 @@ function updateProfileCard() {
 				postDivs.postStatsUsername.innerHTML = profile.userName;
 				postDivs.postStatsLikes = document.createElement('p');
 				postDivs.postStatsLikes.style = "text-align: right;";
-				postDivs.postStatsLikes.innerHTML = "<img src='res/svg/like.svg'> <text>" + post.likes + "</text> | <img src='res/svg/dislike.svg'> <text>" + post.dislikes + "</text>";
+				postDivs.postStatsLikes.innerHTML = "<img src='res/svg/like.svg'> <text>" + post.likes + "</text> <text style='color: gray;'>•</text> <img src='res/svg/dislike.svg'> <text>" + post.dislikes + "</text>";
 				postDivs.postText = document.createElement('p');
 				postDivs.postText.classList.add('profilemsg');
 				postDivs.postText.innerHTML = post.post;
@@ -1409,18 +1407,23 @@ function updateProfileCard() {
 				postDivs.replyInput.classList.add('form-control');
 				postDivs.replyInput.classList.add('reply-input');
 				postDivs.replyInput.setAttribute('type', 'text');
+				postDivs.replyInput.setAttribute('id', 'text' + post.commentID);
 				postDivs.replyInput.setAttribute('placeholder', 'Ответить...');
 				postDivs.replyInputButton = document.createElement('button');
 				postDivs.replyInputButton.classList.add('btn-rendel');
 				postDivs.replyInputButton.classList.add('btn-reply');
-				postDivs.replyInputButton.setAttribute('onclick', 'sendReply(' + post.commentID + ')')
+				postDivs.replyInputButton.setAttribute('onclick', 'sendReply(' + post.commentID + ')');
+				postDivs.replyInputButton.setAttribute('id', 'replyButton' + post.commentID);
 				postDivs.replyInputImg = document.createElement('img');
 				postDivs.replyInputImg.src = "res/svg/paper-plane.svg";
 				postDivs.replyInputImg.style.width = "17px";
+				postDivs.replyInputImg.setAttribute('id', 'replyButtonImg' + post.commentID);
 				postDivs.replyButton = document.createElement('button');
+				postDivs.postReplies = document.createElement('div');
+				postDivs.postReplies.classList.add('profilereplies');
+				postDivs.postReplies.setAttribute('id', 'postReplies' + post.commentID);
+				repliesCount[post.commentID] = post.replies.length;
 				if(post.replies.length > 0) {
-					postDivs.postReplies = document.createElement('div');
-					postDivs.postReplies.classList.add('profilereplies');
 					for(const j in post.replies) {
 						reply = post.replies[j];
 						replyDivs.postCard = document.createElement('div');
@@ -1467,13 +1470,67 @@ function updateProfileCard() {
 				postDivs.replyDiv.append(postDivs.replyInputButton);
 				postDivs.postCardWithReply.append(postDivs.postCard);
 				postDivs.postReplyDiv.append(postDivs.replyDiv);
-				if(typeof postDivs.postReplies != 'undefined') postDivs.postReplyDiv.append(postDivs.postReplies);
+				postDivs.postReplyDiv.append(postDivs.postReplies);
 				postDivs.postCardWithReply.append(postDivs.postReplyDiv);
 				profilePosts.append(postDivs.postCardWithReply);
 			}
+			document.querySelector('#loading-setdiv').classList.add('hide');
 		}
 	});
 }
 function showReplies(commentID) {
 	document.getElementById('replydiv' + commentID).classList.toggle('show');
+}
+function sendReply(commentID) {
+	replyText = document.getElementById('text' + commentID).value;
+	if(!replyText.trim().length) return;
+	replyButton = document.getElementById('replyButton' + commentID);
+	replyButton.disabled = true;
+	replyButtonImg = document.getElementById('replyButtonImg' + commentID);
+	replyButtonImg.src = 'res/svg/load.svg';
+	replyButtonImg.classList.add('spin');
+	replyButtonImg.style.filter = "invert(83%) sepia(0%) saturate(14%) hue-rotate(146deg) brightness(95%) contrast(88%)";
+	fetch("https://gcs.icu/api/replies.php", {
+		method: "post",
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: "commentID=" + encodeURIComponent(commentID) + "&body=" + encodeURIComponent(replyText) + "&auth=" + cook['auth']
+	})
+	.then(response => response.json()).then((gcs) => {
+		replyButtonImg.src = 'res/svg/paper-plane.svg';
+		replyButtonImg.classList.remove('spin');
+		replyButtonImg.style.filter = "";
+		replyButton.disabled = false;
+		if(gcs.success) {
+			postDivs.postReplies = document.getElementById('postReplies' + commentID);
+			replyDivs.postCard = document.createElement('div');
+			replyDivs.postCard.classList.add('profilepost');
+			replyDivs.postStats = document.createElement('div');
+			replyDivs.postStats.classList.add('profilepoststats');
+			replyDivs.postStatsUsername = document.createElement('h2');
+			replyDivs.postStatsUsername.classList.add('profilenick');
+			replyDivs.postStatsUsername.innerHTML = cook['user'];
+			replyDivs.postText = document.createElement('h3');
+			replyDivs.postText.classList.add('profilemsg');
+			replyDivs.postText.innerHTML = replyText;
+			replyDivs.postCommentDate = document.createElement('h3');
+			replyDivs.postCommentDate.classList.add('comments');
+			replyDivs.postCommentDate.classList.add('post');
+			replyDivs.postCommentDate.innerHTML = timeConverter(Math.floor(Date.now() / 1000));
+			if(repliesCount[commentID] > 0) {
+				replyDivs.hr = document.createElement('hr');
+				replyDivs.hr.style = "width:100%";
+				postDivs.postReplies.prepend(replyDivs.hr);
+			}
+			replyDivs.postText.append(replyDivs.postCommentDate);
+			replyDivs.postStats.append(replyDivs.postStatsUsername);
+			replyDivs.postCard.append(replyDivs.postStats);
+			replyDivs.postText.append(replyDivs.postCommentDate);
+			replyDivs.postCard.append(replyDivs.postText);
+			postDivs.postReplies.prepend(replyDivs.postCard);
+			repliesCount[commentID]++;
+			document.getElementById('text' + commentID).value = "";
+		}
+	})
 }

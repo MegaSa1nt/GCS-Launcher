@@ -873,3 +873,16 @@ h2 {
     max-height: 1000px;
 	pointer-events: all;
 }
+.loading-setdiv {
+    position: absolute;
+    z-index: 3;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--anim-menu);
+}
+.loading-setdiv.hide {
+	opacity: 0;
+    pointer-events: none;
+}

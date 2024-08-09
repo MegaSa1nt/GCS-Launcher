@@ -51,6 +51,8 @@
       "allow": [{ "path": "**" }]
     },
 	"process:default",
-	"shell:default"
+	"shell:default",
+	"window:allow-set-resizable",
+	"window:allow-set-maximizable"
   ]
 }
