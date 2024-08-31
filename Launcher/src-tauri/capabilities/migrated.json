@@ -53,6 +53,7 @@
 	"process:default",
 	"shell:default",
 	"window:allow-set-resizable",
-	"window:allow-set-maximizable"
+	"window:allow-set-maximizable",
+	"window:allow-set-shadow"
   ]
 }

@@ -82,6 +82,7 @@ window.isLoggedIn = false;
 const appWindow = window.__TAURI__.window.getCurrentWindow();
 appWindow.setMaximizable(false);
 appWindow.setResizable(false);
+appWindow.setShadow(false);
 document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 document.getElementById('titlebar-close').addEventListener('click', () => {
 	if(window.localStorage.closeorhide == 'false') {
@@ -1368,7 +1369,13 @@ function updateProfileCard() {
 			document.querySelector('#profile-icon-jetpack').src = "https://gdicon.oat.zone/icon.png?type=jetpack&value=" + (profile.icons.jetpack != 0 ? profile.icons.jetpack : 1) + "&color1=" + profile.icons.colors.mainColor + "&color2=" + profile.icons.colors.secondaryColor + (profile.icons.glow ? "&glow=1" + "&color3=" + profile.icons.colors.glowColor : "");
 			// Посты
 			profilePosts = document.getElementById('profile-posts-div');
+			profilePosts.innerHTML = `
+			<div class="empty-section">
+				<img width="130px" style="filter: invert(91%) sepia(0%) saturate(17%) hue-rotate(243deg) brightness(87%) contrast(86%);" src="res/svg/comment-slash.svg"></img>
+				<p>Постов нет!</p>
+			</div>`;
 			repliesCount = [];
+			if(profile.posts.length > 0) profilePosts.innerHTML = '';
 			for(const i in profile.posts) {
 				postDivs = [];
 				replyDivs = [];
@@ -1532,5 +1539,30 @@ function sendReply(commentID) {
 			repliesCount[commentID]++;
 			document.getElementById('text' + commentID).value = "";
 		}
+	});
+}
+
+function makePost() {
+	postBody = document.getElementById('make-post-input').value;
+	if(!postBody.trim().length) return;
+	postButton = document.getElementById('make-post-button');
+	postButton.disabled = true;
+	postButtonImg = document.getElementById('make-post-button-img');
+	postButtonImg.src = 'res/svg/load.svg';
+	postButtonImg.classList.add('spin');
+	postButtonImg.style.filter = "invert(83%) sepia(0%) saturate(14%) hue-rotate(146deg) brightness(95%) contrast(88%)";
+	fetch("https://gcs.icu/api/makePost.php", {
+		method: "post",
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded'
+		},
+		body: "body=" + encodeURIComponent(postBody) + "&auth=" + cook['auth']
 	})
+	.then(response => response.json()).then((gcs) => {
+		postButtonImg.src = 'res/svg/paper-plane.svg';
+		postButtonImg.classList.remove('spin');
+		postButtonImg.style.filter = "";
+		postButton.disabled = false;
+		if(gcs.success) updateProfileCard();
+	});
 }
