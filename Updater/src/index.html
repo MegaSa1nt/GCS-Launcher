@@ -24,11 +24,10 @@
 		</div>
 	</div>
 	<script>
-		const appWindow = window.__TAURI__.window.appWindow;
 		document.getElementById('titlebar-minimize').addEventListener('click', () => appWindow.minimize());
 		document.getElementById('titlebar-close').addEventListener('click', () => appWindow.close());
 		const text = document.getElementById("ph1");
-		window.__TAURI__.window.appWindow.setFocus();
+		appWindow.setFocus();
 		setTimeout(function(){clientUpdate();}, 1);
 	</script>
 </div></body>

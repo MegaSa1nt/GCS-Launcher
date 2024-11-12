@@ -979,20 +979,14 @@ function replaceMods(part) {
 	window.__TAURI__.path.appCacheDir().then(ad => {
 		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(async function(partFiles) {
 					gcs = JSON.parse(partFiles);
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+					await deleteManyFiles(gcs, 'mods');
 					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+					await deleteManyFiles(gcs, 'mods');
 				});
 			}
 			newUpdate(false, part);
@@ -1008,20 +1002,14 @@ function reinstall(part) {
 		menus.forEach(i => {i.classList.remove("show");});
 		window.__TAURI__.fs.exists("wgame.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(async function(partFiles) {
 					gcs = JSON.parse(partFiles);
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
-					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
+					await deleteManyFiles(gcs, 'gcs');
+					window.__TAURI__.fs.remove("wgame.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: false});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+				fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+					await deleteManyFiles(gcs, 'gcs');
 				});
 			}
 			newUpdate(false, 'wgame');
@@ -1039,20 +1027,14 @@ function reinstall(part) {
 		menus.forEach(i => {i.classList.remove("show");});
 		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(async function(partFiles) {
 					gcs = JSON.parse(partFiles);
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+					await deleteManyFiles(gcs, 'mods');
 					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+					await deleteManyFiles(gcs, 'mods');
 				});
 			}
 			newUpdate(false, window.modmenu);
@@ -1068,38 +1050,26 @@ function uninstall() {
 	menus.forEach(i => {i.classList.remove("show");});
 	window.__TAURI__.fs.exists("wgame.json", {baseDir: 16}).then(a => {
 		if(a) {
-			window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(partFiles => {
+			window.__TAURI__.fs.readTextFile("wgame.json", {baseDir: 16}).then(async function(partFiles) {
 				gcs = JSON.parse(partFiles);
-				for(const file in gcs) {
-					if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-					else window.__TAURI__.fs.remove(gcs[file]);
-				}
+				await deleteManyFiles(gcs, 'gcs');
 				window.__TAURI__.fs.remove("wgame.json", {baseDir: 16});
 			});
 		} else {
-			fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-				for(const file in gcs) {
-					if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-					else window.__TAURI__.fs.remove(gcs[file]);
-				}
+			fetch('https://gcs.icu/download/files.php?part=wgame&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+				await deleteManyFiles(gcs, 'gcs');
 			});
 		}
 		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(async function(partFiles) {
 					gcs = JSON.parse(partFiles);
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+					await deleteManyFiles(gcs, 'mods');
 					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+					await deleteManyFiles(gcs, 'mods');
 				});
 			}
 			window.localStorage.v2wgame = 0;
@@ -1121,20 +1091,14 @@ function uninstallMods() {
 	window.__TAURI__.path.appCacheDir().then(ad => {
 		window.__TAURI__.fs.exists("wmods.json", {baseDir: 16}).then(a => {
 			if(a) {
-				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(partFiles => {
+				window.__TAURI__.fs.readTextFile("wmods.json", {baseDir: 16}).then(async function(partFiles) {
 					gcs = JSON.parse(partFiles);
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+					await deleteManyFiles(gcs, 'mods');
 					window.__TAURI__.fs.remove("wmods.json", {baseDir: 16});
 				});
 			} else {
-				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then((gcs) => {
-					for(const file in gcs) {
-						if(gcs[file].endsWith('/')) window.__TAURI__.fs.remove(gcs[file], {recursive: true});
-						else window.__TAURI__.fs.remove(gcs[file]);
-					}
+				fetch('https://gcs.icu/download/files.php?part='+window.modmenu+'&v='+window.localStorage.v2version).then(response => response.json()).then(async function(gcs) {
+					await deleteManyFiles(gcs, 'mods');
 				});
 			}
 			window.localStorage.v2wmo = 0;
@@ -1310,10 +1274,11 @@ function getPercent(current, max) {
 }
 function updateProfileCard() {
 	if(!window.isLoggedIn) return;
+	document.querySelector('#loading-setdiv').classList.remove('hide');
 	fetch('https://api.gcs.icu/profile.php?auth='+cook['auth']).then(response => response.json()).then((gcs) => {
 		if(gcs.success) {
 			profile = gcs.profile;
-			document.querySelector('#profile-username').innerHTML = profile.userName;
+			document.querySelector('#profile-username').innerHTML = profile.userName + '<button class="btn-rendel btn-reply" onclick="updateProfileCard()"><img src="res/svg/reinstall.svg" style="width: 20px;"></button>';
 			profileStars = document.querySelector('#profile-stars-p');
 			profileMoons = document.querySelector('#profile-moons-p');
 			profileDiamonds = document.querySelector('#profile-diamonds-p');
@@ -1564,5 +1529,30 @@ function makePost() {
 		postButtonImg.style.filter = "";
 		postButton.disabled = false;
 		if(gcs.success) updateProfileCard();
+	});
+}
+function deleteManyFiles(files, part) {
+	return new Promise(async function(r) {		
+		pbar = document.getElementById('queue-'+part+'-progress');
+		if(pbar.tagName != 'PROGRESS') {
+			progpls = document.createElement('progress');
+			progpls.id = 'queue-'+part+'-progress';
+			pbar.replaceWith(progpls);
+			pbar = progpls;
+		}
+		pbar.title = 'Удаление';
+		pbar.value = 0;
+		pbar.max = files.length;
+		for(const file in files) {
+			if(files[file].endsWith('/')) window.__TAURI__.fs.remove(files[file], {recursive: true});
+			else window.__TAURI__.fs.remove(files[file]);
+			await wait(1);
+			pbar.value++;
+			appWindow.setProgressBar({progress: getPercent(pbar.value, pbar.max)});
+		}
+		if(pbar.value >= pbar.max) {
+			appWindow.setProgressBar({progress: 0});
+			r(true);
+		}
 	});
 }

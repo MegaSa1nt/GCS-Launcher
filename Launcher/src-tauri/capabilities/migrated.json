@@ -6,22 +6,22 @@
     "main"
   ],
   "permissions": [
-    "path:default",
-    "event:default",
-    "window:default",
-    "app:default",
-    "resources:default",
-    "menu:default",
-    "tray:default",
+    "core:path:default",
+    "core:event:default",
+    "core:window:default",
+    "core:app:default",
+    "core:resources:default",
+    "core:menu:default",
+    "core:tray:default",
     "fs:default",
     "notification:default",
-    "window:allow-set-focus",
-    "window:allow-minimize",
-    "window:allow-close",
-    "window:allow-set-progress-bar",
-    "window:allow-show",
-    "window:allow-hide",
-    "window:allow-request-user-attention",
+    "core:window:allow-set-focus",
+    "core:window:allow-minimize",
+    "core:window:allow-close",
+    "core:window:allow-set-progress-bar",
+    "core:window:allow-show",
+    "core:window:allow-hide",
+    "core:window:allow-request-user-attention",
 	{
       "identifier": "fs:allow-exists",
       "allow": [{ "path": "**" }]
@@ -52,8 +52,8 @@
     },
 	"process:default",
 	"shell:default",
-	"window:allow-set-resizable",
-	"window:allow-set-maximizable",
-	"window:allow-set-shadow"
+	"core:window:allow-set-resizable",
+	"core:window:allow-set-maximizable",
+	"core:window:allow-set-shadow"
   ]
 }

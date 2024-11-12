@@ -370,6 +370,10 @@ input[type=radio]:checked {
     color: white;
     font-weight: 700;
     font-size: 25px;
+	grid-gap: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 h2 {
 	color: #c0c0c0;

@@ -2,98 +2,25 @@
   "build": {
     "beforeDevCommand": "",
     "beforeBuildCommand": "",
-    "devPath": "../src",
-    "distDir": "../src",
-    "withGlobalTauri": true
+    "frontendDist": "../src"
   },
-  "package": {
-    "productName": "GCS-Updater",
-    "version": "1.1.3"
+  "bundle": {
+    "active": true,
+    "shortDescription": "Приложение для обновления лаунчера GreenCatsServer.",
+    "longDescription": "Приложение для обновления лаунчера GreenCatsServer.",
+    "copyright": "GreenCatsServer",
+    "publisher": "MegaSa1nt, GreenCatsServer",
+    "icon": [
+      "icons/updater.ico"
+    ],
+    "targets": "all"
   },
-  "tauri": {
-	  "systemTray": {
-      "iconPath": "icons/updater.png",
-      "iconAsTemplate": true
-    },
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": true,
-		"execute": true,
-        "sidecar": true,
-        "open": false
-      },
-	  "notification": {
-        "all": true
-      },
-	  "fs": {
-		"scope": ["**"],
-        "all": true, 
-        "readFile": true,
-        "writeFile": true,
-        "readDir": true,
-        "copyFile": true,
-        "createDir": true,
-        "removeDir": true,
-        "removeFile": true,
-        "renameFile": true,
-        "exists": true
-      },
-	  "path": {
-        "all": true
-      },
-	  "process": {
-        "all": true
-      },
-	  "window": {
-        "all": true, 
-        "create": true, 
-        "center": true,
-        "requestUserAttention": true,
-        "setResizable": true,
-        "setTitle": true,
-        "minimize": true,
-        "unminimize": true,
-        "show": true,
-        "hide": true,
-        "close": true,
-        "setDecorations": true,
-        "setAlwaysOnTop": true,
-        "setSize": true,
-        "setMinSize": true,
-        "setMaxSize": true,
-        "setPosition": true,
-        "setFullscreen": true,
-        "setFocus": true,
-        "setIcon": true,
-        "setSkipTaskbar": true,
-        "setCursorGrab": true,
-        "setCursorVisible": true,
-        "setCursorIcon": true,
-        "setCursorPosition": true,
-        "setIgnoreCursorEvents": true,
-        "startDragging": true,
-        "print": true
-      }
-    },
-    "bundle": {
-      "active": true,
-	  "shortDescription": "Приложение для обновления клиента GreenCatsServer.",
-	  "longDescription": "Приложение для обновления клиента GreenCatsServer.",
-	  "copyright": "GreenCatsServer",
-	  "publisher": "MegaSa1nt, GreenCatsServer",
-      "icon": [
-		"icons/updater.ico"
-      ],
-      "identifier": "sa1nt.gcs.updater",
-      "targets": "all"
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "productName": "GCS-Updater",
+  "mainBinaryName": "GCS-Updater",
+  "version": "1.2.0",
+  "identifier": "sa1nt.gcs.updater",
+  "plugins": {},
+  "app": {
     "windows": [
       {
         "fullscreen": false,
@@ -101,12 +28,19 @@
         "title": "GreenCatsServer!",
         "width": 720,
         "height": 150,
-		"fileDropEnabled": false,
-		"center": true,
-		"theme": "Dark",
-		"decorations": false,
-		"transparent": true
+        "center": true,
+        "theme": "Dark",
+        "decorations": false,
+        "transparent": true
       }
-    ]
+    ],
+    "withGlobalTauri": true,
+    "trayIcon": {
+      "iconPath": "icons/updater.png",
+      "iconAsTemplate": true
+    },
+    "security": {
+      "csp": null
+    }
   }
 }

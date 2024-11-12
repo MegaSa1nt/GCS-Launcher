@@ -30,7 +30,7 @@
     "targets": "all"
   },
   "productName": "GCS-Client",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "identifier": "sa1nt.gcs",
   "plugins": {},
   "app": {

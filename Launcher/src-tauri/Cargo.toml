@@ -1,6 +1,6 @@
 [package]
 name = "gcs"
-version = "1.5.1"
+version = "1.5.2"
 description = "GreenCatsServer!"
 authors = ["MegaSa1nt"]
 license = ""
@@ -10,19 +10,19 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "2.0.0-beta", features = [] }
+tauri-build = { version = "2.0.0", features = [] }
 
 [dependencies]
-tauri = { version = "2.0.0-beta", features = [ "protocol-asset", "tray-icon", "image-ico"] }
+tauri = { version = "2.0.0", features = [ "protocol-asset", "tray-icon", "image-ico"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 sysinfo = "0.29.0"
 winreg = "0.50"
-tauri-plugin-shell = "2.0.0-beta.3"
-tauri-plugin-notification = "2.0.0-beta.3"
-tauri-plugin-fs = "2.0.0-beta.4"
-tauri-plugin-process = "2.0.0-beta.3"
-tauri-plugin-single-instance = "2.0.0-beta"
+tauri-plugin-shell = "2.0.0"
+tauri-plugin-notification = "2.0.0"
+tauri-plugin-fs = "2.0.0"
+tauri-plugin-process = "2.0.0"
+tauri-plugin-single-instance = "2.0.0"
 
 [features]
 # by default Tauri runs in production mode
