@@ -9,6 +9,8 @@
 	
 	background-color: #00000015;
 	border-right: solid 1px #FFFFFF20;
+	
+	position: fixed;
 }
 
 .button {
@@ -24,7 +26,11 @@
 	
 	border-radius: 15px;
 
-    transition: all .15s;
+    transition: var(--button-hover-transition);
+}
+
+.button:hover {
+    background-color: #2a2a2a;
 }
 
 .button:active {
@@ -42,5 +48,5 @@
 }
 
 .active {
-    stroke: #139CFF; 
+    stroke: var(--accent-color); 
 }

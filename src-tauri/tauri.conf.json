@@ -3,64 +3,58 @@
   "build": {
     "beforeBuildCommand": "npm run build",
     "beforeDevCommand": "npm run dev",
-    "devPath": "http://localhost:5173",
-    "distDir": "../build"
+    "frontendDist": "../build",
+    "devUrl": "http://localhost:5173"
   },
-  "package": {
-    "productName": "gcsl",
-    "version": "0.1.0"
+  "bundle": {
+    "active": true,
+    "shortDescription": "Лаунчер для GreenCatsServer.",
+    "longDescription": "Лаунчер для GreenCatsServer.",
+    "copyright": "GreenCatsServer",
+    "publisher": "MegaSa1nt, GreenCatsServer",
+    "icon": [
+      "icons/lil.ico"
+    ],
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper",
+        "silent": false
+      },
+      "nsis": {
+        "installerIcon": "icons/updater.ico",
+        "languages": [
+          "English"
+        ],
+        "displayLanguageSelector": false
+      },
+      "allowDowngrades": false
+    },
+    "targets": "all"
   },
-  "tauri": {
-    "allowlist": {
-      "all": false
-    },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "com.tauri.dev",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
+  "productName": "gcs",
+  "mainBinaryName": "gcs",
+  "version": "2.0.0",
+  "identifier": "sa1nt.gcs",
+  "plugins": {},
+  "app": {
     "windows": [
       {
         "fullscreen": false,
-        "height": 720,
-        "resizable": true,
-        "title": "гкс ику лаунчер",
-        "width": 743
+        "height": 600,
+        "resizable": false,
+        "decorations": false,
+        "title": "Лаунчер GreenCatsServer",
+        "width": 1080,
+        "center": true,
+        "theme": "Dark",
+        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
+        "transparent": true,
+        "useHttpsScheme": true
       }
-    ]
+    ],
+	"withGlobalTauri": true,
+    "security": {
+      "csp": null
+    }
   }
 }

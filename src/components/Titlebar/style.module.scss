@@ -1,0 +1,35 @@
+.titlebar {
+	position: absolute;
+	width: 100vw;
+	top: 0px;
+	display: flex;
+    justify-content: flex-end;
+}
+
+.titleButton {
+	width: max-content;
+	padding: 5px;
+	height: 27px;
+	cursor: pointer;
+	background: none;
+	border: none;
+}
+
+.titleButtonMinimize {
+	border-bottom-left-radius: 5px;
+	transition: var(--button-hover-transition);
+}
+
+.titleButtonMinimize:hover {
+	background-color: #242424;
+}
+
+.titleButtonClose {
+	border-top-right-radius: 15px;
+	transition: var(--button-hover-transition);
+	padding: 5px 6px 5px 5px;
+}
+
+.titleButtonClose:hover {
+	background-color: #f84242;
+}

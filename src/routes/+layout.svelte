@@ -1,23 +1,32 @@
 <script>
 	import style from './style.module.scss';
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import Titlebar from '../components/Titlebar/titlebar.svelte';
+	import { onNavigate } from '$app/navigation';
+	import { getCurrentWindow } from '@tauri-apps/api/window';
 
-	let ready = false;
+	const appWindow = getCurrentWindow();
 	
-	page.subscribe(() => { 
-		ready = true;
-		setTimeout(() => {
-			ready = !ready
-		}, 750)
+	appWindow.setMaximizable(false);
+	appWindow.setResizable(false);
+	appWindow.setShadow(false);
+
+	onNavigate((navigation) => {
+		if(!document.startViewTransition) return;
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
 	});
 </script>
 
 <div class="app">
 	<main class={style.main}>
+		<Titlebar />
 		<Sidebar />
-		<div class={style.content} class:anim={ready}>
+		<div class={style.content}>
 			<slot />
 		</div>
 	</main>
