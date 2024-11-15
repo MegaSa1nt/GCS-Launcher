@@ -39,17 +39,19 @@
   "app": {
     "windows": [
       {
+		"label": "main",
         "fullscreen": false,
-        "height": 600,
+        "height": 500,
         "resizable": false,
         "decorations": false,
         "title": "Лаунчер GreenCatsServer",
-        "width": 1080,
+        "width": 800,
         "center": true,
         "theme": "Dark",
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
         "transparent": true,
-        "useHttpsScheme": true
+        "useHttpsScheme": true,
+		"visible": false
       }
     ],
 	"withGlobalTauri": true,

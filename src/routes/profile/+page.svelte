@@ -1,7 +1,6 @@
 <script>
 	import { Download } from 'lucide-svelte';
 	import style from './style.module.scss';
-	import game from '$lib/images/game.png';
 </script>
 
 <svelte:head>

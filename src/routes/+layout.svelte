@@ -20,6 +20,22 @@
 			});
 		});
 	});
+	
+	document.addEventListener('keydown', event => {
+		switch(event.key) {
+			case 'F5':
+			case 'Tab':
+				event.preventDefault();
+				return false;
+				break;
+		}
+		return true;
+	});
+	document.addEventListener('contextmenu', event => {
+		event.preventDefault();
+		return false;
+	});
+	appWindow.show();
 </script>
 
 <div class="app">
