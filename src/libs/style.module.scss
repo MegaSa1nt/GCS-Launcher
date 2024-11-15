@@ -1,0 +1,17 @@
+.show {
+	opacity: 1;
+	cursor: not-allowed;
+}
+
+.isAvailable {
+	cursor: pointer;
+	pointer-events: initial;
+}
+
+.isAvailable:hover {
+	background-color: var(--accent-button-color);
+}
+
+.isAvailable:active {
+    scale: 95%;
+}

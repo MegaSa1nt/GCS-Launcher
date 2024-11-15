@@ -4,6 +4,9 @@
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import library from '../libs/library.js';
+	
+	library.checkUpdates();
 
 	const appWindow = getCurrentWindow();
 	

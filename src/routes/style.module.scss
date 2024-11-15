@@ -108,16 +108,11 @@ body {
 
 	width: max-content;
 	height: 100%;
-	cursor: pointer;
+	cursor: not-allowed;
 	transition: var(--button-hover-transition);
-}
-
-.loadButton:hover {
-	background-color: var(--accent-button-color);
-}
-
-.loadButton:active {
-    scale: 95%;
+	
+	position: relative;
+	pointer-events: none;
 }
 
 .settingsButton {
@@ -141,4 +136,33 @@ body {
 .loadGame {
 	display: flex;
 	gap: 15px;
+}
+
+.loadAnimation {
+	width: 100%;
+    height: 100%;
+    position: absolute;
+    background-image: url(/src/public/assets/svg/bars.svg);
+    background-size: 150%;
+    animation-name: load-animation;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+	border-radius: 9px;
+    background-color: rgb(0 0 0 / 72%);
+	backdrop-filter: brightness(1.5) saturate(0.5);
+	transition: 0.3s;
+	opacity: 0;
+	pointer-events: none;
+	z-index: 2;
+	filter: brightness(0.5);
+}
+
+@keyframes load-animation {
+	0% {
+		background-position: 96%;
+	}
+	100% {
+		background-position: 0%;
+	}
 }

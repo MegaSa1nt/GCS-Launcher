@@ -15,6 +15,13 @@
 	"core:window:allow-set-shadow",
 	"core:window:allow-set-resizable",
 	"core:window:allow-hide",
-	"core:window:allow-show"
+	"core:window:allow-show",
+	"shell:default",
+	"shell:allow-open",
+	"fs:default",
+	{
+		"identifier": "fs:allow-remove",
+		"allow": [{ "path": "**" }]
+	}
   ]
 }
