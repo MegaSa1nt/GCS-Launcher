@@ -5,9 +5,13 @@
 	import PlayButtonIcon from '../components/PlayButtonIcon/playButtonIcon.svelte';
 	
 	export let buttonState = window.playButtonState;
+	export let buttonIsAvailable = window.playButtonIsAvailable;
+	export let updatingAnimation = window.gameUpdatingAnimation;
 	
 	document.addEventListener("playButtonStateChange", function(event) {
-		buttonState = updatePlayButtonState();
+		buttonState = window.playButtonState;
+		buttonIsAvailable = window.playButtonIsAvailable;
+		updatingAnimation = window.gameUpdatingAnimation;
 	});
 	updatePlayButtonState();
 </script>
@@ -30,8 +34,8 @@
 	<div class={style.launchBlock}>
 		<div class={style.launchContent}>
 			<div class={style.loadGame}>
-				<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, playButtonIsAvailable].join(' ')}>
-					<span id="play-button-animation" class={[style.loadAnimation, gameUpdatingAnimation].join(' ')}></span>
+				<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
+					<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
 					<PlayButtonIcon state={buttonState} />
 				</div>
 				<div class={style.settingsButton}>
