@@ -29,7 +29,8 @@
       },
       "allowDowngrades": false
     },
-    "targets": "all"
+    "targets": ["nsis"],
+	"resources": ["./bin/hpatch.exe"]
   },
   "productName": "gcs",
   "mainBinaryName": "gcs",
