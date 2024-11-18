@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 package-lock.json
 run.bat
 src-tauri/Cargo.lock
+/src-tauri/gen

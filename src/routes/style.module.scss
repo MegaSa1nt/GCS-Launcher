@@ -1,4 +1,23 @@
-@import url('https://v1.fontapi.ir/css/SFProDisplay');
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/src/public/assets/fonts/sf-pro-display/regular.otf');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/src/public/assets/fonts/sf-pro-display/medium.otf');
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/src/public/assets/fonts/sf-pro-display/bold.otf');
+	font-weight: 900;
+	font-style: normal;
+}
 
 :root {
 	--font-body: 'SF Pro Display', sans-serif;
@@ -20,6 +39,7 @@
 
 * {
     box-sizing: border-box;
+	font-family: var(--font-body);
 }
 
 body {

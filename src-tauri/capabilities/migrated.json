@@ -7,52 +7,80 @@
   ],
   "permissions": [
     "core:default",
-	"core:window:default", 
-	"core:window:allow-start-dragging",
-	"core:window:allow-close",
-	"core:window:allow-minimize",
-	"core:window:allow-set-maximizable",
-	"core:window:allow-set-shadow",
-	"core:window:allow-set-resizable",
-	"core:window:allow-hide",
-	"core:window:allow-show",
-	"shell:default",
-	"shell:allow-open",
-	"fs:default",
-	{
-		"identifier": "fs:allow-remove",
-		"allow": [{ "path": "**" }]
-	},
-	{
+    "core:window:default",
+    "core:window:allow-start-dragging",
+    "core:window:allow-close",
+    "core:window:allow-minimize",
+    "core:window:allow-set-maximizable",
+    "core:window:allow-set-shadow",
+    "core:window:allow-set-resizable",
+    "core:window:allow-hide",
+    "core:window:allow-show",
+    "shell:default",
+    "shell:allow-open",
+    "fs:default",
+    {
+      "identifier": "fs:allow-remove",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
       "identifier": "fs:allow-read-dir",
-      "allow": [{ "path": "**" }]
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     },
-	{
+    {
       "identifier": "fs:allow-write-file",
-      "allow": [{ "path": "**" }]
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     },
-	{
+    {
       "identifier": "fs:scope",
-      "allow": [{ "path": "**" }]
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     },
-	{
+    {
       "identifier": "fs:allow-rename",
-      "allow": [{ "path": "**" }]
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
     },
-	{
+    {
       "identifier": "shell:allow-execute",
       "allow": [
         {
           "args": true,
           "name": "bin/hpatch.exe",
           "sidecar": false,
-		  "cmd": "bin/hpatch.exe"
+          "cmd": "bin/hpatch.exe"
         }
       ]
     },
-	{
+    {
       "identifier": "shell:allow-spawn",
-      "allow": [{ "path": "**" }]
-    }
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    "sql:default",
+    "sql:allow-select",
+    "sql:allow-load",
+    "sql:allow-execute"
   ]
 }

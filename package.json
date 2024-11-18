@@ -39,6 +39,7 @@
 		"@sveltejs/adapter-static": "^3.0.6",
 		"@tauri-apps/plugin-fs": "^2.0.2",
 		"@tauri-apps/plugin-shell": "^2.0.1",
+		"@tauri-apps/plugin-sql": "~2",
 		"lucide-svelte": "^0.378.0"
 	}
 }
