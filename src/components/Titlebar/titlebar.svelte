@@ -1,8 +1,6 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
 	import { Minus, X } from 'lucide-svelte';
     import style from './style.module.scss';
-    import { page } from '$app/stores';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 
 	const appWindow = getCurrentWindow();

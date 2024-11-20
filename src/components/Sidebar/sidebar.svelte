@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-	import { Home, Upload, User } from 'lucide-svelte';
+	import { Home, User, Settings } from 'lucide-svelte';
     import style from './style.module.scss'
     import { page } from '$app/stores';
 
@@ -14,13 +14,13 @@
     };
     
     let homeColor = getButtonColor("/")
-    let updaterColor = getButtonColor("/update")
     let profileColor = getButtonColor("/profile")
+    let settingsColor = getButtonColor("/settings")
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/")
-        updaterColor = getButtonColor("/update")
         profileColor = getButtonColor("/profile")
+        settingsColor = getButtonColor("/settings")
     }
 
     page.subscribe(() => {
@@ -31,13 +31,13 @@
 <div class={style.sidebar}>
 	<div class={style.buttonsSidebar}>
 		<a class={style.button} href="/">
-			<Home color={homeColor} size={30} stroke-width={2.25} />
-        </a>
-		<a class={style.button} href="/update">
-			<Upload color={updaterColor} className="active" size={30} stroke-width={2.25} />
+			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
 		<a class={style.button} href="/profile">
-			<User color={profileColor} className="active" size={30} stroke-width={2.25} />
+			<User color={profileColor} size={30} strokeWidth={2.25} />
+        </a>
+		<a class={style.button} href="/settings">
+			<Settings color={settingsColor} size={30} strokeWidth={2.25} />
         </a>
 	</div>
 </div>

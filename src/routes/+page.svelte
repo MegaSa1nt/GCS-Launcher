@@ -1,8 +1,10 @@
 <script>
-	import { Settings, Play } from 'lucide-svelte';
+	import { Play } from 'lucide-svelte';
 	import style from './style.module.scss';
 	import library from '../libs/library.js';
 	import PlayButtonIcon from '../components/PlayButtonIcon/playButtonIcon.svelte';
+	
+	const gameName = library.getSettings().gdps_name;
 	
 	export let buttonState = window.playButtonState;
 	export let buttonIsAvailable = window.playButtonIsAvailable;
@@ -24,7 +26,7 @@
 <div class={style.contentBlock}>
 	<div class={style.head}>
 		<div class={style.title}>
-			GreenCatsServer
+			{gameName}
 		</div>
 		<div class={style.description}>
 			Привет, Sa1ntSosetHui!
@@ -37,9 +39,6 @@
 				<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
 					<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
 					<PlayButtonIcon state={buttonState} />
-				</div>
-				<div class={style.settingsButton}>
-					<Settings color='#FFFFFF' size={35} />
 				</div>
 			</div>
 		</div>

@@ -56,7 +56,7 @@ library.initializeEvents = async function() {
 	if(typeof window.new_updates == 'undefined') window.new_updates = [];
 	if(typeof window.recursive_check == 'undefined') window.recursive_check = [];
 	if(typeof window.game_folders == 'undefined') window.game_folders = [];
-	const dbPath = await window.__TAURI__.path.resolve(await window.__TAURI__.path.appCacheDir(), "files.db")
+	const dbPath = await resolve(await appCacheDir(), "files.db")
 	if(typeof window.db == 'undefined') window.db = await Database.load("sqlite:" + dbPath);
 	await db.execute(`CREATE TABLE IF NOT EXISTS 'files' (
 		'file' varchar(255) NOT NULL DEFAULT '',
@@ -84,6 +84,7 @@ library.getSettings = function() {
 	//const resourcePath = await resourceDir();
 	return {
 		updates_api_url: "https://updates.gcs.icu/",
+		dashboard_api_url: "https://api.gcs.icu/",
 		gdps_name: "GreenCatsServer",
 		game_exe: "GeometryDash.exe",
 		
@@ -265,6 +266,7 @@ library.patchGame = async function(patchTimestamp) {
 						recursive_check = [];
 						var i = 0;
 						const patchedFiles = [];
+						const downloadedFiles = [];
 						const deletedFiles = [];
 						for(i = 0; i < patchFiles.length; i++) {
 							var patchFunction = patchFiles[i].slice(-2);
@@ -280,9 +282,8 @@ library.patchGame = async function(patchTimestamp) {
 									console.log("Patched", patchFile);
 									break;
 								case '.m':
-									await invoke('download_file', { url: settings.updates_api_url + "download/" + btoa(encodeURIComponent(patchFile)), tempPath: patchPath});
-									patchedFiles.push(patchFile);
-									console.log("Downloaded", patchFile);
+									downloadedFiles.push(patchFile);
+									console.log("Will download", patchFile);
 									break;
 								case '.d':
 									await remove(patchPath).catch(err => {console.error(err);});
@@ -292,6 +293,10 @@ library.patchGame = async function(patchTimestamp) {
 							}
 						}
 						if(patchedFiles.length > 0) await library.addFilesToSQL(patchedFiles);
+						if(downloadedFiles.length > 0) {
+							await library.downloadSpecificFiles(downloadedFiles);
+							await library.addFilesToSQL(downloadedFiles);
+						}
 						if(deletedFiles.length > 0) await library.removeFilesFromSQL(deletedFiles);
 						await library.removeEmptyFolders();
 						game_folders = [];
@@ -349,7 +354,7 @@ library.addFilesToSQL = async function(allFiles) {
 	var i = 0;
 	for(i = 0; i < allFiles.length; i++) {
 		const fileRelativePath = allFiles[i];
-		const md5 = await window.__TAURI__.core.invoke('get_file_md5', {filePath: await join(settings.resource_path, fileRelativePath)}) ?? 'MD5 failed';
+		const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, fileRelativePath)}) ?? 'MD5 failed';
 		await db.execute("INSERT INTO files (file, md5) VALUES($1, $2) ON CONFLICT(file) DO UPDATE SET md5 = $2", [fileRelativePath, md5]);
 	}
 }
@@ -424,16 +429,52 @@ library.verifyGameFilesIntegrity = async function() {
 	const failedFiles = [];
 	for(i = 0; i < gameFiles.length; i++) {
 		const gameFile = gameFiles[i].file;
-		const md5 = await window.__TAURI__.core.invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
+		const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
 		if(gameFiles[i].md5 != md5) failedFiles.push(gameFile);
 	}
 	if(failedFiles.length == 0) {
 		library.changeUpdatingGameState(false);
 		console.log('All files are fine!');
 	} else {
-		console.log(failedFiles);
-		// Потом закончу
+		console.log("Found damaged files!");
+		await library.downloadSpecificFiles(failedFiles);
+		library.changeUpdatingGameState(false);
 	}
+}
+
+library.downloadSpecificFiles = async function(downloadFiles) {
+	return new Promise(async function(r) {
+		const settings = library.getSettings();
+		console.log("Downloading some specific files...");
+		const downloadArchivePath = await resolve(await appCacheDir() + "/download.7z");
+		invoke('download_archive', { url: settings.updates_api_url + "files", tempPath: downloadArchivePath, files: JSON.stringify({ files: downloadFiles })}).then(stdout => {
+			if(stdout == null) {
+				console.log('Unpacking downloaded files...');
+				invoke("unpack_archive", { archivePath: downloadArchivePath, extractPath: settings.resource_path}).then(async function(stdout) {
+					if(stdout == null) {
+						console.log('Extracted downloaded files!');
+						await remove(downloadArchivePath).catch(err => {console.error(err);});
+						r(true)
+					} else {
+						console.error('Failed to extract files:', stdout);
+						r(false);
+					}
+				});
+			} else {
+				console.error('Failed to download files:', stdout);
+				r(false);
+			}
+		});
+	});
+}
+
+library.getProfile = function(accountID) {
+	return new Promise(async function(r) {
+		const settings = library.getSettings();
+		fetch(settings.dashboard_api_url + "profile.php?accountID=" + accountID).then(res => res.json()).then(response => {
+			r(response);
+		})
+	});
 }
 
 library.styles = style;

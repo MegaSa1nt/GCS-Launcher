@@ -6,6 +6,7 @@ use std::path::Path;
 use std::path::PathBuf;
 use sysinfo::System;
 use std::ffi::OsStr;
+use reqwest::header::CONTENT_TYPE;
 
 use chksum_md5;
 
@@ -46,12 +47,27 @@ async fn check_processes(process: String) -> Result<(), String> {
     return Err("No process with that name was found".to_string());
 }
 
+#[tauri::command]
+async fn download_archive(url: String, temp_path: String, files: String) -> Result<(), String> {
+	let client = reqwest::Client::new();
+    let response = client.post(&url).header(CONTENT_TYPE, "application/json").body(files).send().await.expect("Failed downloading file");
+    let body = response.bytes().await.expect("Failed downloading file");
+    let path = Path::new(&temp_path);
+
+    let file = match File::create(&path) {
+        Err(why) => Err(why.to_string()),
+        Ok(file) => Ok(file),
+    };
+    file?.write_all(&body.to_vec()).expect(&"Failed writing file".to_string());
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_sql::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
-        .invoke_handler(tauri::generate_handler![download_file, unpack_archive, get_file_md5, check_processes])
+        .invoke_handler(tauri::generate_handler![download_file, unpack_archive, get_file_md5, check_processes, download_archive])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

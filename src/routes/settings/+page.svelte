@@ -1,11 +1,11 @@
 <script>
-	import { Settings, Download } from 'lucide-svelte';
+	import { Download } from 'lucide-svelte';
 	import style from './style.module.scss';
 </script>
 
 <svelte:head>
-	<title>Update</title>
-	<meta name="description" content="Updater" />
+	<title>Profile</title>
+	<meta name="description" content="Profile" />
 </svelte:head>
 
 <div class={style.updaterBlock}>
@@ -16,10 +16,10 @@
 
 		<div class={style.textContent}>
 			<div class={style.title}>
-				Новая версия!
+				Профиль
 			</div>
 			<div class={style.description}>
-				Доступна новая версия для скачивания
+				Хуёфиль
 			</div>
 		</div>
 	</div>
