@@ -8,7 +8,7 @@
 .profilePostStats {
 	display: flex;
 	justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
 }
 
 .profileUsername {
@@ -51,7 +51,8 @@
     height: 30px;
     transition: 0.2s;
     cursor: pointer;
-    border-bottom-left-radius: 5px;
+	border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
 }
 
 .profileReplyButton:hover {
@@ -63,6 +64,30 @@
 	font-weight: normal;
     opacity: 0.5;
 	font-size: 14px;
+}
+
+.postButtons {
+	display: flex;
+}
+
+.profileLikeButton {
+	display: flex;
+    background: #29282c;
+    border: none;
+    padding: 5px 5px 5px 7px;
+    border-radius: 15px;
+    width: max-content;
+    height: 30px;
+    transition: 0.2s;
+    cursor: normal;
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+    font-size: 15px;
+    color: white;
+    justify-content: flex-start;
+    align-items: center;
+    grid-gap: 5px;
+	border-bottom-left-radius: 5px;
 }
 
 .postPlusReplies {
@@ -107,4 +132,8 @@
 
 .show svg {
 	opacity: 1;
+}
+
+.onlyButtons {
+	display: flex;
 }

@@ -2,7 +2,7 @@
 	width: 100%;
     display: flex;
     align-items: flex-end;
-    justify-content: space-between;
+    justify-content: flex-end;
 }
 
 .profilePostStats {
@@ -18,9 +18,8 @@
 }
 
 .profilePost {
-	width: 100%;
+	width: 90%;
 	height: max-content;
-	background-color: #D9D9D909;
 	border-radius: 10px;
 	padding: 8px 10px 10px 10px;
 	grid-gap: 10px;
@@ -68,43 +67,5 @@
 .postPlusReplies {
 	display: flex;
 	grid-gap: 5px;
-	flex-direction: column;
-    width: 100%;
 	justify-content: center;
-}
-
-.hide {
-	display: none;
-}
-
-.repliesLoader {
-	display: flex;
-	align-items: center;
-    grid-gap: 5px;
-}
-
-.spin {
-	display: contents;
-}
-
-.spin svg {
-	animation-name: rotation;
-    animation-duration: 1.5s;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-	opacity: 0;
-	transition: 0.2s;
-}
-
-@keyframes rotation {
-    0% {
-        transform:rotate(0deg);
-    }
-    100% {
-        transform:rotate(360deg);
-    }
-}
-
-.show svg {
-	opacity: 1;
 }

@@ -1,30 +1,36 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
 	import { Home, User, Settings } from 'lucide-svelte';
-    import style from './style.module.scss'
+    import style from './style.module.scss';
     import { page } from '$app/stores';
+	import library from '../../libs/library.js';
+
+	library.initializeVariables();
 
     const colors = {
         "active": '#3EE667',
         "none": '#C7C6CA'
-    }
+    };
+
+	const profileTypes = ['gd', 'launcher', 'jeros'];
+	export let sidebarProfileType = profileTypes[localStorage.profile_type];
 
     function getButtonColor(path: string): string {
         return path == $page.url.pathname ? colors.active : colors.none;
     };
     
-    let homeColor = getButtonColor("/")
-    let profileColor = getButtonColor("/profile")
-    let settingsColor = getButtonColor("/settings")
+    let homeColor = getButtonColor("/");
+    let profileColor = getButtonColor("/profile-" + sidebarProfileType);
+    let settingsColor = getButtonColor("/settings");
     
     const updateButtonColors = () => {
-        homeColor = getButtonColor("/")
-        profileColor = getButtonColor("/profile")
-        settingsColor = getButtonColor("/settings")
+        homeColor = getButtonColor("/");
+        profileColor = getButtonColor("/profile-" + sidebarProfileType);
+        settingsColor = getButtonColor("/settings");
     }
 
     page.subscribe(() => {
-        updateButtonColors()
+        updateButtonColors();
+		sidebarProfileType = profileTypes[localStorage.profile_type];
     })
 </script>
 
@@ -33,7 +39,7 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
-		<a class={style.button} href="/profile">
+		<a class={style.button} href={"/profile-" + sidebarProfileType}>
 			<User color={profileColor} size={30} strokeWidth={2.25} />
         </a>
 		<a class={style.button} href="/settings">

@@ -76,6 +76,7 @@ const gameCheckInterval = setInterval(async function() {
 
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
+	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 0;
 }
 
 library.getSettings = function() {
@@ -473,7 +474,7 @@ library.getProfile = function(accountID) {
 		const settings = library.getSettings();
 		fetch(settings.dashboard_api_url + "profile.php?accountID=" + accountID).then(res => res.json()).then(response => {
 			r(response);
-		})
+		});
 	});
 }
 

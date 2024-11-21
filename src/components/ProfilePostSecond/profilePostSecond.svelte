@@ -29,7 +29,7 @@
 	export let timestamp = 0;
 	export let postID = 0;
 	
-	var profileReplies = [];
+	export let profileReplies = [];
 	var postReplies = {};
 	
 	async function checkReplies(postID) {
@@ -63,26 +63,30 @@
 		<div class={style.profilePostStats}>
 			<h2 class={style.profileUsername}>{username}</h2>
 			<div class={style.profilePostLikes}>
-				{#if likes >= dislikes}
-					<ThumbsUp size={20} /> {likes - dislikes}
-				{:else}
-					<ThumbsDown size={20} /> {dislikes - likes}
-				{/if}
+				<h4 class={style.profilePostTime}>{timeConverter(timestamp, true)}</h4>
 			</div>
 		</div>
 		<h3>
 			{postText}
 		</h3>
 		<div class={style.profileCreatePostDiv}>
-			<div class={style.repliesLoader}>
-				<button on:click={() => checkReplies(postID)} class={style.profileReplyButton}>
-					<MessageCircleMore size={20} color="#FFFFFF"/>
-				</button>
-				<span class={style.spin} id={"profilePostSpinner" + postID}>
+			<div class={[style.postButtons, style.repliesLoader].join(' ')}>
+				<div class={style.onlyButtons}>
+					<button class={style.profileLikeButton}>
+						{#if likes >= dislikes}
+							<ThumbsUp color="#FFFFFF" size={20} /> {likes - dislikes}
+						{:else}
+							<ThumbsDown color="#FFFFFF" size={20} /> {dislikes - likes}
+						{/if}
+					</button>
+					<button on:click={() => checkReplies(postID)} class={style.profileReplyButton}>
+						<MessageCircleMore size={20} color="#FFFFFF"/>
+					</button>
+				</div>
+				<span class={[style.spin]} id={"profilePostSpinner" + postID}>
 					<LoaderCircle color="#FFFFFF" size={15} strokeWidth={3} />
 				</span>
 			</div>
-			<h4 class={style.profilePostTime}>{timeConverter(timestamp, true)}</h4>
 		</div>
 	</div>
 	{#if profileReplies.length > 0}
