@@ -1,10 +1,12 @@
 <script>
 	import style from './style.module.scss';
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
+	import SettingsSidebar from '../components/SettingsSidebar/settingsSidebar.svelte';
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import library from '../libs/library.js';
+	import { page } from '$app/stores';
 	
 	library.checkUpdates();
 
@@ -23,7 +25,6 @@
 			});
 		});
 	});
-	
 	document.addEventListener('keydown', event => {
 		switch(event.key) {
 			case 'F5':
@@ -44,7 +45,11 @@
 <div class="app">
 	<main class={style.main}>
 		<Titlebar />
-		<Sidebar />
+		{#if !$page.url.pathname.startsWith("/settings")}
+			<Sidebar />
+		{:else}
+			<SettingsSidebar />
+		{/if}
 		<div class={style.content}>
 			<slot />
 		</div>

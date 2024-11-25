@@ -1,10 +1,8 @@
-.updaterBlock {
-    display: flex;
-
-    width: 100%;
-
-    padding: 24px 24px 17px 24px;
-    background-color: #D9D9D907;
+.contentBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 100%;
 }
 
 .button {
@@ -18,24 +16,140 @@
     border-radius: 15px; 
 }
 
-.head {
-    display: flex;
-    gap: 14px;
-}
-
-.textContent {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
 .title {
-    font-weight: 700;
-    font-size: 36px;
+	font-size: 36px;
+	font-weight: 600;
 }
 
 .description {
-    opacity: 50%;
-    font-weight: 500;
-    font-size: 20px;
+	font-size: 20px;
+	font-weight: 400;
+	color: #FFFFFF;
+	opacity: 80%;
+}
+
+.head {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.allSettingsDiv {
+	display: flex;
+	flex-direction: column;
+	background-color: #D9D9D909;
+	padding: 15px;
+	border-radius: 15px;
+	grid-gap: 10px;
+}
+
+.settingDiv {
+	display: flex;
+	grid-gap: 10px;
+	align-items: center;
+}
+
+.settingDescription {
+	display: flex;
+    flex-direction: column;
+    grid-gap: 5px;
+	width: 100%;
+}
+
+.settingDescription h2,
+.settingDescription h3 {
+	margin: 0px;
+}
+
+.settingDescription h2 {
+	line-height: 0.9;
+}
+
+.settingDescription h3 {
+	color: gray;
+	font-weight: 400;
+	font-size: 15px;
+}
+
+hr {
+	width: 100%;
+    margin: 5px 0px;
+    opacity: 0.1;
+}
+
+.settingsButton {
+	display: flex;
+	border: none;
+	width: max-content;
+	height: max-content;
+	padding: 10px;
+	background-color: #242424;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.settingsButton:hover {
+	background-color: #2a2a2a;
+}
+
+.dangerButton:hover {
+	background-color: #5c2222;
+}
+
+.settingsButton:disabled {
+	background-color: #141414;
+	cursor: not-allowed;
+}
+
+.inputStyle {
+	padding: 10px;
+	background-color: #242424;
+	border: none;
+	border-radius: 10px;
+	font-size: 15px;
+	color: #c0c0c0;
+	outline: none;
+}
+
+.inputDiv {
+	display: flex;
+	flex-direction: column;
+	grid-gap: 5px;
+}
+
+.inputDiv h2 {
+	font-size: 20px;
+	margin: 0px;
+}
+
+.loginDiv {
+	display: flex;
+	flex-direction: column;
+	background-color: #D9D9D909;
+	padding: 15px;
+	border-radius: 10px;
+	grid-gap: 10px;
+	width: 70%;
+    margin-left: 15%;
+}
+
+.loginButton {
+	border: none;
+	outline: none;
+	cursor: pointer;
+	padding: 10px;
+	border-radius: 10px;
+	font-size: 17px;
+	background: #242424;
+	transition: 0.2s;
+	color: white;
+}
+
+.loginButton:hover {
+	background: #2a2a2a;
+}
+
+form {
+	display: contents;
 }

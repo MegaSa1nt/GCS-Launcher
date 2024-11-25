@@ -81,6 +81,7 @@
     "sql:default",
     "sql:allow-select",
     "sql:allow-load",
-    "sql:allow-execute"
+    "sql:allow-execute",
+    "notification:default"
   ]
 }

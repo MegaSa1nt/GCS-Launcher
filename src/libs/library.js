@@ -3,6 +3,7 @@ import { appCacheDir, resolve, resourceDir, join, sep } from '@tauri-apps/api/pa
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
 import Database from '@tauri-apps/plugin-sql';
+import { sendNotification } from '@tauri-apps/plugin-notification';
 import style from './style.module.scss';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
@@ -76,7 +77,8 @@ const gameCheckInterval = setInterval(async function() {
 
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
-	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 0;
+	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 1;
+	if(typeof localStorage.enable_notifications == 'undefined') localStorage.enable_notifications = true;
 }
 
 library.getSettings = function() {
@@ -110,6 +112,7 @@ library.checkUpdates = async function() {
 				library.changePendingUpdateState(false);
 				return true;
 			} else {
+				library.sendNotification("Обновление игры", "Лаунчер нашёл обновление для игры!");
 				console.log("Updates were found!");
 				window.new_updates = response;
 				library.changeIsCheckingUpdateState(false);
@@ -138,6 +141,7 @@ library.installGame = async function() {
 				if(stdout === null) {
 					console.log('Adding all files to SQL... (that means it also calculates MD5 checksum for all files)');
 					await library.addFolderToSQL(settings.resource_path);
+					library.sendNotification("Игра установлена", "Игра была успешно установлена! Приятной игры :)");
 					console.log('Game successfully downloaded!');
 					library.changeUpdatingGameState(false);
 					library.cleanTemporaryFiles();
@@ -233,6 +237,7 @@ library.updateGame = async function() {
 		await library.patchGame(new_updates[i]);
 	}
 	const lastUpdateTimestamp = new_updates[new_updates.length - 1];
+	library.sendNotification("Игра обновлена", "Игра была успешно обновлена! Приятной игры :)");
 	console.log('Game successfully updated!');
 	library.changeUpdatingGameState(false);
 	library.cleanTemporaryFiles();
@@ -392,6 +397,7 @@ library.uninstallGame = async function() {
 	await db.execute("DELETE FROM files");
 	await db.execute("DELETE FROM folders");
 	localStorage.update_time = 0;
+	library.sendNotification("Игра удалена", "Игра была удалена! До встречи...");
 	console.log('Game was successfully deleted! ...');
 	library.changePendingUpdateState(true);
 	library.changeUpdatingGameState(false);
@@ -430,8 +436,13 @@ library.verifyGameFilesIntegrity = async function() {
 	const failedFiles = [];
 	for(i = 0; i < gameFiles.length; i++) {
 		const gameFile = gameFiles[i].file;
-		const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
-		if(gameFiles[i].md5 != md5) failedFiles.push(gameFile);
+		try {
+			const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
+			if(gameFiles[i].md5 != md5) failedFiles.push(gameFile);
+		} catch(e) {
+			console.log('File', gameFile, 'was not found');
+			failedFiles.push(gameFile);
+		}
 	}
 	if(failedFiles.length == 0) {
 		library.changeUpdatingGameState(false);
@@ -478,10 +489,18 @@ library.getProfile = function(accountID) {
 	});
 }
 
+library.openGameFolder = async function() {
+	const settings = library.getSettings();
+	open(settings.resource_path);
+}
+
+library.sendNotification = async function(title, body) {
+	if(localStorage.enable_notifications == 'false') return;
+	sendNotification({title: title.toString(), body: body.toString()});
+}
+
 library.styles = style;
 
 library.initializeEvents();
-
-//window.lib = library;
 
 export default library;

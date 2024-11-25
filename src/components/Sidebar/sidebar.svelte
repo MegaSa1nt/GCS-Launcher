@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Home, User, Settings } from 'lucide-svelte';
+	import { Home, User } from 'lucide-svelte';
     import style from './style.module.scss';
     import { page } from '$app/stores';
 	import library from '../../libs/library.js';
@@ -20,12 +20,10 @@
     
     let homeColor = getButtonColor("/");
     let profileColor = getButtonColor("/profile-" + sidebarProfileType);
-    let settingsColor = getButtonColor("/settings");
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/");
         profileColor = getButtonColor("/profile-" + sidebarProfileType);
-        settingsColor = getButtonColor("/settings");
     }
 
     page.subscribe(() => {
@@ -41,9 +39,6 @@
         </a>
 		<a class={style.button} href={"/profile-" + sidebarProfileType}>
 			<User color={profileColor} size={30} strokeWidth={2.25} />
-        </a>
-		<a class={style.button} href="/settings">
-			<Settings color={settingsColor} size={30} strokeWidth={2.25} />
         </a>
 	</div>
 </div>
