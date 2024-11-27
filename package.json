@@ -1,5 +1,5 @@
 {
-	"name": "gcs",
+	"name": "gdps-launcher",
 	"version": "2.0.0",
 	"scripts": {
 		"dev": "vite dev",

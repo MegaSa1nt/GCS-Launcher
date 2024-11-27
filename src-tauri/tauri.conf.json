@@ -8,12 +8,12 @@
   },
   "bundle": {
     "active": true,
-    "shortDescription": "Лаунчер для GreenCatsServer.",
-    "longDescription": "Лаунчер для GreenCatsServer.",
-    "copyright": "GreenCatsServer",
-    "publisher": "MegaSa1nt, GreenCatsServer",
+    "shortDescription": "GDPS launcher",
+    "longDescription": "GDPS launcher",
+    "copyright": "YourGDPS",
+    "publisher": "YourUsername, YourGDPS",
     "icon": [
-      "icons/lil.ico"
+      "icons/icon.ico"
     ],
     "windows": {
       "webviewInstallMode": {
@@ -21,7 +21,7 @@
         "silent": false
       },
       "nsis": {
-        "installerIcon": "icons/updater.ico",
+        "installerIcon": "icons/icon.ico",
         "languages": [
           "English"
         ],
@@ -32,10 +32,10 @@
     "targets": ["nsis"],
 	"resources": ["./bin/hpatch.exe", "./updater.exe"]
   },
-  "productName": "GCS-Launcher",
+  "productName": "GDPS-Launcher",
   "mainBinaryName": "launcher",
   "version": "2.0.0",
-  "identifier": "sa1nt.gcs",
+  "identifier": "username.gdps",
   "plugins": {},
   "app": {
     "windows": [
@@ -45,7 +45,7 @@
         "height": 500,
         "resizable": false,
         "decorations": false,
-        "title": "Лаунчер GreenCatsServer",
+        "title": "GDPS launcher",
         "width": 800,
         "center": true,
         "theme": "Dark",

@@ -7,6 +7,11 @@ import { sendNotification } from '@tauri-apps/plugin-notification';
 import style from './style.module.scss';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
+import languageStrings from './languages.js';
+let strings = languageStrings;
+import('./languages.js?' + localStorage.language).then(str => {
+	strings = str.default.default;
+});
 
 window.gameUpdatingAnimation = '';
 window.playButtonIsAvailable = style.isAvailable;
@@ -91,13 +96,12 @@ library.initializeVariables = function() {
 
 library.getSettings = function() {
 	library.initializeVariables();
-	const resourcePath = "C:\\Users\\megas\\OneDrive\\Рабочий стол\\UNPACKING TEST";
-	//const resourcePath = await resourceDir();
+	const resourcePath = await resourceDir();
 	return {
-		updates_api_url: "https://updates.gcs.icu/",
-		dashboard_api_url: "https://api.gcs.icu/",
-		gdps_name: "GreenCatsServer",
-		game_exe: "GeometryDash.exe",
+		updates_api_url: "https://updates.example.com/",
+		dashboard_api_url: "https://example.com/dashboard/api/",
+		gdps_name: "GDPS",
+		game_exe: "GDPS.exe",
 		
 		update_time: localStorage.update_time,
 		resource_path: resourcePath
@@ -120,7 +124,7 @@ library.checkUpdates = async function() {
 				library.changePendingUpdateState(false);
 				return true;
 			} else {
-				library.sendNotification("Обновление игры", "Лаунчер нашёл обновление для игры!");
+				library.sendNotification(settings.foundUpdate.title, settings.foundUpdate.description);
 				console.log("Updates were found!");
 				window.new_updates = response;
 				library.changeIsCheckingUpdateState(false);
@@ -149,7 +153,7 @@ library.installGame = async function() {
 				if(stdout === null) {
 					console.log('Adding all files to SQL... (that means it also calculates MD5 checksum for all files)');
 					await library.addFolderToSQL(settings.resource_path);
-					library.sendNotification("Игра установлена", "Игра была успешно установлена! Приятной игры :)");
+					library.sendNotification(settings.gameInstalled.title, settings.gameInstalled.description);
 					console.log('Game successfully downloaded!');
 					library.changeUpdatingGameState(false);
 					library.cleanTemporaryFiles();
@@ -245,7 +249,7 @@ library.updateGame = async function() {
 		await library.patchGame(new_updates[i]);
 	}
 	const lastUpdateTimestamp = new_updates[new_updates.length - 1];
-	library.sendNotification("Игра обновлена", "Игра была успешно обновлена! Приятной игры :)");
+	library.sendNotification(settings.gameUpdated.title, settings.gameUpdated.description);
 	console.log('Game successfully updated!');
 	library.changeUpdatingGameState(false);
 	library.cleanTemporaryFiles();
@@ -405,7 +409,7 @@ library.uninstallGame = async function() {
 	await db.execute("DELETE FROM files");
 	await db.execute("DELETE FROM folders");
 	localStorage.update_time = 0;
-	library.sendNotification("Игра удалена", "Игра была удалена! До встречи...");
+	library.sendNotification(settings.gameDeleted.title, settings.gameDeleted.description);
 	console.log('Game was successfully deleted! ...');
 	library.changePendingUpdateState(true);
 	library.changeUpdatingGameState(false);

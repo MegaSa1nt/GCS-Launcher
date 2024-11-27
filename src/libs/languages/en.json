@@ -2,6 +2,25 @@
 	"mainPage": "Hi %1$s!",
 	"guest": "guest",
 	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Game was installed",
+			"description": "Game was successfully installed!"
+		},
+		"gameUpdated": {
+			"title": "Game was updated",
+			"description": "Game was successfully updated!"
+		},
+		"gameDeleted": {
+			"title": "Game was deleted",
+			"description": "Game was successfully deleted..."
+		},
+		"foundUpdate": {
+			"title": "New game update",
+			"description": "Launcher found new update for game!"
+		}
+	},
+	
 	"settings": {
 		"title": "Settings",
 		

@@ -2,6 +2,25 @@
 	"mainPage": "Привет, %1$s!",
 	"guest": "гость",
 	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Игра установлена",
+			"description": "Игра была успешно установлена! Приятной игры :)"
+		},
+		"gameUpdated": {
+			"title": "Игра обновлена",
+			"description": "Игра была успешно обновлена! Приятной игры :)"
+		},
+		"gameDeleted": {
+			"title": "Игра удалена",
+			"description": "Игра была удалена! До встречи..."
+		},
+		"foundUpdate": {
+			"title": "Обновление игры",
+			"description": "Лаунчер нашёл обновление для игры!"
+		}
+	},
+	
 	"settings": {
 		"title": "Настройки",
 		
