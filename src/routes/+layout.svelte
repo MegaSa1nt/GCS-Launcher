@@ -5,8 +5,11 @@
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
+	import { getVersion } from '@tauri-apps/api/app';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
+	import { open } from '@tauri-apps/plugin-shell';
+	import { exit } from '@tauri-apps/plugin-process';
 	
 	library.checkUpdates();
 
@@ -39,7 +42,20 @@
 		event.preventDefault();
 		return false;
 	});
-	appWindow.show();
+	
+	const settings = library.getSettings();
+	
+	fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
+		const version = await getVersion();
+		if(version != response) {
+			open("updater.exe");
+			exit(0);
+		} else {
+			appWindow.show();
+		}
+	}).catch(e => {
+		appWindow.show();
+	});
 </script>
 
 <div class="app">

@@ -36,12 +36,12 @@ async fn unpack_archive(archive_path: String, extract_path: String) -> Result<()
 #[tauri::command]
 async fn get_file_md5(file_path: String) -> Result<String, String> {
     let path = PathBuf::from(file_path);
-	if path.exists() {
-		let digest = chksum_md5::chksum(path).expect("MD5 failed");
-		Ok(digest.to_hex_lowercase())
-	} else {
-		Err("Path doesn't exist".to_string())
-	}
+    if path.exists() {
+        let digest = chksum_md5::chksum(path).expect("MD5 failed");
+        Ok(digest.to_hex_lowercase())
+    } else {
+        Err("Path doesn't exist".to_string())
+    }
 }
 
 #[tauri::command]
@@ -78,13 +78,14 @@ async fn download_archive(url: String, temp_path: String, files: String) -> Resu
 }
 
 fn main() {
-	let mut builder = tauri::Builder::default();
+    let mut builder = tauri::Builder::default().plugin(tauri_plugin_process::init());
     #[cfg(desktop)]
     {
         builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-			let _ = app.get_webview_window("main")
-				.expect("no main window")
-				.set_focus();
+            let _ = app
+                .get_webview_window("main")
+                .expect("no main window")
+                .set_focus();
         }));
     }
     builder
