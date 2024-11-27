@@ -1,0 +1,102 @@
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/res/fonts/regular.otf');
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('/res/fonts/medium.otf');
+	font-weight: 700;
+	font-style: normal;
+}
+
+@font-face {
+    font-family: 'SF Pro Display';
+    src: url('res/fonts/bold.otf');
+	font-weight: 900;
+	font-style: normal;
+}
+
+html {
+	overflow: hidden;
+}
+
+body {
+	font-family: 'SF Pro Display', sans-serif;
+    border-radius: 15px;
+    background-color: transparent;
+	margin: 0px;
+}
+
+button {
+	background: none;
+	border: none;
+}
+
+.h1, h1 {
+    font-size: 2rem;
+	width: 100%;
+	color: white;
+	text-align: center;
+	font-weight: 600;
+	margin: 0px;
+}
+
+.maindiv {
+	display: flex;
+    flex-direction: column;
+    align-items: center;
+	height: 100%;
+	width: 100%;
+	justify-content: space-around;
+}
+
+.login {
+	position: fixed;
+	left: 10px;
+    top: 10px;
+	cursor: pointer;
+	padding: 0px;
+}
+
+.titlebar {
+  height: 30px;
+  user-select: none;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  width: 93%;
+}
+
+.mahbody {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: #131313;
+	border-radius: 15px;
+}
+
+.spin {
+    animation-name: rotation;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+	width: 100px;
+}
+@keyframes rotation {
+    0% {
+        transform:rotate(0deg);
+    }
+    100% {
+        transform:rotate(360deg);
+    }
+}
+
+progress::-webkit-progress-value {  
+  background: linear-gradient(-90deg, rgba(106,255,115,1) 0%, rgba(0,255,86,1) 100%);
+} 

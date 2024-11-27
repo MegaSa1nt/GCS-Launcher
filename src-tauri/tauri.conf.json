@@ -1,61 +1,40 @@
 {
-  "$schema": "../node_modules/@tauri-apps/cli/schema.json",
   "build": {
-    "beforeBuildCommand": "npm run build",
-    "beforeDevCommand": "npm run dev",
-    "frontendDist": "../build",
-    "devUrl": "http://localhost:5173"
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "frontendDist": "../src"
   },
   "bundle": {
     "active": true,
-    "shortDescription": "Лаунчер для GreenCatsServer.",
-    "longDescription": "Лаунчер для GreenCatsServer.",
-    "copyright": "GreenCatsServer",
-    "publisher": "MegaSa1nt, GreenCatsServer",
+    "shortDescription": "Launcher updater",
+    "longDescription": "Launcher updater",
+    "copyright": "YourGDPS",
+    "publisher": "YourUsername, YourGDPS",
     "icon": [
-      "icons/lil.ico"
+      "icons/updater.ico"
     ],
-    "windows": {
-      "webviewInstallMode": {
-        "type": "embedBootstrapper",
-        "silent": false
-      },
-      "nsis": {
-        "installerIcon": "icons/updater.ico",
-        "languages": [
-          "English"
-        ],
-        "displayLanguageSelector": false
-      },
-      "allowDowngrades": false
-    },
-    "targets": ["nsis"],
-	"resources": ["./bin/hpatch.exe"]
+    "targets": "all"
   },
-  "productName": "gcs",
-  "mainBinaryName": "gcs",
-  "version": "2.0.0",
-  "identifier": "sa1nt.gcs",
+  "productName": "updater",
+  "mainBinaryName": "updater",
+  "version": "1.0.0",
+  "identifier": "username.gdps.updater",
   "plugins": {},
   "app": {
     "windows": [
       {
-		"label": "main",
         "fullscreen": false,
-        "height": 500,
         "resizable": false,
-        "decorations": false,
-        "title": "Лаунчер GreenCatsServer",
-        "width": 800,
+        "title": "Launcher updater",
+        "width": 300,
+        "height": 350,
         "center": true,
         "theme": "Dark",
-        "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
-        "transparent": true,
-        "useHttpsScheme": true,
-		"visible": false
+        "decorations": false,
+        "transparent": true
       }
     ],
-	"withGlobalTauri": true,
+    "withGlobalTauri": true,
     "security": {
       "csp": null
     }
