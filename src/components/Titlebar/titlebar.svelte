@@ -10,7 +10,7 @@
 	}
 	
 	function closeLauncher() {
-		appWindow.close();
+		appWindow.hide();
 	}
 </script>
 

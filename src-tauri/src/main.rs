@@ -8,6 +8,10 @@ use std::path::Path;
 use std::path::PathBuf;
 use sysinfo::System;
 use tauri::Manager;
+use tauri::{
+    menu::{MenuBuilder, MenuItemBuilder},
+    tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
+};
 
 use chksum_md5;
 
@@ -100,6 +104,42 @@ fn main() {
             check_processes,
             download_archive
         ])
+		.setup(|app| {
+			let open = MenuItemBuilder::with_id("open".to_string(), "Развернуть лаунчер").build(app)?;
+			let close = MenuItemBuilder::with_id("quit".to_string(), "Закрыть лаунчер").build(app)?;
+			let menu = MenuBuilder::new(app).items(&[&open, &close]).build()?;
+			let _tray = TrayIconBuilder::new()
+            .menu(&menu)
+			.icon(tauri::image::Image::from_bytes(include_bytes!("..\\icons\\lil.ico"))?)
+            .on_menu_event(move |app, event| match event.id().as_ref() {
+                "open" => {
+                    if let Some(webview_window) = app.get_webview_window("main") {
+						let _ = webview_window.show();
+						let _ = webview_window.unminimize();
+						let _ = webview_window.set_focus();
+                    }
+                },
+				"quit" => {
+                    std::process::exit(0);
+                },
+                _ => (),
+            })
+            .on_tray_icon_event(|tray, event| {
+				if let TrayIconEvent::Click { button, button_state, .. } = event {
+					if button_state == MouseButtonState::Up && button == MouseButton::Left {
+						let app = tray.app_handle();
+						if let Some(webview_window) = app.get_webview_window("main") {
+							let _ = webview_window.show();
+							let _ = webview_window.unminimize();
+							let _ = webview_window.set_focus();
+						}
+					}
+				}
+            })
+            .build(app)?;
+
+        Ok(())
+		})
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
