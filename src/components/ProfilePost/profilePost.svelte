@@ -41,7 +41,7 @@
 		postReplies[postID] = false;
 		document.getElementById("profilePostSpinner" + postID).classList.add(style.show);
 		return new Promise(async function(r) {
-			const settings = library.getSettings();
+			const settings = await library.getSettings();
 			fetch(settings.dashboard_api_url + "replies.php", {
 				method: "POST",
 				body: "commentID=" + postID,

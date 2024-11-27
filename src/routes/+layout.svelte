@@ -47,19 +47,20 @@
 		return false;
 	});
 	
-	const settings = library.getSettings();
-	
-	fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
-		const version = await getVersion();
-		if(version != response) {
-			open("updater.exe");
-			exit(0);
-		} else {
+	library.getSettings().then(settings => {		
+		fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
+			const version = await getVersion();
+			if(version != response) {
+				open("updater.exe");
+				exit(0);
+			} else {
+				appWindow.show();
+			}
+		}).catch(e => {
 			appWindow.show();
-		}
-	}).catch(e => {
-		appWindow.show();
+		});
 	});
+	
 </script>
 
 <div class="app">

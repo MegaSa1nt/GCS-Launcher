@@ -79,7 +79,7 @@ library.initializeEvents = async function() {
 }
 
 const gameCheckInterval = setInterval(async function() {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	library.checkProcess(settings.game_exe);
 },	500);
 
@@ -96,22 +96,24 @@ library.initializeVariables = function() {
 
 library.getSettings = function() {
 	library.initializeVariables();
-	const resourcePath = await resourceDir();
-	return {
-		updates_api_url: "https://updates.gcs.icu/",
-		dashboard_api_url: "https://api.gcs.icu/",
-		gdps_name: "GreenCatsServer",
-		game_exe: "GreenCatsServer.exe",
-		
-		update_time: localStorage.update_time,
-		resource_path: resourcePath
-	}
+	return new Promise(async function(r) {
+		const resourcePath = await resourceDir();
+		r({
+			updates_api_url: "https://updates.gcs.icu/",
+			dashboard_api_url: "https://api.gcs.icu/",
+			gdps_name: "GreenCatsServer",
+			game_exe: "GreenCatsServer.exe",
+			
+			update_time: localStorage.update_time,
+			resource_path: resourcePath
+		});
+	});
 }
 
 library.checkUpdates = async function() {
 	if(window.isCheckingUpdate) return;
 	await library.changeIsCheckingUpdateState(true);
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	if(settings.update_time == 0) {
 		console.log('You should install game ;)');
 		await library.changeIsCheckingUpdateState(false);
@@ -142,7 +144,7 @@ library.installGame = async function() {
 	if(window.isUpdatingGame) return;
 	library.changeUpdatingGameState(true);
 	library.changePendingUpdateState(false);
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	const lastUpdateTimestamp = await library.getLatestUpdateTimestamp();
 	const configPath = await resolve(await appCacheDir() + "/temp.7z");
 	console.log('Starting downloading game...');
@@ -181,7 +183,7 @@ library.installGame = async function() {
 }
 
 library.cleanTemporaryFiles = async function(patchTimestamp = 0) {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	const configPath = await appCacheDir();
 	await remove(configPath + "/temp.7z").catch(err => {console.log("Temporary game archive was not found. Nothing to delete!");});
 	if(patchTimestamp != 0) {
@@ -224,7 +226,7 @@ library.openOrInstallGame = async function() {
 	if(isGameRunning) return;
 	if(isPendingUpdate) return library.updateGame();
 	clearInterval(gameCheckInterval);
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	await library.changeIsGameStartingState(true);
 	await open(await join(settings.resource_path, settings.game_exe)).then(res => {
 		library.changeIsGameStartingState(false);
@@ -240,7 +242,7 @@ library.openOrInstallGame = async function() {
 
 library.updateGame = async function() {
 	if(window.isUpdatingGame) return;
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	if(settings.update_time == 0) return library.installGame();
 	library.changePendingUpdateState(false);
 	library.changeUpdatingGameState(true);
@@ -257,7 +259,7 @@ library.updateGame = async function() {
 }
 
 library.getLatestUpdateTimestamp = async function() {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	return new Promise(r => {
 		fetch(settings.updates_api_url + "lastUpdate").then(res => res.json()).then(response => {
 			r(response.timestamp);
@@ -269,7 +271,7 @@ library.getLatestUpdateTimestamp = async function() {
 }
 
 library.patchGame = async function(patchTimestamp) {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	const patchArchivePath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp + ".7z");
 	const patchFolderPath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp);
 	console.log('Downloading patch ' + patchTimestamp + '...');
@@ -368,7 +370,7 @@ library.addFolderToSQL = async function(folder) {
 }
 
 library.addFilesToSQL = async function(allFiles) {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	var i = 0;
 	for(i = 0; i < allFiles.length; i++) {
 		const fileRelativePath = allFiles[i];
@@ -378,7 +380,7 @@ library.addFilesToSQL = async function(allFiles) {
 }
 
 library.addGameFoldersToSQL = async function(allFolders) {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	var i = 0;
 	for(i = 0; i < allFolders.length; i++) {
 		const folderRelativePath = allFolders[i];
@@ -393,7 +395,7 @@ library.removeFilesFromSQL = async function(allFiles) {
 
 library.uninstallGame = async function() {
 	if(window.isUpdatingGame) return;
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	console.log('Deleting game...');
 	library.changeUpdatingGameState(true);
 	const gameFiles = await db.select("SELECT file FROM files");
@@ -417,7 +419,7 @@ library.uninstallGame = async function() {
 }
 
 library.removeEmptyFolders = async function() {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	var i = game_folders.length - 1;
 	for(i = game_folders.length - 1; i >= 0; i--) {
 		const folderPath = game_folders[i];
@@ -440,7 +442,7 @@ library.checkProcess = async function(process) {
 
 library.verifyGameFilesIntegrity = async function() {
 	if(window.isUpdatingGame) return;
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	console.log("Verifying game files integrity...");
 	library.changeUpdatingGameState(true);
 	const gameFiles = await db.select("SELECT * FROM files");
@@ -468,7 +470,7 @@ library.verifyGameFilesIntegrity = async function() {
 
 library.downloadSpecificFiles = async function(downloadFiles) {
 	return new Promise(async function(r) {
-		const settings = library.getSettings();
+		const settings = await library.getSettings();
 		console.log("Downloading some specific files...");
 		const downloadArchivePath = await resolve(await appCacheDir() + "/download.7z");
 		invoke('download_archive', { url: settings.updates_api_url + "files", tempPath: downloadArchivePath, files: JSON.stringify({ files: downloadFiles })}).then(stdout => {
@@ -494,7 +496,7 @@ library.downloadSpecificFiles = async function(downloadFiles) {
 
 library.getProfile = function(accountID) {
 	return new Promise(async function(r) {
-		const settings = library.getSettings();
+		const settings = await library.getSettings();
 		fetch(settings.dashboard_api_url + "profile.php?accountID=" + accountID).then(res => res.json()).then(response => {
 			r(response);
 		});
@@ -502,7 +504,7 @@ library.getProfile = function(accountID) {
 }
 
 library.openGameFolder = async function() {
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	open(settings.resource_path);
 }
 
@@ -511,9 +513,9 @@ library.sendNotification = async function(title, body) {
 	sendNotification({title: title.toString(), body: body.toString()});
 }
 
-library.checkIfPlayerIsLoggedIn = function() {
+library.checkIfPlayerIsLoggedIn = async function() {
 	if(!localStorage.auth.length) return false;
-	const settings = library.getSettings();
+	const settings = await library.getSettings();
 	fetch(settings.dashboard_api_url + "login.php?auth=" + localStorage.auth).then(r => r.json()).then(response => {
 		if(!response.success) {
 			library.logout();
