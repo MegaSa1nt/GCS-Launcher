@@ -2,12 +2,14 @@
 	import { ThumbsUp, ThumbsDown, MessageCircleMore } from 'lucide-svelte';
     import style from './style.module.scss';
 	import library from '../../libs/library.js';
+	import languageStrings from '../../libs/languages.js';
+	let strings = languageStrings[localStorage.language];
 	
 	function timeConverter(timestamp, min = false) {
 		const a = new Date(timestamp * 1000);
 		var months = '';
-		if(!min) months = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-		else months = ['янв', 'фев', 'мар', 'апр', 'мая', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+		if(!min) months = [strings.months.full.january, strings.months.full.february, strings.months.full.march, strings.months.full.april, strings.months.full.may, strings.months.full.june, strings.months.full.july, strings.months.full.august, strings.months.full.september, strings.months.full.october, strings.months.full.november, strings.months.full.december];
+		else months = [strings.months.short.january, strings.months.short.february, strings.months.short.march, strings.months.short.april, strings.months.short.may, strings.months.short.june, strings.months.short.july, strings.months.short.august, strings.months.short.september, strings.months.short.october, strings.months.short.november, strings.months.short.december];
 		const year = a.getFullYear();
 		const month = months[a.getMonth()];
 		const date = a.getDate();

@@ -1,11 +1,11 @@
 [package]
-name = "gcs"
-version = "2.0.0"
-description = "Лаунчер GreenCatsServer"
-authors = ["MegaSa1nt"]
+name = "launcher"
+version = "2.0.1"
+description = "GDPS launcher"
+authors = ["Your username"]
 license = "MIT"
 repository = ""
-default-run = "gcs"
+default-run = "launcher"
 edition = "2021"
 rust-version = "1.82"
 

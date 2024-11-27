@@ -4,8 +4,7 @@
 	import Select from 'svelte-select';
 	import library from '../../../libs/library.js';
 	import languageStrings from '../../../libs/languages.js';
-	let strings = languageStrings;
-	import('../../../libs/languages.js?' + localStorage.language).then(str => strings = str.default.default);
+	let strings = languageStrings[localStorage.language];
 	
 	let isVerifyDisabled = false;
 	let isUninstallDisabled = false;

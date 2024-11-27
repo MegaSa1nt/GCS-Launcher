@@ -4,8 +4,7 @@
 	import library from '../libs/library.js';
 	import PlayButtonIcon from '../components/PlayButtonIcon/playButtonIcon.svelte';
 	import languageStrings from '../libs/languages.js';
-	let strings = languageStrings;
-	import('../libs/languages.js?' + localStorage.language).then(str => strings = str.default.default);
+	let strings = languageStrings[localStorage.language];
 	import { printf } from 'fast-printf';
 	
 	library.checkIfPlayerIsLoggedIn();
