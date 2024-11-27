@@ -12,6 +12,10 @@
 	import { exit } from '@tauri-apps/plugin-process';
 	
 	library.checkUpdates();
+	
+	setInterval(() => {
+		library.checkUpdates();
+	}, 1800000);
 
 	const appWindow = getCurrentWindow();
 	

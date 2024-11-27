@@ -96,13 +96,12 @@ library.initializeVariables = function() {
 
 library.getSettings = function() {
 	library.initializeVariables();
-	const resourcePath = "C:\\Users\\megas\\OneDrive\\Рабочий стол\\UNPACKING TEST";
-	//const resourcePath = await resourceDir();
+	const resourcePath = await resourceDir();
 	return {
 		updates_api_url: "https://updates.gcs.icu/",
 		dashboard_api_url: "https://api.gcs.icu/",
 		gdps_name: "GreenCatsServer",
-		game_exe: "GeometryDash.exe",
+		game_exe: "GreenCatsServer.exe",
 		
 		update_time: localStorage.update_time,
 		resource_path: resourcePath
