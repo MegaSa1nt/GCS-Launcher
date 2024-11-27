@@ -11,7 +11,7 @@
     "copyright": "YourGDPS",
     "publisher": "YourUsername, YourGDPS",
     "icon": [
-      "icons/updater.ico"
+      "icons/icon.ico"
     ],
     "targets": "all"
   },
