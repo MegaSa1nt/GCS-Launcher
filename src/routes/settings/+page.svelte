@@ -3,16 +3,7 @@
 	import Toggle from "../../components/Toggle/toggle.svelte";
 	import Select from '../../components/Select/select.svelte';
 	import languageStrings from '../../libs/languages.js';
-	let strings = languageStrings;
-	import('../../libs/languages.js?' + localStorage.language).then(str => {
-		strings = str.default.default;
-		profileTypes = [
-			{value: 1, label: strings.settings.profileType.firstType},
-			{value: 2, label: strings.settings.profileType.secondType},
-			{value: 0, label: strings.settings.profileType.thirdType}
-		];
-	});
-	
+	let strings = languageStrings[localStorage.language];
 	let profileTypes = [
 		{value: 1, label: strings.settings.profileType.firstType},
 		{value: 2, label: strings.settings.profileType.secondType},
@@ -23,7 +14,8 @@
 	
 	let languages = [
 		{value: 'en', label: 'English'},
-		{value: 'ru', label: 'Русский'}
+		{value: 'ru', label: 'Русский'},
+		{value: 'fr', label: 'Français'}
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
@@ -31,14 +23,12 @@
 	
 	function changeLanguage(lang) {
 		localStorage.language = lang;
-		import('../../libs/languages.js?' + lang).then(str => {
-			strings = str.default.default;
-			profileTypes = [
-				{value: 1, label: strings.settings.profileType.firstType},
-				{value: 2, label: strings.settings.profileType.secondType},
-				{value: 0, label: strings.settings.profileType.thirdType}
-			];
-		});
+		strings = languageStrings[localStorage.language];
+		profileTypes = [
+			{value: 1, label: strings.settings.profileType.firstType},
+			{value: 2, label: strings.settings.profileType.secondType},
+			{value: 0, label: strings.settings.profileType.thirdType}
+		];
 	}
 </script>
 

@@ -14,3 +14,4 @@ package-lock.json
 run.bat
 src-tauri/Cargo.lock
 /src-tauri/gen
+bun.lockb

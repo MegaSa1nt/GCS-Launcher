@@ -1,0 +1,103 @@
+{
+	"mainPage": "Salut %1$s !",
+	"guest": "invité",
+	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Jeu installé",
+			"description": "Le jeu a bien été installé !"
+		},
+		"gameUpdated": {
+			"title": "Jeu mis à jour",
+			"description": "Le jeu a bien été mis à jour !"
+		},
+		"gameDeleted": {
+			"title": "Jeu supprimé",
+			"description": "Le jeu a été supprimé..."
+		},
+		"foundUpdate": {
+			"title": "Nouvelle mise à jour",
+			"description": "Le launcher a trouvé une nouvelle mise à jour pour le jeu !"
+		}
+	},
+	
+	"settings": {
+		"title": "Paramètres",
+		
+		"launcher": "Launcher",
+		"notifications": {
+			"title": "Notifications",
+			"description": "Activer les notifications pour les nouvelles mises à jour, les événements en jeu, etc..."
+		},
+		"profileType": {
+			"title": "Style pour le profil",
+			"description": "Le launcher a plusieurs styles pour les profils, choissisez celui qui vous plaît le plus !",
+			"firstType": "Style Launcher 1",
+			"secondType": "Style Launcher 2",
+			"thirdType": "Style Geometry Dash"
+		},
+		"language": {
+			"title": "Langage du Launcher",
+			"description": "Modifiez le langage du launcher pour correspondre à celui que vous comprenez le mieux"
+		},
+		
+		"game": "Jeu",
+		"gameFolder": {
+			"title": "Dossier du jeu",
+			"description": "Ouvrir le dossier du jeu"
+		},
+		"filesIntegrity": {
+			"title": "Intégrité des fichiers",
+			"description": "Verifier l'intégrité des fichiers du jeu"
+		},
+		"deleteGame": {
+			"title": "Supprimer le jeu",
+			"description": "Supprimer les fichiers du jeu de votre ordinateur"
+		},
+		
+		"username": "Nom d'utilisateur",
+		"password": "Mot de passe",
+		"loginButton": "Se connecter",
+		"error": {
+			"wrongLoginOrPassword": "Le nom d'utilisateur ou le mot de passe est incorrect !",
+			"activateAccount": "Votre compte n'est pas activé !",
+			"unexpectedError": "Erreur inattendue !"
+		},
+		"logout": {
+			"title": "Se déconnecter",
+			"description": "Êtes-vous sûr de vouloir vous déconnecter ?",
+			"button": "Se déconnecter"
+		}
+	},
+	
+	"months": {
+        "full": {
+            "january": "janvier",
+            "february": "février",
+            "march": "mars",
+            "april": "avril",
+            "may": "mai",
+            "june": "juin",
+            "july": "juillet",
+            "august": "août",
+            "september": "septembre",
+            "october": "octobre",
+            "november": "novembre",
+            "december": "décembre"
+        },
+        "short": {
+            "january": "jan",
+            "february": "fév",
+            "march": "mar",
+            "april": "avr",
+            "may": "mai",
+            "june": "jun",
+            "july": "jul",
+            "august": "aou",
+            "september": "sep",
+            "october": "oct",
+            "november": "nov",
+            "december": "déc"
+        }
+    }
+}

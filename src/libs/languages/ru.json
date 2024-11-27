@@ -68,5 +68,36 @@
 			"description": "Вы уверены, что хотите выйти из аккаунта?",
 			"button": "Выйти"
 		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "января",
+			"february": "февраля",
+			"march": "марта",
+			"april": "апреля",
+			"may": "мая",
+			"june": "июня",
+			"july": "июля",
+			"august": "августа",
+			"september": "сентября",
+			"october": "октября",
+			"november": "ноября",
+			"december": "декабря"
+		},
+		"short": {
+			"january": "янв",
+			"february": "фев",
+			"march": "мар",
+			"april": "апр",
+			"may": "мая",
+			"june": "июн",
+			"july": "июл",
+			"august": "авг",
+			"september": "сен",
+			"october": "окт",
+			"november": "ноя",
+			"december": "дек"
+		}
 	}
 }

@@ -34,7 +34,7 @@
   },
   "productName": "GCS-Launcher",
   "mainBinaryName": "launcher",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "identifier": "sa1nt.gcs",
   "plugins": {},
   "app": {

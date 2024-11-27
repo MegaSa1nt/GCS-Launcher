@@ -68,5 +68,36 @@
 			"description": "Are you sure you want to logout?",
 			"button": "Logout"
 		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "january",
+			"february": "february",
+			"march": "march",
+			"april": "april",
+			"may": "may",
+			"june": "june",
+			"july": "july",
+			"august": "august",
+			"september": "september",
+			"october": "october",
+			"november": "november",
+			"december": "december"
+		},
+		"short": {
+			"january": "jan",
+			"february": "feb",
+			"march": "mar",
+			"april": "apr",
+			"may": "may",
+			"june": "jun",
+			"july": "jul",
+			"august": "aug",
+			"september": "sep",
+			"october": "oct",
+			"november": "nov",
+			"december": "dec"
+		}
 	}
 }
