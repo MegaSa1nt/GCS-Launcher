@@ -3,6 +3,9 @@
 	import style from '../style.module.scss';
 	import Select from 'svelte-select';
 	import library from '../../../libs/library.js';
+	import languageStrings from '../../../libs/languages.js';
+	let strings = languageStrings;
+	import('../../../libs/languages.js?' + localStorage.language).then(str => strings = str.default.default);
 	
 	let isVerifyDisabled = false;
 	let isUninstallDisabled = false;
@@ -34,10 +37,10 @@
 <div class={style.contentBlock}>
 	<div class={style.head}>
 		<div class={style.title}>
-			Настройки
+			{strings.settings.title}
 		</div>
 		<div class={style.description}>
-			Игра
+			{strings.settings.game}
 		</div>
 	</div>
 	
@@ -45,10 +48,10 @@
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
 				<h2>
-					Папка с игрой
+					{strings.settings.gameFolder.title}
 				</h2>
 				<h3>
-					Открыть папку с игрой
+					{strings.settings.gameFolder.description}
 				</h3>
 			</div>
 			<button class={style.settingsButton} on:click={() => library.openGameFolder()}>
@@ -61,10 +64,10 @@
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
 				<h2>
-					Целостность игры
+					{strings.settings.filesIntegrity.title}
 				</h2>
 				<h3>
-					Проверить целостность файлов игры
+					{strings.settings.filesIntegrity.description}
 				</h3>
 			</div>
 			<button disabled={isVerifyDisabled} class={style.settingsButton} on:click={() => library.verifyGameFilesIntegrity()}>
@@ -77,10 +80,10 @@
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
 				<h2>
-					Удалить игру
+					{strings.settings.deleteGame.title}
 				</h2>
 				<h3>
-					Удалить файлы игры с компьютера
+					{strings.settings.deleteGame.description}
 				</h3>
 			</div>
 			<button disabled={isUninstallDisabled} class={[style.settingsButton, style.dangerButton].join(' ')} on:click={() => library.uninstallGame()}>

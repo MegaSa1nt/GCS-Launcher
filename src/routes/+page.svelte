@@ -3,6 +3,12 @@
 	import style from './style.module.scss';
 	import library from '../libs/library.js';
 	import PlayButtonIcon from '../components/PlayButtonIcon/playButtonIcon.svelte';
+	import languageStrings from '../libs/languages.js';
+	let strings = languageStrings;
+	import('../libs/languages.js?' + localStorage.language).then(str => strings = str.default.default);
+	import { printf } from 'fast-printf';
+	
+	library.checkIfPlayerIsLoggedIn();
 	
 	const gameName = library.getSettings().gdps_name;
 	
@@ -19,8 +25,8 @@
 </script>
 
 <svelte:head>
-	<title>Лаунчер GreenCatsServer</title>
-	<meta name="description" content="GreenCatsServer" />
+	<title>Лаунчер {gameName}</title>
+	<meta name="description" content={gameName} />
 </svelte:head>
 
 <div class={style.contentBlock}>
@@ -29,7 +35,11 @@
 			{gameName}
 		</div>
 		<div class={style.description}>
-			Привет, Sa1ntSosetHui!
+			{#if !localStorage.username.length}
+				{printf(strings.mainPage, strings.guest)}
+			{:else}
+				{printf(strings.mainPage, localStorage.username)}
+			{/if}
 		</div>
 	</div>
 

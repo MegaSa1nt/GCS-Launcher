@@ -53,6 +53,9 @@ library.initializeEvents = async function() {
 	if(typeof window.isGameRunning == 'undefined') window.isGameRunning = false;
 	if(typeof window.isPendingUpdate == 'undefined') window.isPendingUpdate = false;
 	
+	// Rare type of events
+	if(typeof window.isLoggingIn == 'undefined') window.isLoggingIn = false;
+	
 	// Not really events
 	if(typeof window.new_updates == 'undefined') window.new_updates = [];
 	if(typeof window.recursive_check == 'undefined') window.recursive_check = [];
@@ -79,6 +82,11 @@ library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
 	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 1;
 	if(typeof localStorage.enable_notifications == 'undefined') localStorage.enable_notifications = true;
+	if(typeof localStorage.username == 'undefined') localStorage.username = '';
+	if(typeof localStorage.accountID == 'undefined') localStorage.accountID = 0;
+	if(typeof localStorage.auth == 'undefined') localStorage.auth = '';
+	if(typeof localStorage.color == 'undefined') localStorage.color = '';
+	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 }
 
 library.getSettings = function() {
@@ -497,6 +505,25 @@ library.openGameFolder = async function() {
 library.sendNotification = async function(title, body) {
 	if(localStorage.enable_notifications == 'false') return;
 	sendNotification({title: title.toString(), body: body.toString()});
+}
+
+library.checkIfPlayerIsLoggedIn = function() {
+	if(!localStorage.auth.length) return false;
+	const settings = library.getSettings();
+	fetch(settings.dashboard_api_url + "login.php?auth=" + localStorage.auth).then(r => r.json()).then(response => {
+		if(!response.success) {
+			library.logout();
+			return false;
+		}
+		return true;
+	});
+}
+
+library.logout = function() {
+	localStorage.username = '';
+	localStorage.auth = '';
+	localStorage.color = '';
+	localStorage.accountID = 0;
 }
 
 library.styles = style;

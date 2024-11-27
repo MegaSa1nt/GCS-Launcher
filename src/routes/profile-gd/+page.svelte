@@ -36,20 +36,36 @@
 		return "https://gdicon.oat.zone/icon.png?type=" + type + "&value=" + icon + "&color1=" + color1 + "&color2=" + color2 + (glow ? "&glow=1&color3=" + color3 : "");
 	}
 	
-	library.getProfile(71).then(r => {
-		profileData = r.profile;
-		profileIcons = {
-			cube: getIconURL('cube', profileData.icons.cube, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			ship: getIconURL('ship', profileData.icons.ship, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			ball: getIconURL('ball', profileData.icons.ball, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			ufo: getIconURL('ufo', profileData.icons.ufo, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			wave: getIconURL('wave', profileData.icons.wave, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			robot: getIconURL('robot', profileData.icons.robot, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			spider: getIconURL('spider', profileData.icons.spider, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			swing: getIconURL('swing', profileData.icons.swing, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
-			jetpack: getIconURL('jetpack', profileData.icons.jetpack, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+	library.getProfile(localStorage.accountID).then(r => {
+		if(r.success) {
+			profileData = r.profile;
+			if(profileData.icons.currentIcon.iconID == 0) profileData.icons.currentIcon.iconID = 1;
+			if(profileData.icons.cube == 0) profileData.icons.cube = 1;
+			if(profileData.icons.ship == 0) profileData.icons.ship = 1;
+			if(profileData.icons.ball == 0) profileData.icons.ball = 1;
+			if(profileData.icons.ufo == 0) profileData.icons.ufo = 1;
+			if(profileData.icons.wave == 0) profileData.icons.wave = 1;
+			if(profileData.icons.robot == 0) profileData.icons.robot = 1;
+			if(profileData.icons.spider == 0) profileData.icons.spider = 1;
+			if(profileData.icons.swing == 0) profileData.icons.swing = 1;
+			if(profileData.icons.jetpack == 0) profileData.icons.jetpack = 1;
+			if(!Object.keys(profileData.clan).length) profileData.clan = {
+				name: 'Не в клане',
+				color: 'c0c0c0'
+			};
+			profileIcons = {
+				cube: getIconURL('cube', profileData.icons.cube, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				ship: getIconURL('ship', profileData.icons.ship, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				ball: getIconURL('ball', profileData.icons.ball, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				ufo: getIconURL('ufo', profileData.icons.ufo, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				wave: getIconURL('wave', profileData.icons.wave, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				robot: getIconURL('robot', profileData.icons.robot, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				spider: getIconURL('spider', profileData.icons.spider, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				swing: getIconURL('swing', profileData.icons.swing, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+				jetpack: getIconURL('jetpack', profileData.icons.jetpack, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
+			}
+			isProfileLoaded = style.hideSkeleton;
 		}
-		isProfileLoaded = style.hideSkeleton;
 	});
 </script>
 

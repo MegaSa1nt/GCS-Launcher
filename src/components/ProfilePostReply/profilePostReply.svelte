@@ -21,6 +21,7 @@
 		return time;
 	}
 	
+	export let index = 0;
 	export let username = '';
 	export let replyText = '';
 	export let timestamp = 0;
@@ -45,6 +46,9 @@
 </script>
 
 <div class={style.postPlusReplies}>
+	{#if index != 0}
+		<hr class={style.hr}>
+	{/if}
 	<div class={style.profilePost}>
 		<div class={style.profilePostStats}>
 			<h2 class={style.profileUsername}>{username}</h2>

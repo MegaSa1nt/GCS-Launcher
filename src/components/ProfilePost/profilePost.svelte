@@ -87,8 +87,8 @@
 	</div>
 	{#if profileReplies.length > 0}
 		<div id={"profilePostReplies" + postID}>
-			{#each profileReplies as reply}
-				<ProfilePostReply username={reply.account.username} replyText={reply.body} timestamp={reply.timestamp} />
+			{#each profileReplies as reply, index}
+				<ProfilePostReply index={index} username={reply.account.username} replyText={reply.body} timestamp={reply.timestamp} />
 			{/each}
 		</div>
 	{/if}

@@ -121,6 +121,9 @@ hr {
 .inputDiv h2 {
 	font-size: 20px;
 	margin: 0px;
+	display: flex;
+	align-items: center;
+    grid-gap: 3px;
 }
 
 .loginDiv {
@@ -144,6 +147,10 @@ hr {
 	background: #242424;
 	transition: 0.2s;
 	color: white;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+    grid-gap: 5px;
 }
 
 .loginButton:hover {
@@ -152,4 +159,58 @@ hr {
 
 form {
 	display: contents;
+}
+
+.loginBlock {
+	justify-content: center;
+}
+
+.spin {
+	display: contents;
+}
+
+.spin svg {
+	animation-name: rotation;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+	transition: 0.2s;
+}
+
+@keyframes rotation {
+    0% {
+        transform:rotate(0deg);
+    }
+    100% {
+        transform:rotate(360deg);
+    }
+}
+
+.loginDiv .error {
+	margin: 0px;
+	font-size: 20px;
+	width: 100%;
+	color: #ffbbbb;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+    grid-gap: 5px;
+}
+
+.loginDiv .logoutTitle {
+	margin: 0px;
+	font-size: 25px;
+	width: 100%;
+	text-align: center;
+	line-height: 0.9;
+}
+
+.loginDiv .logoutDesc {
+	margin: 0px;
+	font-size: 20px;
+	font-weight: 400;
+	width: 100%;
+	text-align: center;
+	color: #c0c0c0;
+	line-height: 0.9;
 }

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ArrowLeft, LogIn, AppWindow, Gamepad } from 'lucide-svelte';
+	import { ArrowLeft, LogIn, AppWindow, Gamepad, LogOut } from 'lucide-svelte';
     import style from './style.module.scss';
     import { page } from '$app/stores';
 
@@ -18,11 +18,13 @@
     let launcherSettingsColor = getButtonColor("/settings");
     let gameSettingsColor = getButtonColor("/settings/game");
     let loginColor = getButtonColor("/settings/login");
+    let logoutColor = getButtonColor("/settings/logout");
     
     const updateButtonColors = () => {
 		launcherSettingsColor = getButtonColor("/settings");
 		gameSettingsColor = getButtonColor("/settings/game");
 		loginColor = getButtonColor("/settings/login");
+		logoutColor = getButtonColor("/settings/logout");
     }
 
     page.subscribe(() => {
@@ -44,8 +46,14 @@
 				<Gamepad color={gameSettingsColor} size={30} strokeWidth={2.25} />
 			</a>
 		</div>
-		<a class={style.button} href={"/settings/login"}>
-			<LogIn color={loginColor} size={30} strokeWidth={2.25} />
-        </a>
+		{#if !localStorage.auth.length}
+			<a class={style.button} href={"/settings/login"}>
+				<LogIn color={loginColor} size={30} strokeWidth={2.25} />
+			</a>
+		{:else}
+			<a class={style.button} href={"/settings/logout"}>
+				<LogOut color={logoutColor} size={30} strokeWidth={2.25} />
+			</a>
+		{/if}
 	</div>
 </div>

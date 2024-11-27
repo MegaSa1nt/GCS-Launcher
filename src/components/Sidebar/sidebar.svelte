@@ -37,8 +37,14 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
-		<a class={style.button} href={"/profile-" + sidebarProfileType}>
-			<User color={profileColor} size={30} strokeWidth={2.25} />
-        </a>
+		{#if !localStorage.auth.length}
+			<a class={style.button} href={"/settings/login"}>
+				<User color={profileColor} size={30} strokeWidth={2.25} />
+			</a>
+		{:else}
+			<a class={style.button} href={"/profile-" + sidebarProfileType}>
+				<User color={profileColor} size={30} strokeWidth={2.25} />
+			</a>
+		{/if}
 	</div>
 </div>
