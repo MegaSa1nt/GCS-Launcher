@@ -13,45 +13,46 @@
 	
 	function loginToAccount() {
 		if(isLogging) return;
-		const settings = library.getSettings();
-		const formItems = new FormData(document.getElementsByName("loginForm")[0]);
-		const username = encodeURIComponent(formItems.get("username"));
-		const password = encodeURIComponent(formItems.get("password"));
-		if(!username.length || !password.length) return;
-		isLoggingIn = isLogging = true;
-		fetch(settings.dashboard_api_url + "login.php", {
-			method: "POST",
-			body: "userName=" + username + "&password=" + password,
-			headers: {
-				"Content-type": "application/x-www-form-urlencoded"
-			}
-		}).then(r => r.json()).then(response => {
-			isLoggingIn = isLogging = false;
-			if(response.success) {
-				localStorage.username = response.user;
-				localStorage.auth = response.auth;
-				localStorage.color = response.color;
-				localStorage.accountID = response.accountID;
-				goto("/");
-			} else {
+		library.getSettings().then(settings => {
+			const formItems = new FormData(document.getElementsByName("loginForm")[0]);
+			const username = encodeURIComponent(formItems.get("username"));
+			const password = encodeURIComponent(formItems.get("password"));
+			if(!username.length || !password.length) return;
+			isLoggingIn = isLogging = true;
+			fetch(settings.dashboard_api_url + "login.php", {
+				method: "POST",
+				body: "userName=" + username + "&password=" + password,
+				headers: {
+					"Content-type": "application/x-www-form-urlencoded"
+				}
+			}).then(r => r.json()).then(response => {
+				isLoggingIn = isLogging = false;
+				if(response.success) {
+					localStorage.username = response.user;
+					localStorage.auth = response.auth;
+					localStorage.color = response.color;
+					localStorage.accountID = response.accountID;
+					goto("/");
+				} else {
+					library.logout();
+					isLoginErrored = true;
+					switch(response.error) {
+						case '-1':
+							errorText = strings.settings.error.wrongLoginOrPassword;
+							break;
+						case '-2':
+							errorText = strings.settings.error.activateAccount;
+							break;
+						default:
+							errorText = strings.settings.error.unexpectedError;
+							break;
+					}
+				}
+			}).catch(e => {
 				library.logout();
 				isLoginErrored = true;
-				switch(response.error) {
-					case '-1':
-						errorText = strings.settings.error.wrongLoginOrPassword;
-						break;
-					case '-2':
-						errorText = strings.settings.error.activateAccount;
-						break;
-					default:
-						errorText = strings.settings.error.unexpectedError;
-						break;
-				}
-			}
-		}).catch(e => {
-			library.logout();
-			isLoginErrored = true;
-			errorText = strings.settings.error.unexpectedError;
+				errorText = strings.settings.error.unexpectedError;
+			});
 		});
 	}
 	

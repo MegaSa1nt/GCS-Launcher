@@ -10,7 +10,11 @@
 	
 	library.checkIfPlayerIsLoggedIn();
 	
-	const gameName = library.getSettings().gdps_name;
+	let gameName = '';
+	
+	library.getSettings().then(r => {
+		gameName = r.gdps_name;
+	});
 	
 	export let buttonState = window.playButtonState;
 	export let buttonIsAvailable = window.playButtonIsAvailable;
