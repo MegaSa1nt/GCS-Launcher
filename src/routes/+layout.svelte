@@ -51,8 +51,9 @@
 		fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
 			const version = await getVersion();
 			if(version != response) {
-				open("updater.exe");
-				exit(0);
+				open("updater.exe").then(r => {
+					exit(0);
+				});
 			} else {
 				appWindow.show();
 			}
