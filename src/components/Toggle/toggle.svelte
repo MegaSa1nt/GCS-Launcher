@@ -10,7 +10,7 @@
 	export let off = undefined;
 	export let switchColor = "#000";
 	export let untoggledSwitchColor = "#eee";
-	export let toggledColor = "#3EE667";
+	export let toggledColor = "var(--accent-color)";
 	export let untoggledColor = "#5b5b5b";
 
 	import { createEventDispatcher } from "svelte";

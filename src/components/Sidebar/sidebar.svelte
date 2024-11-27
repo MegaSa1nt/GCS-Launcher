@@ -7,7 +7,7 @@
 	library.initializeVariables();
 
     const colors = {
-        "active": '#3EE667',
+        "active": 'var(--accent-color)',
         "none": '#C7C6CA'
     };
 
