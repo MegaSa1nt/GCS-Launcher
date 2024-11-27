@@ -20,3 +20,7 @@ For building:
 
 Setup tutorial:
 *later*
+
+Thanks:
+- @Unitoshka for launcher base
+- @jerosajose for profile style 2
