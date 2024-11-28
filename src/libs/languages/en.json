@@ -40,6 +40,19 @@
 			"title": "Launcher language",
 			"description": "Choose language you know most"
 		},
+		"versions": {
+			"launcher": "Version %1$s",
+			"game": "%1$s",
+			"checkUpdates": "Check updates",
+			"notInstalled": "Not installed"
+		},
+		"intervals": {
+			"every10Minutes": "Every 10 minutes",
+			"every30Minutes": "Every 30 minutes",
+			"every1Hour": "Every hour",
+			"every6Hours": "Every 6 hours",
+			"onlyAtStartup": "Only at startup"
+		},
 		
 		"game": "Game",
 		"gameFolder": {
@@ -53,6 +66,10 @@
 		"deleteGame": {
 			"title": "Delete game",
 			"description": "Delete game files from your computer"
+		},
+		"updatesInterval": {
+			"title": "Checking updates",
+			"description": "How often launcher will check game updates"
 		},
 		
 		"username": "Username",

@@ -5,17 +5,14 @@
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
-	import { getVersion } from '@tauri-apps/api/app';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
-	import { open } from '@tauri-apps/plugin-shell';
-	import { exit } from '@tauri-apps/plugin-process';
 	
-	library.checkUpdates();
-	
-	setInterval(() => {
-		library.checkUpdates();
-	}, 1800000);
+	library.checkUpdates().then(r => {
+		if(localStorage.updates_interval != 0) {
+			setInterval(() => library.checkUpdates(), localStorage.updates_interval);
+		}
+	});
 
 	const appWindow = getCurrentWindow();
 	
@@ -47,21 +44,9 @@
 		return false;
 	});
 	
-	library.getSettings().then(settings => {		
-		fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
-			const version = await getVersion();
-			if(version != response) {
-				open("updater.exe").then(r => {
-					exit(0);
-				});
-			} else {
-				appWindow.show();
-			}
-		}).catch(e => {
-			appWindow.show();
-		});
+	library.checkLauncherUpdates().then(r => {
+		appWindow.show();
 	});
-	
 </script>
 
 <div class="app">

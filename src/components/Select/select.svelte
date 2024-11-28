@@ -19,6 +19,7 @@
 	--list-border-radius="10px"
 	--multi-item-border-radius="10px"
 	--font-size="15px"
+	--list-shadow="#00000000"
 	searchable={false}
 	showChevron
 	on:change={onChange}
