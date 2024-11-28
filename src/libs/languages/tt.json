@@ -1,0 +1,103 @@
+{
+  "mainPage": "Сәлам, %1$s!",
+  "guest": "кунак",
+  
+  "notifications": {
+    "gameInstalled": {
+      "title": "Уйнау урнаштырылган",
+      "description": "Уйнау уңышлы урнаштырылды! Яхшы уйныйсыгыз :)"
+    },
+    "gameUpdated": {
+      "title": "Уйнау яңартылган",
+      "description": "Уйнау уңышлы яңартылды! Яхшы уйныйсыгыз :)"
+    },
+    "gameDeleted": {
+      "title": "Уйнау юкка чыгарылган",
+      "description": "Уйнау юкка чыгарылды! Очрашканчы..."
+    },
+    "foundUpdate": {
+      "title": "Уйнау яңартылуы",
+      "description": "Лаунчер уйнау өчен яңарту тапты!"
+    }
+  },
+  
+  "settings": {
+    "title": "Көйләүләр",
+    
+    "launcher": "Лаунчер",
+    "notifications": {
+      "title": "Хәбәрләр",
+      "description": "Лаунчерның хәбәрләрен, шул исәптән лаунчер/уйнау яңартулары, яңарту тәмамлану, уйнау хәбәрләре һәм башка нәрсәләрне кушарга"
+    },
+    "profileType": {
+      "title": "Профиль стиле",
+      "description": "Лаунчерда берничә төрле профиль стиле бар, сезгә иң ошаганын сайлагыз!",
+      "firstType": "Профиль стиле 1",
+      "secondType": "Профиль стиле 2",
+      "thirdType": "Geometry Dash стиле"
+    },
+    "language": {
+      "title": "Лаунчер теле",
+      "description": "Сезгә иң аңлаешлы булган телне сайлагыз"
+    },
+    
+    "game": "Уйнау",
+    "gameFolder": {
+      "title": "Уйнау папкасы",
+      "description": "Уйнау папкасын ачыгыз"
+    },
+    "filesIntegrity": {
+      "title": "Уйнауның целостлыгы",
+      "description": "Уйнау файлларының целостлыгын тикшерегез"
+    },
+    "deleteGame": {
+      "title": "Уйнауны юкка чыгару",
+      "description": "Уйнау файлларын компьютердан юкка чыгарыгыз"
+    },
+    
+    "username": "Никнейм",
+    "password": "Пароль",
+    "loginButton": "Аккаунтка керү",
+    "error": {
+      "wrongLoginOrPassword": "Неправильный логин яки пароль!",
+      "activateAccount": "Аккаунтыгызны активлаштырыгыз!",
+      "unexpectedError": "Билгесез хата!"
+    },
+    "logout": {
+      "title": "Аккаунттан чыгу",
+      "description": "Аккаунттан чыгуны теләгәнегезне раслыйсызмы?",
+      "button": "Чыгу"
+    }
+  },
+  
+  "months": {
+    "full": {
+      "january": "гыйнвар",
+      "february": "февраль",
+      "march": "март",
+      "april": "апрель",
+      "may": "май",
+      "june": "июнь",
+      "july": "июль",
+      "august": "август",
+      "september": "сентябрь",
+      "october": "октябрь",
+      "november": "ноябрь",
+      "december": "декабрь"
+    },
+    "short": {
+      "january": "гыйн",
+      "february": "фев",
+      "march": "март",
+      "april": "апр",
+      "may": "май",
+      "june": "июн",
+      "july": "июл",
+      "august": "авг",
+      "september": "сен",
+      "october": "окт",
+      "november": "ноя",
+      "december": "дек"
+    }
+  }
+}

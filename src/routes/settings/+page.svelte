@@ -16,8 +16,9 @@
 		{value: 'en', label: 'English'},
 		{value: 'ru', label: 'Русский'},
 		{value: 'fr', label: 'Français'},
-    {value: 'bm', label: 'Bahasa Melayu'},
-		{value: 'vi', label: 'Tiếng Việt'}
+		{value: 'bm', label: 'Bahasa Melayu'},
+		{value: 'vi', label: 'Tiếng Việt'},
+		{value: 'tt', label: 'Татарча'}
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
