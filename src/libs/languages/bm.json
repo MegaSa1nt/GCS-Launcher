@@ -1,0 +1,103 @@
+{
+	"mainPage": "Selamat Sejahtera %1$s!",
+	"guest": "pemain",
+	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Game berjaya dipasang",
+			"description": "Game sudah dipasang!"
+		},
+		"gameUpdated": {
+			"title": "Game berjaya dikemas kini",
+			"description": "Game sudah dikemas kini!"
+		},
+		"gameDeleted": {
+			"title": "Game berjaya dipadam",
+			"description": "Game sudah dipadam..."
+		},
+		"foundUpdate": {
+			"title": "Game kemas kini yang baharu",
+			"description": "Pelancar ada carikan kemas kini yang baharu!"
+		}
+	},
+	
+	"settings": {
+		"title": "Settings",
+		
+		"launcher": "Pelancar",
+		"notifications": {
+			"title": "Pemberitahuan",
+			"description": "Bukakan pemberitahuan seperti: kemas kini game/pelancar yang baharu, pemberitahuan game dan lain-lain"
+		},
+		"profileType": {
+			"title": "Gaya Profil",
+			"description": "Pelancar adalah banyak gaya, carikan gaya yang kamu paling suka!",
+			"firstType": "Gaya Pelancar 1",
+			"secondType": "Gaya Pelancar 2",
+			"thirdType": "Gaya Geometry Dash"
+		},
+		"language": {
+			"title": "Bahasa Launcher",
+			"description": "Tukarkan bahasa yang kamu paling tahu"
+		},
+		
+		"game": "Game",
+		"gameFolder": {
+			"title": "Fail game",
+			"description": "Bukakan fail game"
+		},
+		"filesIntegrity": {
+			"title": "Integriti fail",
+			"description": "Mengesahkan integriti fail game"
+		},
+		"deleteGame": {
+			"title": "Padam game",
+			"description": "Padamkan data game kepada komputer kamu"
+		},
+		
+		"username": "Nama User",
+		"password": "Password",
+		"loginButton": "Login ke akaun kamu",
+		"error": {
+			"wrongLoginOrPassword": "Nama user dan password salah!",
+			"activateAccount": "Aktifkan akaun kamu!",
+			"unexpectedError": "Error tak dijangka!"
+		},
+		"logout": {
+			"title": "Logout",
+			"description": "Betulkan kamu nak logout akaun kamu?",
+			"button": "Logout"
+		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "januari",
+			"february": "februari",
+			"march": "mac",
+			"april": "april",
+			"may": "mei",
+			"june": "jun",
+			"july": "julei",
+			"august": "ogos",
+			"september": "september",
+			"october": "oktober",
+			"november": "november",
+			"december": "disember"
+		},
+		"short": {
+			"january": "jan",
+			"february": "feb",
+			"march": "mac",
+			"april": "apr",
+			"may": "mei",
+			"june": "jun",
+			"july": "jul",
+			"august": "ogs",
+			"september": "sep",
+			"october": "okt",
+			"november": "nov",
+			"december": "dis"
+		}
+	}
+}
