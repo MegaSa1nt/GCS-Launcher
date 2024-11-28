@@ -5,10 +5,12 @@ import { open, Command } from '@tauri-apps/plugin-shell';
 import Database from '@tauri-apps/plugin-sql';
 import { sendNotification } from '@tauri-apps/plugin-notification';
 import style from './style.module.scss';
+import { exit } from '@tauri-apps/plugin-process';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 import languageStrings from './languages.js';
 let strings = languageStrings[localStorage.language];
+import { getVersion } from '@tauri-apps/api/app';
 
 window.gameUpdatingAnimation = '';
 window.playButtonIsAvailable = style.isAvailable;

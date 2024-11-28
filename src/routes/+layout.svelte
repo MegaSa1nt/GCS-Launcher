@@ -5,11 +5,8 @@
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
-	import { getVersion } from '@tauri-apps/api/app';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
-	import { open } from '@tauri-apps/plugin-shell';
-	import { exit } from '@tauri-apps/plugin-process';
 	
 	library.checkUpdates().then(r => {
 		if(localStorage.updates_interval != 0) {
