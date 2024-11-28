@@ -15,7 +15,8 @@
 	let languages = [
 		{value: 'en', label: 'English'},
 		{value: 'ru', label: 'Русский'},
-		{value: 'fr', label: 'Français'}
+		{value: 'fr', label: 'Français'},
+		{value: 'bm', label: 'Bahasa Melayu'}
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
