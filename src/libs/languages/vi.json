@@ -1,0 +1,103 @@
+{
+	"mainPage": "Xin chào %1$s!",
+	"guest": "Khách",
+	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Game đã được cài đặt",
+			"description": "Game đã được cài đặt thành công!"
+		},
+		"gameUpdated": {
+			"title": "Game đã được update",
+			"description": "Game đã được update thành công"
+		},
+		"gameDeleted": {
+			"title": "Game đã được xóa",
+			"description": "Game đã được xóa thành công... (tại saaaaaaaaaaaaaaaaaao)"
+		},
+		"foundUpdate": {
+			"title": "Bản cập nhật mới!",
+			"description": "Trình khởi chạy đã tìm được bản cập nhật mới cho Game"
+		}
+	},
+	
+	"settings": {
+		"title": "Cài đặt",
+		
+		"launcher": "Trình khởi chạy",
+		"notifications": {
+			"title": "Thông báo",
+			"description": "Thông báo khi có bản cập nhật mới cho Game/trình khởi chạy, thông báo liên quan tới Game, v.v"
+		},
+		"profileType": {
+			"title": "Kiểu hồ sơ",
+			"description": "Chọn kiểu hồ sơ sẽ xuất hiện khi bạn xem nó",
+			"firstType": "Kiểu 1",
+			"secondType": "Kiểu 2",
+			"thirdType": "Kiểu Geometry Dash"
+		},
+		"language": {
+			"title": "Ngôn ngữ",
+			"description": "Lựa chọn ngôn ngữ mà bạn biết! (Ừa thật đấy)"
+		},
+		
+		"game": "Game",
+		"gameFolder": {
+			"title": "Folder của game",
+			"description": "Mở folder của game (cho mấy thanh niên cài geode hoặc Megahack, tùy)"
+		},
+		"filesIntegrity": {
+			"title": "Kiểm tra độ toàn vẹn",
+			"description": "Kiểm tra độ toàn vẹn (thường dùng khi game gặp vấn đề)"
+		},
+		"deleteGame": {
+			"title": "Xóa game",
+			"description": "Xóa game ra khỏi máy tính. Nghĩ kỹ trước khi làm"
+		},
+		
+		"username": "Tên đăng nhập",
+		"password": "Mật khẩu",
+		"loginButton": "Đăng nhập",
+		"error": {
+			"wrongLoginOrPassword": "Sai tên đăng nhập/mật khẩu",
+			"activateAccount": "Chưa kích hoạt tài khoản",
+			"unexpectedError": "Lỗi không lường trước được (bất ngờ chưa)"
+		},
+		"logout": {
+			"title": "Đăng xuất",
+			"description": "Bạn có muốn đăng xuất không?",
+			"button": "Đăng xuất"
+		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "Tháng 1",
+			"february": "Tháng 2",
+			"march": "Tháng 3",
+			"april": "Tháng 4",
+			"may": "Tháng 5",
+			"june": "Tháng 6",
+			"july": "Tháng 7",
+			"august": "Tháng 8",
+			"september": "Tháng 9",
+			"october": "Tháng 10",
+			"november": "Tháng 11",
+			"december": "Tháng 12"
+		},
+		"short": {
+			"january": "Tháng 1,",
+			"february": "Tháng 2,",
+			"march": "Tháng 3,",
+			"april": "Tháng 4,",
+			"may": "Tháng 5,",
+			"june": "Tháng 6,",
+			"july": "Tháng 7,",
+			"august": "Tháng 8,",
+			"september": "Tháng 9,",
+			"october": "Tháng 10,",
+			"november": "Tháng 11,",
+			"december": "Tháng 12,"
+		}
+	}
+}
