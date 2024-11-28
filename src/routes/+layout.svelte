@@ -12,10 +12,9 @@
 	import { exit } from '@tauri-apps/plugin-process';
 	
 	library.checkUpdates();
-	
-	setInterval(() => {
-		library.checkUpdates();
-	}, 1800000);
+	if(localStorage.updates_interval != 0) {
+		setInterval(() => library.checkUpdates(), localStorage.updates_interval);
+	}
 
 	const appWindow = getCurrentWindow();
 	
@@ -47,21 +46,9 @@
 		return false;
 	});
 	
-	library.getSettings().then(settings => {		
-		fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
-			const version = await getVersion();
-			if(version != response) {
-				open("updater.exe").then(r => {
-					exit(0);
-				});
-			} else {
-				appWindow.show();
-			}
-		}).catch(e => {
-			appWindow.show();
-		});
+	library.checkLauncherUpdates().then(r => {
+		appWindow.show();
 	});
-	
 </script>
 
 <div class="app">

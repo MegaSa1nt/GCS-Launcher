@@ -40,6 +40,19 @@
 			"title": "Bahasa Launcher",
 			"description": "Tukarkan bahasa yang kamu paling tahu"
 		},
+		"versions": {
+			"launcher": "Version %1$s",
+			"game": "%1$s",
+			"checkUpdates": "Check updates",
+			"notInstalled": "Not installed"
+		},
+		"intervals": {
+			"every10Minutes": "Every 10 minutes",
+			"every30Minutes": "Every 30 minutes",
+			"every1Hour": "Every hour",
+			"every6Hours": "Every 6 hours",
+			"onlyAtStartup": "Only at startup"
+		},
 		
 		"game": "Game",
 		"gameFolder": {
@@ -53,6 +66,10 @@
 		"deleteGame": {
 			"title": "Padam game",
 			"description": "Padamkan data game kepada komputer kamu"
+		},
+		"updatesInterval": {
+			"title": "Checking updates",
+			"description": "How often launcher will check game updates"
 		},
 		
 		"username": "Nama User",

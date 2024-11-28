@@ -32,7 +32,7 @@
 	<meta name="description" content={gameName} />
 </svelte:head>
 
-<div class={style.contentBlock}>
+<div class={style.mainPageBlock}>
 	<div class={style.head}>
 		<div class={style.title}>
 			{gameName}

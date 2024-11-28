@@ -2,7 +2,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 18px;
-	height: 100%;
+    justify-content: space-between;
 }
 
 .button {
@@ -56,19 +56,17 @@
 	width: 100%;
 }
 
-.settingDescription h2,
-.settingDescription h3 {
-	margin: 0px;
-}
-
 .settingDescription h2 {
 	line-height: 0.9;
+	margin: 0px;
 }
 
 .settingDescription h3 {
 	color: gray;
 	font-weight: 400;
 	font-size: 15px;
+	line-height: 1.2;
+	margin: 0px;
 }
 
 hr {
@@ -165,7 +163,8 @@ form {
 	justify-content: center;
 }
 
-.spin {
+.spin,
+.notSpinning {
 	display: contents;
 }
 
@@ -213,4 +212,19 @@ form {
 	text-align: center;
 	color: #c0c0c0;
 	line-height: 0.9;
+}
+
+.versionIcon {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centerBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 100%;
+    justify-content: center;
 }

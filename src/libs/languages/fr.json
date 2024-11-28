@@ -40,6 +40,19 @@
 			"title": "Langage du Launcher",
 			"description": "Modifiez le langage du launcher pour correspondre à celui que vous comprenez le mieux"
 		},
+		"versions": {
+			"launcher": "Version %1$s",
+			"game": "%1$s",
+			"checkUpdates": "Check updates",
+			"notInstalled": "Not installed"
+		},
+		"intervals": {
+			"every10Minutes": "Every 10 minutes",
+			"every30Minutes": "Every 30 minutes",
+			"every1Hour": "Every hour",
+			"every6Hours": "Every 6 hours",
+			"onlyAtStartup": "Only at startup"
+		},
 		
 		"game": "Jeu",
 		"gameFolder": {
@@ -53,6 +66,10 @@
 		"deleteGame": {
 			"title": "Supprimer le jeu",
 			"description": "Supprimer les fichiers du jeu de votre ordinateur"
+		},
+		"updatesInterval": {
+			"title": "Checking updates",
+			"description": "How often launcher will check game updates"
 		},
 		
 		"username": "Nom d'utilisateur",

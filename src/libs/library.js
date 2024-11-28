@@ -89,6 +89,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.auth == 'undefined') localStorage.auth = '';
 	if(typeof localStorage.color == 'undefined') localStorage.color = '';
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
+	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 }
 
 library.getSettings = function() {
@@ -107,34 +108,39 @@ library.getSettings = function() {
 	});
 }
 
-library.checkUpdates = async function() {
-	if(window.isCheckingUpdate) return;
-	await library.changeIsCheckingUpdateState(true);
-	const settings = await library.getSettings();
-	if(settings.update_time == 0) {
-		console.log('You should install game ;)');
-		await library.changeIsCheckingUpdateState(false);
-		await library.changePendingUpdateState(true);
-	} else {
-		fetch(settings.updates_api_url + "updates/" + settings.update_time).then(res => res.json()).then(response => {
-			if(response.length == 0) {
-				console.log("No updates available. Latest version!");
+library.checkUpdates = function() {
+	return new Promise(async function(r) {
+		if(window.isCheckingUpdate) r(false);
+		await library.changeIsCheckingUpdateState(true);
+		const settings = await library.getSettings();
+		if(settings.update_time == 0) {
+			console.log('You should install game ;)');
+			await library.changeIsCheckingUpdateState(false);
+			await library.changePendingUpdateState(true);
+			r(false);
+		} else {
+			fetch(settings.updates_api_url + "updates/" + settings.update_time).then(res => res.json()).then(response => {
+				if(response.length == 0) {
+					console.log("No updates available. Latest version!");
+					library.changeIsCheckingUpdateState(false);
+					library.changePendingUpdateState(false);
+					r(true);
+				} else {
+					library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
+					console.log("Updates were found!");
+					window.new_updates = response;
+					library.changeIsCheckingUpdateState(false);
+					library.changePendingUpdateState(true);
+					r(false);
+				}
+			}).catch(err => {
+				console.error('Failed checking updates:', err);
 				library.changeIsCheckingUpdateState(false);
 				library.changePendingUpdateState(false);
-				return true;
-			} else {
-				library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
-				console.log("Updates were found!");
-				window.new_updates = response;
-				library.changeIsCheckingUpdateState(false);
-				library.changePendingUpdateState(true);
-			}
-		}).catch(err => {
-			console.error('Failed checking updates:', err);
-			library.changeIsCheckingUpdateState(false);
-			library.changePendingUpdateState(false);
-		});
-	}
+				r(false);
+			});
+		}
+	});
 }
 
 library.installGame = async function() {
@@ -527,6 +533,43 @@ library.logout = function() {
 	localStorage.auth = '';
 	localStorage.color = '';
 	localStorage.accountID = 0;
+}
+
+library.timeConverter = function(timestamp, min = false) { // This is function from old launcher version, so it was written poor
+	const a = new Date(timestamp * 1000);
+	var months = '';
+	if(!min) months = [strings.months.full.january, strings.months.full.february, strings.months.full.march, strings.months.full.april, strings.months.full.may, strings.months.full.june, strings.months.full.july, strings.months.full.august, strings.months.full.september, strings.months.full.october, strings.months.full.november, strings.months.full.december];
+	else months = [strings.months.short.january, strings.months.short.february, strings.months.short.march, strings.months.short.april, strings.months.short.may, strings.months.short.june, strings.months.short.july, strings.months.short.august, strings.months.short.september, strings.months.short.october, strings.months.short.november, strings.months.short.december];
+	const year = a.getFullYear();
+	const month = months[a.getMonth()];
+	const date = a.getDate();
+	var time = '';
+	if(!min) time = date + ' ' + month + ' ' + year;
+	else {
+		const b = new Date();
+		if(a.getFullYear() == b.getFullYear()) time = date + ' ' + month;
+		else time = date + ' ' + month + ' ' + year;
+	}
+	return time;
+}
+
+library.checkLauncherUpdates = function() {
+	return new Promise(r => {
+		library.getSettings().then(settings => {		
+			fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
+				const version = await getVersion();
+				if(version != response) {
+					open("updater.exe").then(r => {
+						exit(0);
+					});
+				} else {
+					r(true);
+				}
+			}).catch(e => {
+				r(true);
+			});
+		});
+	});
 }
 
 library.styles = style;

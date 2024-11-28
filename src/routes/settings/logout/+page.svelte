@@ -17,7 +17,7 @@
 	<meta name="description" content="Login" />
 </svelte:head>
 
-<div class={[style.contentBlock, style.loginBlock].join(' ')}>
+<div class={[style.centerBlock, style.loginBlock].join(' ')}>
 	<div class={style.loginDiv}>
 		<h1 class={style.logoutTitle}>
 			{strings.settings.logout.title}
