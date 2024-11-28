@@ -11,10 +11,11 @@
 	import { open } from '@tauri-apps/plugin-shell';
 	import { exit } from '@tauri-apps/plugin-process';
 	
-	library.checkUpdates();
-	if(localStorage.updates_interval != 0) {
-		setInterval(() => library.checkUpdates(), localStorage.updates_interval);
-	}
+	library.checkUpdates().then(r => {
+		if(localStorage.updates_interval != 0) {
+			setInterval(() => library.checkUpdates(), localStorage.updates_interval);
+		}
+	});
 
 	const appWindow = getCurrentWindow();
 	
