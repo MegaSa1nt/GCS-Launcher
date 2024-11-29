@@ -43,7 +43,7 @@
 		"versions": {
 			"launcher": "Version %1$s",
 			"game": "%1$s",
-			"checkUpdates": "Check updates",
+			"checkUpdates": "Updates finden",
 			"notInstalled": "Nicht installiert"
 		},
 		"intervals": {
