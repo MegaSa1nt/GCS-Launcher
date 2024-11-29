@@ -1,0 +1,120 @@
+{
+	"mainPage": "Hi %1$s!",
+	"guest": "Gast",
+	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Spiel wurde installiert",
+			"description": "Das Spiel wurde erfolgreich heruntergeladen!"
+		},
+		"gameUpdated": {
+			"title": "Spiel wurde geupdated",
+			"description": "Das Spiel wurde erfolgreich geupdatet!"
+		},
+		"gameDeleted": {
+			"title": "Spiel wurde gelöscht",
+			"description": "Das Spiel wurde erfolgreich gelöscht!"
+		},
+		"foundUpdate": {
+			"title": "Neues Spiel Update",
+			"description": "Der Launcher hat fürs Spiel ein neues Update gefunden!"
+		}
+	},
+	
+	"settings": {
+		"title": "Einstellungen",
+		
+		"launcher": "Launcher",
+		"notifications": {
+			"title": "Benachrichtigungen",
+      "description": "Wie zum Beispiel Spiel/Launcher Updates, Spiel Benachrichtigungen, usw."
+		},
+		"profileType": {
+			"title": "Design",
+			"description": "Der Launcher hat mehrere Stile, Unten ist eine Liste mit den Stilen.",
+			"firstType": "Stil 1",
+			"secondType": "Stil 2",
+			"thirdType": "Geometry Dash Stil"
+		},
+		"language": {
+			"title": "Sprache",
+			"description": "Die Sprache die im Launcher benutzt wird."
+		},
+		"versions": {
+			"launcher": "Version %1$s",
+			"game": "%1$s",
+			"checkUpdates": "Updates finden",
+			"notInstalled": "Nicht installiert"
+		},
+		"intervals": {
+			"every10Minutes": "Jede 10 Minuten",
+			"every30Minutes": "Jede 30 Minuten",
+			"every1Hour": "Jede Stunde",
+			"every6Hours": "Jede 6 Stunden",
+			"onlyAtStartup": "Nur beim Start vom Launcher"
+		},
+		
+		"game": "Spiel",
+		"gameFolder": {
+			"title": "Spielordner",
+			"description": "Öffne Spielordner."
+		},
+		"filesIntegrity": {
+			"title": "Dateien Integrität",
+			"description": "Überprüfe die Integrität der Spieldateien."
+		},
+		"deleteGame": {
+			"title": "Lösche Spiel",
+			"description": "Lösche Spieldateien von deinem Computer."
+		},
+		"updatesInterval": {
+			"title": "Updates",
+			"description": "Wie oft der Launcher für Updates schauen soll."
+		},
+		
+		"username": "Benutzername",
+		"password": "Passwort",
+		"loginButton": "Einloggen",
+		"error": {
+			"wrongLoginOrPassword": "Falscher Benutzername oder Passwort!",
+			"activateAccount": "Account nicht aktiviert!",
+			"unexpectedError": "Ein unerwarteter Fehler ist aufgetreten!"
+		},
+		"logout": {
+			"title": "Ausloggen",
+			"description": "Bist du sicher dass du dich ausloggen willst?",
+			"button": "Ausloggen"
+		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "Januar",
+			"february": "Februar",
+			"march": "März",
+			"april": "April",
+			"may": "Mai",
+			"june": "Juni",
+			"july": "Juli",
+			"august": "August",
+			"september": "September",
+			"october": "Oktober",
+			"november": "November",
+			"december": "Dezember"
+		},
+		"short": {
+			"january": "Jan",
+			"february": "Feb",
+			"march": "Mär",
+			"april": "Apr",
+			"may": "Mai",
+			"june": "Jun",
+			"july": "Jul",
+			"august": "Aug",
+			"september": "Sep",
+			"october": "Okt",
+			"november": "Nov",
+			"december": "Dez"
+		}
+	}
+}
