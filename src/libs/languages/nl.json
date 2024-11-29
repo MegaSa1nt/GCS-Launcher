@@ -1,0 +1,103 @@
+{
+	"mainPage": "Hallo %1$s!",
+	"guest": "gast",
+	
+	"notifications": {
+		"gameInstalled": {
+			"title": "Videospel geïnstalleerd",
+			"description": "De videospel heeft gelukkig geïnstalleerd!"
+		},
+		"gameUpdated": {
+			"title": "Videospel geupdated",
+			"description": "De videospel heeft gelukkig geupdated!"
+		},
+		"gameDeleted": {
+			"title": "Videospel verwijderd",
+			"description": "De videospel heeft gelukkig verwijderd..."
+		},
+		"foundUpdate": {
+			"title": "Nieuw videospel update",
+			"description": "De launcher heeft en nieuw videospel update gevonden!"
+		}
+	},
+	
+	"settings": {
+		"title": "Instellingen",
+		
+		"launcher": "Launcher",
+		"notifications": {
+			"title": "Meldingen",
+			"description": "Inschakel meldingen bvb nieuw spel/launcher updates, spel meldingen en andere"
+		},
+		"profileType": {
+			"title": "Profielstijl",
+			"description": "De launcher heeft meerdere profielstijlen, kies wat je verkiest!",
+			"firstType": "Launcherstijl 1",
+			"secondType": "Launcherstijl 2",
+			"thirdType": "Geometry Dash stijl"
+		},
+		"language": {
+			"title": "Launcher taal",
+			"description": "Kies de taal je weet het best"
+		},
+		
+		"game": "Spel",
+		"gameFolder": {
+			"title": "Spelmap",
+			"description": "Open de spelmap"
+		},
+		"filesIntegrity": {
+			"title": "Files integrity",
+			"description": "Verify integrity of game files"
+		},
+		"deleteGame": {
+			"title": "Delete game",
+			"description": "Delete game files from your computer"
+		},
+		
+		"username": "Username",
+		"password": "Password",
+		"loginButton": "Login to account",
+		"error": {
+			"wrongLoginOrPassword": "Wrong username or password!",
+			"activateAccount": "Activate your account!",
+			"unexpectedError": "Unexpected error!"
+		},
+		"logout": {
+			"title": "Logout",
+			"description": "Are you sure you want to logout?",
+			"button": "Logout"
+		}
+	},
+	
+	"months": {
+		"full": {
+			"january": "januari",
+			"february": "februari",
+			"march": "maart",
+			"april": "april",
+			"may": "mei",
+			"june": "juni",
+			"july": "juli",
+			"august": "augustus",
+			"september": "september",
+			"october": "oktober",
+			"november": "november",
+			"december": "december"
+		},
+		"short": {
+			"january": "jan",
+			"february": "feb",
+			"march": "maa",
+			"april": "apr",
+			"may": "mei",
+			"june": "jun",
+			"july": "jul",
+			"august": "aug",
+			"september": "sep",
+			"october": "okt",
+			"november": "nov",
+			"december": "dec"
+		}
+	}
+}
