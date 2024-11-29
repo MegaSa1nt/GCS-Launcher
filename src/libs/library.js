@@ -6,11 +6,13 @@ import Database from '@tauri-apps/plugin-sql';
 import { sendNotification } from '@tauri-apps/plugin-notification';
 import style from './style.module.scss';
 import { exit } from '@tauri-apps/plugin-process';
+import { getVersion } from '@tauri-apps/api/app';
+import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
+let themeChangeEvent = new Event("themeChange", {bubbles: true});
 import languageStrings from './languages.js';
 let strings = languageStrings[localStorage.language];
-import { getVersion } from '@tauri-apps/api/app';
 
 window.gameUpdatingAnimation = '';
 window.playButtonIsAvailable = style.isAvailable;
@@ -92,6 +94,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.color == 'undefined') localStorage.color = '';
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
+	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
 }
 
 library.getSettings = function() {
@@ -571,6 +574,26 @@ library.checkLauncherUpdates = function() {
 				r(true);
 			});
 		});
+	});
+}
+
+library.changeLauncherTheme = function(theme) {
+	return new Promise(r => {
+		const appWindow = getCurrentWindow();
+		document.dispatchEvent(themeChangeEvent);
+		document.getElementById("launcher-contents").setAttribute("launcher-theme", theme);
+		switch(theme) {
+			case 'main':
+				document.getElementById("launcher-background").style.display = "block";
+				appWindow.clearEffects();
+				appWindow.setShadow(false);
+				break;
+			case 'mica':
+				document.getElementById("launcher-background").style.display = "none";
+				appWindow.setEffects({ effects: [ Effect.Mica ] })
+				appWindow.setShadow(true);
+				break;
+		}
 	});
 }
 

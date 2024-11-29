@@ -194,3 +194,11 @@ body {
 .content::-webkit-scrollbar {
 	width: 0px;
 }
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .content {
+	padding: 50px 50px 50px 130px;
+}

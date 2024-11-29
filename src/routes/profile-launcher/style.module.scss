@@ -3,7 +3,6 @@
     width: 100%;
 	height: 100%;
 	border-radius: 20px;
-	padding: 15px;
 }
 
 .head {
@@ -23,6 +22,8 @@
 	background-color: #D9D9D909;
 	border-radius: 15px;
 	padding: 6px 8px 6px 6px;
+	opacity: 0;
+	transition: 0.3s;
 }
 
 .usernameDiv h1 {
@@ -42,6 +43,18 @@
 	justify-content: space-around;
 	align-items: center;
 	position: relative;
+}
+
+.onlyStats {
+	display: flex;
+    grid-gap: 5px;
+	width: 100%;
+	border-radius: 15px;
+	justify-content: space-around;
+	align-items: center;
+	position: relative;
+	opacity: 0;
+	transition: 0.3s;
 }
 
 .profileStat {
@@ -133,6 +146,12 @@
 	opacity: 0;
 }
 
+.hideSkeleton .usernameDiv,
+.hideSkeleton .headerIcons,
+.hideSkeleton .onlyStats {
+	opacity: 1;
+}
+
 .usernameSkeletonSpan {
 	width: 250px;
     height: 30px;
@@ -166,7 +185,7 @@
 .profilePostsSkeleton {
 	position: absolute;
     width: 100%;
-    height: 142%;
+    height: 129%;
     display: flex;
     grid-gap: 10px;
     justify-content: space-around;
@@ -214,7 +233,7 @@
 }
 
 .headerIcons {
-	width: 40%;
+	width: 35%;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -222,6 +241,8 @@
 	background-color: #D9D9D909;
     padding: 7px;
     border-radius: 15px;
+	opacity: 0;
+	transition: 0.3s;
 }
 
 .profileHeaderSkeleton {
@@ -237,9 +258,35 @@
 }
 
 .profileIconsDivSkeleton {
-	width: 71%;
+	width: 56%;
 }
 
 .profileHeaderSkeleton .profileIconsSkeletonSpan {
 	border-radius: 15px;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .profileHeaderSkeleton {
+	background-color: transparent;
+}
+
+[launcher-theme="mica"] .skeletonSpan {
+    background: linear-gradient(90deg, #D9D9D914 0%, #D9D9D924 50%, #D9D9D914 100%);
+	display: block;
+	transition: 0.3s;
+    animation: skeleton-animation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    background-size: 50%;
+    animation-timing-function: linear;
+	pointer-events: none;
+}
+
+[launcher-theme="mica"] ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 100px;
+    border: 2.5px solid transparent;
 }

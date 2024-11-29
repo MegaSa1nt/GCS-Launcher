@@ -27,6 +27,14 @@
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
+	
+	let themes = [
+		{value: 'main', label: 'Стандартный'},
+		{value: 'mica', label: 'Mica'}
+	];
+	
+	let themesValue = themes.find(c => c.value == localStorage.theme);
+	
 	let isNotificationsToggled = localStorage.enable_notifications == "true";
 	
 	function changeLanguage(lang) {
@@ -114,6 +122,27 @@
 				value={languagesValue}
 				onChange={(event) => {
 					changeLanguage(event.detail.value);
+				}}
+			/>
+		</div>
+		
+		<hr>
+		
+		<div class={style.settingDiv}>
+			<div class={style.settingDescription}>
+				<h2>
+					Тема лаунчера
+				</h2>
+				<h3>
+					Выберите тему, которая вам нравится!
+				</h3>
+			</div>
+			<Select
+				items={themes}
+				value={themesValue}
+				onChange={(event) => {
+					localStorage.theme = event.detail.value;
+					library.changeLauncherTheme(event.detail.value);
 				}}
 			/>
 		</div>

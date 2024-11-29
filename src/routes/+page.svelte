@@ -11,9 +11,7 @@
 	
 	let gameName = '';
 	
-	library.getSettings().then(r => {
-		gameName = r.gdps_name;
-	});
+	library.getSettings().then(r => gameName = r.gdps_name);
 	
 	export let buttonState = window.playButtonState;
 	export let buttonIsAvailable = window.playButtonIsAvailable;

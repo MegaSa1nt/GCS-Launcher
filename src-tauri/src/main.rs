@@ -12,7 +12,6 @@ use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
 };
-
 use chksum_md5;
 
 #[tauri::command]
@@ -86,10 +85,12 @@ fn main() {
     #[cfg(desktop)]
     {
         builder = builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-            let _ = app
+            let launcher_window = app
                 .get_webview_window("main")
-                .expect("no main window")
-                .set_focus();
+                .expect("no main window");
+			let _ = launcher_window.unminimize();
+            let _ = launcher_window.show();
+            let _ = launcher_window.set_focus();
         }));
     }
     builder
@@ -137,7 +138,6 @@ fn main() {
 				}
             })
             .build(app)?;
-
         Ok(())
 		})
         .run(tauri::generate_context!())

@@ -18,7 +18,6 @@
 	
 	appWindow.setMaximizable(false);
 	appWindow.setResizable(false);
-	appWindow.setShadow(false);
 
 	onNavigate((navigation) => {
 		if(!document.startViewTransition) return;
@@ -44,6 +43,7 @@
 		return false;
 	});
 	
+	library.changeLauncherTheme(localStorage.theme);
 	library.checkLauncherUpdates().then(r => {
 		appWindow.show();
 	});
