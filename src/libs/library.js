@@ -14,6 +14,8 @@ let themeChangeEvent = new Event("themeChange", {bubbles: true});
 import languageStrings from './languages.js';
 let strings = languageStrings[localStorage.language];
 
+document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
+
 window.gameUpdatingAnimation = '';
 window.playButtonIsAvailable = style.isAvailable;
 window.playButtonState = 0;
@@ -590,7 +592,7 @@ library.changeLauncherTheme = function(theme) {
 				break;
 			case 'mica':
 				document.getElementById("launcher-background").style.display = "none";
-				appWindow.setEffects({ effects: [ Effect.Mica ] })
+				appWindow.setEffects({ effects: [ Effect.Mica, Effect.Acrylic ] })
 				appWindow.setShadow(true);
 				break;
 		}

@@ -13,7 +13,7 @@
 
 .profileUsername {
 	font-weight: bold;
-	font-size: 22px;
+	font-size: 20px;
 	margin: 0px;
 }
 
@@ -38,7 +38,7 @@
 	margin: 0px;
     font-weight: normal;
     word-wrap: break-word;
-    font-size: 15px;
+    font-size: 14px;
     color: #c0c0c0;
 }
 
@@ -47,8 +47,8 @@
     border: none;
     padding: 5px;
     border-radius: 20px;
-    width: 30px;
-    height: 30px;
+    width: 27px;
+    height: 27px;
     transition: 0.2s;
     cursor: pointer;
 	border-top-left-radius: 0px;
@@ -74,15 +74,15 @@
 	display: flex;
     background: #29282c;
     border: none;
-    padding: 5px 5px 5px 7px;
+    padding: 3px 3px 3px 5px;
     border-radius: 15px;
     width: max-content;
-    height: 30px;
+    height: 27px;
     transition: 0.2s;
-    cursor: normal;
+    cursor: initial;
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
-    font-size: 15px;
+    font-size: 13px;
     color: white;
     justify-content: flex-start;
     align-items: center;
@@ -136,4 +136,22 @@
 
 .onlyButtons {
 	display: flex;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .profilePost {
+	background-color: #94949414;
+	border-radius: 0px;
+}
+
+[launcher-theme="mica"] .profileReplyButton,
+[launcher-theme="mica"] .profileLikeButton {
+	background: #94949417;
+}
+
+[launcher-theme="mica"] .profileReplyButton:hover {
+	background: #94949427;
 }

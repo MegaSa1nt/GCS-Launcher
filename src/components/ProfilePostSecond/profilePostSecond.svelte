@@ -58,13 +58,13 @@
 				<div class={style.onlyButtons}>
 					<button class={style.profileLikeButton}>
 						{#if likes >= dislikes}
-							<ThumbsUp color="#FFFFFF" size={20} /> {likes - dislikes}
+							<ThumbsUp color="#FFFFFF" size={17} /> {likes - dislikes}
 						{:else}
-							<ThumbsDown color="#FFFFFF" size={20} /> {dislikes - likes}
+							<ThumbsDown color="#FFFFFF" size={17} /> {dislikes - likes}
 						{/if}
 					</button>
 					<button on:click={() => checkReplies(postID)} class={style.profileReplyButton}>
-						<MessageCircleMore size={20} color="#FFFFFF"/>
+						<MessageCircleMore size={17} color="#FFFFFF"/>
 					</button>
 				</div>
 				<span class={[style.spin]} id={"profilePostSpinner" + postID}>

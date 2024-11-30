@@ -20,6 +20,7 @@
 	height: max-content;
 	width: 100%;
 	justify-content: center;
+	opacity: 0;
 }
 
 .usernameDiv h1 {
@@ -40,6 +41,18 @@
 	justify-content: space-around;
 	align-items: center;
 	position: relative;
+}
+
+.onlyStats {
+	display: flex;
+    grid-gap: 5px;
+	width: 100%;
+	border-radius: 15px;
+	justify-content: space-around;
+	align-items: center;
+	position: relative;
+	opacity: 0;
+	transition: 0.3s;
 }
 
 .profileStat {
@@ -106,6 +119,7 @@
     animation-iteration-count: infinite;
     background-size: 50%;
     animation-timing-function: linear;
+	pointer-events: none;
 }
 
 .usernameSkeletonDiv {
@@ -125,6 +139,11 @@
 
 .hideSkeleton .skeletonSpan {
 	opacity: 0;
+}
+
+.hideSkeleton .usernameDiv,
+.hideSkeleton .onlyStats {
+	opacity: 1;
 }
 
 .usernameSkeletonSpan {
@@ -149,7 +168,8 @@
     height: 100%;
 }
 
-.profileIconsSkeletonSpan {
+.profileIconsSkeletonSpan,
+.profilePostsSkeletonSpan {
 	border-radius: 10px;
     width: 100%;
     height: 100%;
@@ -167,8 +187,65 @@
     top: 0;
     left: 0;
     z-index: 2;
+	pointer-events: none;
 }
 
 .hideSkeleton .profilePostsSkeleton {
 	padding: 10px 0px 10px 10px;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .profileBlock {
+	background-color: #94949414;
+	padding: 20px;
+	border-radius: 10px;
+}
+
+[launcher-theme="mica"] .profileStatsDiv {
+	background-color: #94949414;
+	border-radius: 10px;
+}
+
+[launcher-theme="mica"] .profilePostsDiv {
+	padding: 0px;
+	background: transparent;
+	grid-gap: 2px;
+}
+
+[launcher-theme="mica"] .profilePostsSkeleton {
+	padding: 0px;
+	background: transparent;
+	grid-gap: 2px;
+	height: 112%;
+	border-radius: 10px;
+}
+
+[launcher-theme="mica"] .profilePostsSkeletonSpan {
+	border-radius: 0px;
+}
+
+[launcher-theme="mica"] .skeletonSpan {
+    background: linear-gradient(90deg, #94949414 0%, #94949424 50%, #94949414 100%);
+	display: block;
+	transition: 0.3s;
+    animation: skeleton-animation;
+    animation-duration: 5s;
+    animation-iteration-count: infinite;
+    background-size: 50%;
+    animation-timing-function: linear;
+	pointer-events: none;
+}
+
+[launcher-theme="mica"] ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 100px;
+    border: 2.5px solid transparent;
+}
+
+[launcher-theme="mica"] ::-webkit-scrollbar {
+	width: 0px;
+  	border-radius: 500px;
 }

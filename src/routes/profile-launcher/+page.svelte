@@ -140,9 +140,9 @@
 		</div>
 		<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
 			<div class={style.profilePostsSkeleton}>
-				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 			</div>
 			{#each profileData.posts as post}
 				<ProfilePost postID={post.commentID} username={profileData.userName} postText={post.post} likes={post.likes} dislikes={post.dislikes} timestamp={post.timestamp} />

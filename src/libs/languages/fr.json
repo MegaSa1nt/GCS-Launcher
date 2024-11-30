@@ -53,6 +53,11 @@
 			"every6Hours": "Every 6 hours",
 			"onlyAtStartup": "Only at startup"
 		},
+		"themes": {
+			"title": "Launcher theme",
+			"description": "Choose theme you like most!",
+			"default": "Default"
+		},
 		
 		"game": "Jeu",
 		"gameFolder": {

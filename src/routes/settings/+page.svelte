@@ -23,13 +23,14 @@
 		{value: 'fr', label: 'Français'},
 		{value: 'bm', label: 'Bahasa Melayu'},
 		{value: 'vi', label: 'Tiếng Việt'},
-		{value: 'tt', label: 'Татарча'}
+		{value: 'tt', label: 'Татарча'},
+		{value: 'de', label: 'Deutsch'}
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
 	
 	let themes = [
-		{value: 'main', label: 'Стандартный'},
+		{value: 'main', label: strings.settings.themes.default},
 		{value: 'mica', label: 'Mica'}
 	];
 	
@@ -37,13 +38,20 @@
 	
 	let isNotificationsToggled = localStorage.enable_notifications == "true";
 	
+	let languageChangeEvent = new Event("languageChange", {bubbles: true});
+	
 	function changeLanguage(lang) {
 		localStorage.language = lang;
 		strings = languageStrings[localStorage.language];
+		document.dispatchEvent(languageChangeEvent);
 		profileTypes = [
 			{value: 1, label: strings.settings.profileType.firstType},
 			{value: 2, label: strings.settings.profileType.secondType},
 			{value: 0, label: strings.settings.profileType.thirdType}
+		];
+		themes = [
+			{value: 'main', label: strings.settings.themes.default},
+			{value: 'mica', label: 'Mica'}
 		];
 	}
 	
@@ -88,7 +96,7 @@
 			<Toggle bind:toggled={isNotificationsToggled} on:toggle={(e) => localStorage.enable_notifications = e.detail} />
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -106,7 +114,7 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -126,15 +134,15 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
 				<h2>
-					Тема лаунчера
+					{strings.settings.themes.title}
 				</h2>
 				<h3>
-					Выберите тему, которая вам нравится!
+					{strings.settings.themes.description}
 				</h3>
 			</div>
 			<Select
@@ -147,7 +155,7 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.versionIcon}>
@@ -161,7 +169,7 @@
 					{printf(strings.settings.versions.launcher, appVersion)}
 				</h3>
 			</div>
-			<button title={strings.settings.versions.checkUpdates} class={style.settingsButton} on:click={() => {checkLauncherUpdates()}}>
+			<button title={strings.settings.versions.checkUpdates} class={style.settingsButton} on:click={() => checkLauncherUpdates()}>
 				<span class={isCheckingLauncherUpdate}>
 					<RefreshCw color="#FFFFFF"/>
 				</span>

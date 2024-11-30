@@ -46,6 +46,18 @@
 			"checkUpdates": "Проверить обновления",
 			"notInstalled": "Не установлено"
 		},
+		"intervals": {
+			"every10Minutes": "Каждые 10 минут",
+			"every30Minutes": "Каждые полчаса",
+			"every1Hour": "Каждый час",
+			"every6Hours": "Каждые 6 часов",
+			"onlyAtStartup": "Только при запуске"
+		},
+		"themes": {
+			"title": "Тема лаунчера",
+			"description": "Выберите тему, которая вам нравится!",
+			"default": "Стандартная"
+		},
 		
 		"game": "Уйнау",
 		"gameFolder": {
@@ -63,13 +75,6 @@
 		"updatesInterval": {
 			"title": "Проверка обновлений",
 			"description": "Как часто лаунчер будет проверять обновление игры"
-		},
-		"intervals": {
-			"every10Minutes": "Каждые 10 минут",
-			"every30Minutes": "Каждые полчаса",
-			"every1Hour": "Каждый час",
-			"every6Hours": "Каждые 6 часов",
-			"onlyAtStartup": "Только при запуске"
 		},
 		
 		"username": "Никнейм",
