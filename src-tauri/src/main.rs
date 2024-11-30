@@ -1,18 +1,26 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use reqwest::header::CONTENT_TYPE;
+
 use std::ffi::OsStr;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
 use std::path::PathBuf;
+
 use sysinfo::System;
+
 use tauri::Manager;
 use tauri::{
     menu::{MenuBuilder, MenuItemBuilder},
     tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent},
 };
+use tauri::{AppHandle, Emitter};
+
 use chksum_md5;
+
+use mundy::{Preferences, Interest};
+use futures_lite::StreamExt as _;
 
 #[tauri::command]
 async fn download_file(url: String, temp_path: String) -> Result<(), String> {
@@ -80,6 +88,15 @@ async fn download_archive(url: String, temp_path: String, files: String) -> Resu
     Ok(())
 }
 
+#[tauri::command]
+async fn track_accent_color(app: AppHandle) -> Result<(), ()> {
+	let mut stream = Preferences::stream(Interest::AccentColor);
+	while let Some(preferences) = stream.next().await {
+		app.emit("accentColorChange", format!("{:?}|{:?}|{:?}", preferences.accent_color.0.unwrap().red, preferences.accent_color.0.unwrap().green, preferences.accent_color.0.unwrap().blue)).unwrap();
+	}
+	Ok(())
+}
+
 fn main() {
     let mut builder = tauri::Builder::default().plugin(tauri_plugin_process::init());
     #[cfg(desktop)]
@@ -103,7 +120,8 @@ fn main() {
             unpack_archive,
             get_file_md5,
             check_processes,
-            download_archive
+            download_archive,
+			track_accent_color
         ])
 		.setup(|app| {
 			let open = MenuItemBuilder::with_id("open".to_string(), "Развернуть лаунчер").build(app)?;

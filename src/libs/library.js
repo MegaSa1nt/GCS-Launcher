@@ -8,6 +8,7 @@ import style from './style.module.scss';
 import { exit } from '@tauri-apps/plugin-process';
 import { getVersion } from '@tauri-apps/api/app';
 import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
+import { listen } from '@tauri-apps/api/event';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
@@ -89,7 +90,7 @@ const gameCheckInterval = setInterval(async function() {
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
 	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 1;
-	if(typeof localStorage.enable_notifications == 'undefined') localStorage.enable_notifications = true;
+	if(typeof localStorage.enable_notifications == 'undefined') localStorage.enable_notifications = 'true';
 	if(typeof localStorage.username == 'undefined') localStorage.username = '';
 	if(typeof localStorage.accountID == 'undefined') localStorage.accountID = 0;
 	if(typeof localStorage.auth == 'undefined') localStorage.auth = '';
@@ -97,6 +98,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
+	if(typeof localStorage.use_accent_color == 'undefined') localStorage.use_accent_color = 'false';
 }
 
 library.getSettings = function() {
@@ -598,6 +600,21 @@ library.changeLauncherTheme = function(theme) {
 		}
 	});
 }
+
+library.changeAccentColorSetting = function(doUseAccentColor) {
+	localStorage.use_accent_color = doUseAccentColor;
+	document.getElementById("launcher-contents").setAttribute("accent-color", doUseAccentColor);
+}
+
+let accentColorChange = listen('accentColorChange', (event) => {
+	let rustColors = event.payload.split('|');
+	let rgb = [Math.round(rustColors[0] * 255), Math.round(rustColors[1] * 255), Math.round(rustColors[2] * 255)].join(',');
+	document.getElementById("accent-color").innerHTML = `
+		:root {
+			--system-accent-color: rgb(${rgb});
+		}
+	`;
+});
 
 library.styles = style;
 

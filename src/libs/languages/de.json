@@ -58,6 +58,10 @@
 			"description": "Choose theme you like most!",
 			"default": "Default"
 		},
+		"accentColor": {
+			"title": "System color",
+			"description": "Should launcher use accent color or keep default one"
+		},
 		
 		"game": "Spiel",
 		"gameFolder": {

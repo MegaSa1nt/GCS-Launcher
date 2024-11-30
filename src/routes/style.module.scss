@@ -195,6 +195,11 @@ body {
 	width: 0px;
 }
 
+[accent-color="true"] {
+	--accent-color: var(--system-accent-color);
+	--accent-button-color: color-mix(in srgb, var(--system-accent-color) 100%, #fff 50%);
+}
+
 /*
 	Mica theme
 */
@@ -207,4 +212,30 @@ body {
 	background-color: #94949414;
 	padding: 20px;
 	border-radius: 10px;
+}
+
+[launcher-theme="mica"] .launchBlock {
+	background-color: #94949414;
+	border-radius: 10px;
+	padding: 10px;
+	border: none;
+}
+
+[launcher-theme="mica"] .settingsButton {
+	background-color: #94949424;
+	border-radius: 5px;
+	border: none;
+}
+
+[launcher-theme="mica"] .loadButton {
+	border-radius: 5px;
+	border: none;
+}
+
+[launcher-theme="mica"] .settingsButton:hover {
+	background-color: #94949434;
+}
+
+[launcher-theme="mica"] .loadGame {
+	gap: 10px;
 }

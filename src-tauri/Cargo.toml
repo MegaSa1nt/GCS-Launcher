@@ -27,6 +27,8 @@ chksum-md5 = "0.0.0"
 sysinfo = "0.32.0"
 tauri-plugin-notification = "2"
 tauri-plugin-process = "2"
+mundy = "0.1.2"
+futures-lite = "2.3"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem and the built-in dev server is disabled.

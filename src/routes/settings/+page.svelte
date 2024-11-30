@@ -37,6 +37,7 @@
 	let themesValue = themes.find(c => c.value == localStorage.theme);
 	
 	let isNotificationsToggled = localStorage.enable_notifications == "true";
+	let isAccentColorToggled = localStorage.use_accent_color == "true";
 	
 	let languageChangeEvent = new Event("languageChange", {bubbles: true});
 	
@@ -153,6 +154,20 @@
 					library.changeLauncherTheme(event.detail.value);
 				}}
 			/>
+		</div>
+		
+		<hr class={style.settingsHR}>
+		
+		<div class={style.settingDiv}>
+			<div class={style.settingDescription}>
+				<h2>
+					{strings.settings.accentColor.title}
+				</h2>
+				<h3>
+					{strings.settings.accentColor.description}
+				</h3>
+			</div>
+			<Toggle bind:toggled={isAccentColorToggled} on:toggle={(e) => library.changeAccentColorSetting(e.detail)} />
 		</div>
 		
 		<hr class={style.settingsHR}>
