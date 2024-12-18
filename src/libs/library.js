@@ -1,14 +1,16 @@
 import { invoke } from '@tauri-apps/api/core';
 import { appCacheDir, resolve, resourceDir, join, sep } from '@tauri-apps/api/path';
+import { getVersion } from '@tauri-apps/api/app';
+import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
+import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
 import Database from '@tauri-apps/plugin-sql';
 import { sendNotification } from '@tauri-apps/plugin-notification';
-import style from './style.module.scss';
 import { exit } from '@tauri-apps/plugin-process';
-import { getVersion } from '@tauri-apps/api/app';
-import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
-import { listen } from '@tauri-apps/api/event';
+import { version } from '@tauri-apps/plugin-os';
+import style from './style.module.scss';
+import { printf } from 'fast-printf';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
@@ -16,6 +18,8 @@ import languageStrings from './languages.js';
 let strings = languageStrings[localStorage.language];
 
 document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
+
+document.addEventListener("notificationChange", (event) => notifications = event.detail.notifies);
 
 window.gameUpdatingAnimation = '';
 window.playButtonIsAvailable = style.isAvailable;
@@ -61,14 +65,17 @@ library.initializeEvents = async function() {
 	if(typeof window.isGameStarting == 'undefined') window.isGameStarting = false;
 	if(typeof window.isGameRunning == 'undefined') window.isGameRunning = false;
 	if(typeof window.isPendingUpdate == 'undefined') window.isPendingUpdate = false;
+	if(typeof window.hasNewNotifications == 'undefined') window.hasNewNotifications = false;
 	
 	// Rare type of events
 	if(typeof window.isLoggingIn == 'undefined') window.isLoggingIn = false;
+	if(typeof window.isNotificationsLoading == 'undefined') window.isNotificationsLoading = true;
 	
 	// Not really events
 	if(typeof window.new_updates == 'undefined') window.new_updates = [];
 	if(typeof window.recursive_check == 'undefined') window.recursive_check = [];
 	if(typeof window.game_folders == 'undefined') window.game_folders = [];
+	if(typeof window.notifications == 'undefined') window.notifications = [];
 	const dbPath = await resolve(await appCacheDir(), "files.db")
 	if(typeof window.db == 'undefined') window.db = await Database.load("sqlite:" + dbPath);
 	await db.execute(`CREATE TABLE IF NOT EXISTS 'files' (
@@ -593,8 +600,9 @@ library.changeLauncherTheme = function(theme) {
 				appWindow.setShadow(false);
 				break;
 			case 'mica':
+				let micaEffect = library.isWindows11() ? Effect.Mica : Effect.Acrylic;
 				document.getElementById("launcher-background").style.display = "none";
-				appWindow.setEffects({ effects: [ Effect.Mica, Effect.Acrylic ] })
+				appWindow.setEffects({ effects: [ micaEffect ] });
 				appWindow.setShadow(true);
 				break;
 		}
@@ -604,6 +612,122 @@ library.changeLauncherTheme = function(theme) {
 library.changeAccentColorSetting = function(doUseAccentColor) {
 	localStorage.use_accent_color = doUseAccentColor;
 	document.getElementById("launcher-contents").setAttribute("accent-color", doUseAccentColor);
+}
+
+library.getNotifications = function() {
+	return new Promise(async function(r) {
+		if(!localStorage.auth.length) r({ notifies: [] });
+		const settings = await library.getSettings();
+		fetch(settings.dashboard_api_url + "notify.php?auth=" + localStorage.auth).then(res => res.json()).then(response => {
+			if(!response.success) r({ notifies: [] });
+			
+			hasNewNotifications = response.notifies.some(notification => !notification.checked);
+			
+			let notificationChangeEvent = new CustomEvent("notificationChange", { detail: response });
+			document.dispatchEvent(notificationChangeEvent);
+			
+			if(isNotificationsLoading) {
+				if(response.counts.new > 0) {
+					if(response.counts.new == 1) {
+						let unreadNotification = response.notifies.filter((notification) => !notification.checked)[0].action;
+						let notificationTitle = library.getNotificationTitle(unreadNotification);
+						library.sendNotification(notificationTitle.title, notificationTitle.description);
+					} else {
+						let getPlural = library.getPluralType(response.counts.new);
+						library.sendNotification(printf(strings.notifications.several['title-' + getPlural], response.counts.new), printf(strings.notifications.several['description-' + getPlural], response.counts.new));
+					}
+				}
+			}
+			
+			isNotificationsLoading = false;
+			
+			r(response);
+		});
+	});
+}
+
+library.getNotificationTitle = function(action) {
+	let notificationTitle = '';
+	let notificationDescription = '';
+	let notificationType = style.squareYellow;
+	switch(action.type) {
+		case 1:
+			if(action.v3) {
+				notificationTitle = strings.notifications.first.levelRated.title;
+				notificationDescription = printf(strings.notifications.first.levelRated["description-" + library.getPluralType(action.v3)], action.v1.name, action.v3);
+				notificationType = style.squareGreen;
+			} else {
+				notificationTitle = strings.notifications.first.levelUnrated.title;
+				notificationDescription = printf(strings.notifications.first.levelUnrated.description, action.v1.name);
+				notificationType = style.squareRed;
+			}
+			break;
+		case 2:
+			if(action.v1 > 5) action.v1 = 0;
+			if(!action.v3) {
+				notificationTitle = strings.notifications.second.unbanned.title;
+				notificationDescription = strings.notifications.second.unbanned["description-" + action.v1]
+				notificationType = style.squareGreen;
+			} else {
+				notificationTitle = strings.notifications.second.banned.title;
+				notificationDescription = strings.notifications.second.banned["description-" + action.v1]
+				notificationType = style.squareRed;
+			}
+			break;
+		case 3:
+			notificationTitle = strings.notifications.third.title;
+			notificationDescription = printf(strings.notifications.third.description, action.v2.clan);
+			notificationType = style.squareYellow;
+			break;
+		case 4:
+			if(action.v1) {
+				notificationTitle = strings.notifications.fourth.joined.title;
+				notificationDescription = printf(strings.notifications.fourth.joined.description, action.v2.clan);
+				notificationType = style.squareGreen;
+			} else {
+				notificationTitle = strings.notifications.fourth.left.title;
+				notificationDescription = printf(strings.notifications.fourth.left.description, action.v2.clan);
+				notificationType = style.squareRed;
+			}
+			break;
+		case 5:
+			notificationTitle = strings.notifications.fifth.title;
+			notificationDescription = printf(strings.notifications.fifth.description, action.v2.clan);
+			notificationType = style.squareRed;
+			break;
+		case 6:
+			if(action.v1) {
+				notificationTitle = strings.notifications.sixth.accepted.title;
+				notificationDescription = printf(strings.notifications.sixth.accepted.description, action.v2.clan);
+				notificationType = style.squareGreen;
+			} else {
+				notificationTitle = strings.notifications.sixth.denied.title;
+				notificationDescription = printf(strings.notifications.sixth.denied.description, action.v2.clan);
+				notificationType = style.squareRed;
+			}
+			break;
+		default:
+			notificationTitle = strings.notifications.unknown.title;
+			notificationDescription = strings.notifications.unknown.description;
+			break;
+	}
+	return {
+		title: notificationTitle,
+		description: notificationDescription,
+		type: notificationType
+	};
+}
+
+library.getPluralType = function(number) {
+	let lastCharacter = String(number).slice(-1);
+	if(number == 1) return 1;
+	if((lastCharacter > 1 && lastCharacter < 5) || (number < 10 || number > 21)) return 2;
+	return 3;
+}
+
+library.isWindows11 = function() {
+	let windowsVersion = version().split('.');
+	return Number(windowsVersion[2]) >= 22000;
 }
 
 let accentColorChange = listen('accentColorChange', (event) => {
@@ -619,5 +743,7 @@ let accentColorChange = listen('accentColorChange', (event) => {
 library.styles = style;
 
 library.initializeEvents();
+
+library.getNotifications();
 
 export default library;

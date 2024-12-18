@@ -84,6 +84,7 @@
     "sql:allow-load",
     "sql:allow-execute",
     "notification:default",
-    "process:default"
+    "process:default",
+    "os:default"
   ]
 }

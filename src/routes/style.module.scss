@@ -91,7 +91,7 @@ body {
 	flex-direction: column;
 	gap: 18px;
 	height: 100%;
-    justify-content: space-between;
+    justify-content: flex-start;
 }
 
 .launchBlock {
@@ -101,8 +101,10 @@ body {
 	border-radius: 20px;
 	
 	padding: 15px;
-	width: max-content;
-    margin-left: auto;
+	
+	position: absolute;
+    right: 50px;
+    bottom: 50px;
 }
 
 .launchContent {
@@ -195,6 +197,46 @@ body {
 	width: 0px;
 }
 
+.mainPageNotificationsBlock {
+	width: 66%;
+	max-height: 100%;
+	background-color: #D9D9D909;
+	border-radius: 15px;
+	overflow-y: scroll;
+	padding: 10px 0px 10px 10px;
+	grid-gap: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+::-webkit-scrollbar-track {
+    background-color: rgba(0, 0, 0, 0);
+    border-radius: 100px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #373A3F;
+    border-radius: 100px;
+    border: 2.5px solid #1A1A1A;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+  	border-radius: 500px;
+}
+
+.mainPageNotificationsH2 {
+	margin: 0px;
+	width: 100%;
+	text-align: center;
+}
+
+.notificationsHR {
+	width: 100%;
+    margin: 5px 0px;
+    opacity: 0.1;
+}
+
 [accent-color="true"] {
 	--accent-color: var(--system-accent-color);
 	--accent-button-color: color-mix(in srgb, var(--system-accent-color) 100%, #fff 50%);
@@ -232,10 +274,42 @@ body {
 	border: none;
 }
 
+[launcher-theme="mica"] .loadAnimation {
+	border-radius: 5px;
+}
+
 [launcher-theme="mica"] .settingsButton:hover {
 	background-color: #94949434;
 }
 
 [launcher-theme="mica"] .loadGame {
 	gap: 10px;
+}
+
+[launcher-theme="mica"] .mainPageNotificationsBlock {
+	padding: 0px;
+	background: transparent;
+	border-radius: 10px;
+	grid-gap: 2px;
+	width: 70%;
+}
+
+[launcher-theme="mica"] ::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 100px;
+    border: 2.5px solid transparent;
+}
+
+[launcher-theme="mica"] ::-webkit-scrollbar {
+	width: 0px;
+  	border-radius: 500px;
+}
+
+[launcher-theme="mica"] .mainPageNotificationsH2 {
+	background-color: #94949414;
+	padding: 5px;
+}
+
+[launcher-theme="mica"] .notificationsHR {
+	display: none;
 }

@@ -52,6 +52,8 @@
 	
 	invoke('track_accent_color');
 	
+	library.checkIfPlayerIsLoggedIn();
+	
 	library.checkLauncherUpdates().then(r => {
 		appWindow.show();
 	});

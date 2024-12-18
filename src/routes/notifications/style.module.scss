@@ -1,0 +1,170 @@
+.notificationsBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+    justify-content: space-between;
+	min-height: 100%;
+}
+
+.button {
+    padding: 22px;
+    width: max-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #00000015;
+    border: solid 1px #FFFFFF10;
+    border-radius: 15px; 
+}
+
+.title {
+	font-size: 36px;
+	font-weight: 600;
+}
+
+.description {
+	font-size: 20px;
+	font-weight: 400;
+	color: #FFFFFF;
+	opacity: 80%;
+}
+
+.head {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.allNotificationsDiv {
+	display: flex;
+	flex-direction: column;
+	background-color: #D9D9D909;
+	padding: 15px;
+	border-radius: 15px;
+	grid-gap: 10px;
+	height: 100%;
+}
+
+form {
+	display: contents;
+}
+
+.loginBlock {
+	justify-content: center;
+}
+
+.spin,
+.notSpinning {
+	display: contents;
+}
+
+.spin svg {
+	animation-name: rotation;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+	transition: 0.2s;
+}
+
+@keyframes rotation {
+    0% {
+        transform:rotate(0deg);
+    }
+    100% {
+        transform:rotate(360deg);
+    }
+}
+
+.loginDiv .error {
+	margin: 0px;
+	font-size: 20px;
+	width: 100%;
+	color: #ffbbbb;
+	display: flex;
+	align-items: center;
+    justify-content: center;
+    grid-gap: 5px;
+}
+
+.loginDiv .logoutTitle {
+	margin: 0px;
+	font-size: 25px;
+	width: 100%;
+	text-align: center;
+	line-height: 0.9;
+}
+
+.loginDiv .logoutDesc {
+	margin: 0px;
+	font-size: 20px;
+	font-weight: 400;
+	width: 100%;
+	text-align: center;
+	color: #c0c0c0;
+	line-height: 0.9;
+}
+
+.versionIcon {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centerBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	height: 100%;
+    justify-content: center;
+}
+
+.notificationsHR {
+	width: 100%;
+    margin: 5px 0px;
+    opacity: 0.1;
+}
+
+.noNotificationsDiv {
+	width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+	justify-content: center;
+}
+
+.noNotificationsH3 {
+	margin: 0px;
+	font-size: 20px;
+	font-weight: 700;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .content {
+	padding: 30px 30px 30px 110px;
+}
+
+[launcher-theme="mica"] .notificationsBlock {
+	background-color: #94949414;
+	padding: 20px;
+	border-radius: 10px;
+}
+
+[launcher-theme="mica"] .allNotificationsDiv {
+	background-color: transparent;
+	border-radius: 10px;
+	padding: 0px;
+	grid-gap: 2px;
+}
+
+[launcher-theme="mica"] .notificationsHR {
+	display: none;
+}
+
+[launcher-theme="mica"] .noNotificationsDiv {
+	height: 80%;
+}

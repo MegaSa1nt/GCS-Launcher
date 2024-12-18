@@ -96,10 +96,20 @@
 		border-radius: 50%;
 		background-color: currentColor;
 		transition: transform 0.2s ease-in-out;
+		transform: scale(0.8);
+	}
+	
+	button:active:before {
+		transition: transform 0.2s ease-in-out;
+		transform: scale(1.0);
+	}
+	
+	button[aria-checked="true"]:active:before {
+		transform: translateX(1.25rem) scale(1.0);
 	}
 
 	button[aria-checked="true"]:before {
-		transform: translateX(1.25rem);
+		transform: translateX(1.25rem) scale(0.8);
 	}
 
 	button.small {
