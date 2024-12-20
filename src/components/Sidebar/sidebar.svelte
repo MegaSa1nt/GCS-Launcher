@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Home, User } from 'lucide-svelte';
+	import { Home, User, Bell, BellDot } from 'lucide-svelte';
     import style from './style.module.scss';
     import { page } from '$app/stores';
 	import library from '../../libs/library.js';
@@ -20,16 +20,21 @@
     
     let homeColor = getButtonColor("/");
     let profileColor = getButtonColor("/profile-" + sidebarProfileType);
+    let notificationsColor = getButtonColor("/notifications");
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/");
         profileColor = getButtonColor("/profile-" + sidebarProfileType);
-    }
+		notificationsColor = getButtonColor("/notifications");
+    };
 
     page.subscribe(() => {
         updateButtonColors();
 		sidebarProfileType = profileTypes[localStorage.profile_type];
-    })
+    });
+	
+	let newNotifications = window.hasNewNotifications;
+	document.addEventListener("notificationChange", (event) => newNotifications = window.hasNewNotifications);
 </script>
 
 <div class={style.sidebar}>

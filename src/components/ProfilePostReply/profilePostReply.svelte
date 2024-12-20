@@ -36,12 +36,10 @@
 	<div class={style.profilePost}>
 		<div class={style.profilePostStats}>
 			<h2 class={style.profileUsername}>{username}</h2>
+			<h4 class={style.profilePostTime}>{library.timeConverter(timestamp, true)}</h4>
 		</div>
 		<h3>
 			{replyText}
 		</h3>
-		<div class={style.profileCreatePostDiv}>
-			<h4 class={style.profilePostTime}>{library.timeConverter(timestamp, true)}</h4>
-		</div>
 	</div>
 </div>

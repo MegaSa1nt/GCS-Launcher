@@ -50,3 +50,20 @@
 .active {
     stroke: var(--accent-color); 
 }
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .sidebar {
+	background-color: #00000000;
+	border-right: solid 1px #FFFFFF00;
+}
+
+[launcher-theme="mica"] .button {
+	background-color: #D9D9D914;
+}
+
+[launcher-theme="mica"] .button:hover {
+	background-color: #D9D9D924;
+}

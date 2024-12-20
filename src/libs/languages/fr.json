@@ -18,6 +18,83 @@
 		"foundUpdate": {
 			"title": "Nouvelle mise à jour",
 			"description": "Le launcher a trouvé une nouvelle mise à jour pour le jeu !"
+		},
+		
+		"new": "New notifications",
+		
+		"unknown": {
+			"title": "Unknown notification",
+			"description": "You received unknown notification 🤨"
+		},
+		
+		"several": {
+			"title-1": "%1$s new notification",
+			"title-2": "%1$s new notifications",
+			"title-3": "%1$s new notifications",
+			"description-1": "You received %1$s new notification!",
+			"description-2": "You received %1$s new notifications!",
+			"description-3": "You received %1$s new notifications!"
+		},
+		
+		"first": {
+			"levelRated": {
+				"title": "Your level was rated",
+				"description-1": "Congratulations! Your level %1$s was rated with %2$s star 🎉",
+				"description-2": "Congratulations! Your level %1$s was rated with %2$s stars 🎉",
+				"description-3": "Congratulations! Your level %1$s was rated with %2$s stars 🎉"
+			},
+			"levelUnrated": {
+				"title": "Your level was unrated",
+				"description": "Your level %1$s lost rate 😢"
+			}
+		},
+		"second": {
+			"unbanned": {
+				"title": "You were unbanned",
+				"description-0": "You were unbanned in unknown for launcher thing! 🥳",
+				"description-1": "You were unbanned from players leaderboard! 🥳",
+				"description-2": "You were unbanned from creators leaderboard! 🥳",
+				"description-3": "Moderator unbanned uploading levels to you! 🥳",
+				"description-4": "Moderator unbanned commenting levels to you! 🥳",
+				"description-5": "Moderator unbanned your account! 🥳"
+			},
+			"banned": {
+				"title": "You were banned",
+				"description-0": "You were banned in unknown for launcher thing! 😭",
+				"description-1": "You were banned from players leaderboard! 😭",
+				"description-2": "You were banned from creators leaderboard! 😭",
+				"description-3": "Moderator banned uploading levels to you! 😭",
+				"description-4": "Moderator banned commenting levels to you! 😭",
+				"description-5": "Moderator banned your account! 😭"
+			}
+		},
+		"third": {
+			"title": "New clan join request",
+			"description": "Someone sent join request to your clan %1$s! 😊"
+		},
+		"fourth": {
+			"joined": {
+				"title": "Someone joined clan",
+				"description": "Someone joined your clan %1$s! 😱"
+			},
+			"left": {
+				"title": "Someone left clan",
+				"description": "One of members of your clan %1$s left it! 😔"
+			}
+		},
+		"fifth": {
+			"title": "You were kicked",
+			"description": "You were kicked from clan %1$s by its owner! 😔"
+		},
+		"sixth": {
+			"accepted": {
+				"title": "Join request was accepted",
+				"description": "Owner of clan %1$s accepted your join request! 😀"
+			},
+			"denied": {
+				"title": "Join request was denied",
+				"description": "Owner of clan %1$s denied your join request! 😥"
+			}
 		}
 	},
 	
@@ -52,6 +129,15 @@
 			"every1Hour": "Every hour",
 			"every6Hours": "Every 6 hours",
 			"onlyAtStartup": "Only at startup"
+		},
+		"themes": {
+			"title": "Launcher theme",
+			"description": "Choose theme you like most!",
+			"default": "Default"
+		},
+		"accentColor": {
+			"title": "System color",
+			"description": "Should launcher use accent color or keep default one"
 		},
 		
 		"game": "Jeu",

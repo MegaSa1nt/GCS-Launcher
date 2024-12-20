@@ -31,8 +31,10 @@
 					localStorage.auth = response.auth;
 					localStorage.color = response.color;
 					localStorage.accountID = response.accountID;
+					library.getNotifications();
 					goto("/");
 				} else {
+					isLogging = false;
 					library.logout();
 					isLoginErrored = true;
 					switch(response.error) {

@@ -1,0 +1,141 @@
+.notificationsButton {
+	display: flex;
+	border: none;
+	width: max-content;
+	height: max-content;
+	padding: 10px;
+	background-color: #242424;
+	border-radius: 10px;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.notificationsButton:hover {
+	background-color: #2a2a2a;
+}
+
+.notificationsButton:disabled {
+	background-color: #141414;
+	cursor: not-allowed;
+}
+
+.notificationsHR {
+	width: 100%;
+    margin: 5px 0px;
+    opacity: 0.1;
+}
+
+.notificationDiv {
+	display: flex;
+	grid-gap: 10px;
+	align-items: center;
+}
+
+.notificationDescription {
+	display: flex;
+    flex-direction: column;
+    grid-gap: 5px;
+	width: 100%;
+}
+
+.notificationDescription h2 {
+	line-height: 0.9;
+	margin: 0px;
+	display: flex;
+	font-size: 18px;
+    flex-direction: row;
+    align-items: flex-start;
+	grid-gap: 5px;
+}
+
+.notificationDescription h3 {
+	color: #c0c0c0;
+	font-weight: 400;
+	font-size: 15px;
+	line-height: 1.2;
+	margin: 0px;
+}
+
+.notificationDescription h4 {
+	font-weight: 400;
+	font-size: 18px;
+	line-height: 1.2;
+	margin: 0px;
+	color: #c0c0c0;
+}
+
+.notificationShort {
+	display: flex;
+	grid-gap: 10px;
+	width: 100%;
+}
+
+.notificationDescription h2 p {
+	margin: 0px;
+	font-size: 13px;
+	font-weight: 400;
+	color: gray;
+	margin-left: auto;
+}
+
+.notificationTypeSquare {
+	border-radius: 5px;
+	width: 16px;
+	height: 16px;
+	background: black;
+}
+
+.squareGreen {
+	background: #bbffbb;
+}
+
+.squareYellow {
+	background: #ffffbb;
+}
+
+.squareRed {
+	background: #ffbbbb;
+}
+
+.notificationCircle {
+	border-radius: 500px;
+	width: 10px;
+	height: 10px;
+	background: #ff7878;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .notificationsHR {
+	display: none;
+}
+
+[launcher-theme="mica"] .notificationsButton {
+	background-color: #94949414;
+}
+
+[launcher-theme="mica"] .notificationsButton:enabled:hover {
+	background-color: #94949424;
+}
+
+[launcher-theme="mica"] .notificationsButton:disabled {
+	opacity: 0.7;
+}
+
+[launcher-theme="mica"] .notificationDiv {
+	background-color: #94949414;
+	border-radius: 0px;
+	padding: 10px;
+}
+
+[launcher-theme="mica"] .notificationDiv:first-child {
+	border-top-left-radius: 10px;
+	border-top-right-radius: 10px;
+}
+
+[launcher-theme="mica"] .notificationDiv:last-child {
+	border-bottom-left-radius: 10px;
+	border-bottom-right-radius: 10px;
+}

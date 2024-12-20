@@ -28,15 +28,31 @@
 	];
 	
 	let languagesValue = languages.find(c => c.value == localStorage.language);
+	
+	let themes = [
+		{value: 'main', label: strings.settings.themes.default},
+		{value: 'mica', label: 'Mica'}
+	];
+	
+	let themesValue = themes.find(c => c.value == localStorage.theme);
+	
 	let isNotificationsToggled = localStorage.enable_notifications == "true";
+	let isAccentColorToggled = localStorage.use_accent_color == "true";
+	
+	let languageChangeEvent = new Event("languageChange", {bubbles: true});
 	
 	function changeLanguage(lang) {
 		localStorage.language = lang;
 		strings = languageStrings[localStorage.language];
+		document.dispatchEvent(languageChangeEvent);
 		profileTypes = [
 			{value: 1, label: strings.settings.profileType.firstType},
 			{value: 2, label: strings.settings.profileType.secondType},
 			{value: 0, label: strings.settings.profileType.thirdType}
+		];
+		themes = [
+			{value: 'main', label: strings.settings.themes.default},
+			{value: 'mica', label: 'Mica'}
 		];
 	}
 	
@@ -81,7 +97,7 @@
 			<Toggle bind:toggled={isNotificationsToggled} on:toggle={(e) => localStorage.enable_notifications = e.detail} />
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -99,7 +115,7 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -119,7 +135,42 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
+		
+		<div class={style.settingDiv}>
+			<div class={style.settingDescription}>
+				<h2>
+					{strings.settings.themes.title}
+				</h2>
+				<h3>
+					{strings.settings.themes.description}
+				</h3>
+			</div>
+			<Select
+				items={themes}
+				value={themesValue}
+				onChange={(event) => {
+					localStorage.theme = event.detail.value;
+					library.changeLauncherTheme(event.detail.value);
+				}}
+			/>
+		</div>
+		
+		<hr class={style.settingsHR}>
+		
+		<div class={style.settingDiv}>
+			<div class={style.settingDescription}>
+				<h2>
+					{strings.settings.accentColor.title}
+				</h2>
+				<h3>
+					{strings.settings.accentColor.description}
+				</h3>
+			</div>
+			<Toggle bind:toggled={isAccentColorToggled} on:toggle={(e) => library.changeAccentColorSetting(e.detail)} />
+		</div>
+		
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.versionIcon}>
@@ -133,7 +184,7 @@
 					{printf(strings.settings.versions.launcher, appVersion)}
 				</h3>
 			</div>
-			<button title={strings.settings.versions.checkUpdates} class={style.settingsButton} on:click={() => {checkLauncherUpdates()}}>
+			<button title={strings.settings.versions.checkUpdates} class={style.settingsButton} on:click={() => checkLauncherUpdates()}>
 				<span class={isCheckingLauncherUpdate}>
 					<RefreshCw color="#FFFFFF"/>
 				</span>

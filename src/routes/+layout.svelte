@@ -7,6 +7,7 @@
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
+	import { invoke } from '@tauri-apps/api/core';
 	
 	library.checkUpdates().then(r => {
 		if(localStorage.updates_interval != 0) {
@@ -18,7 +19,6 @@
 	
 	appWindow.setMaximizable(false);
 	appWindow.setResizable(false);
-	appWindow.setShadow(false);
 
 	onNavigate((navigation) => {
 		if(!document.startViewTransition) return;
@@ -29,6 +29,7 @@
 			});
 		});
 	});
+	
 	document.addEventListener('keydown', event => {
 		switch(event.key) {
 			case 'F5':
@@ -39,10 +40,19 @@
 		}
 		return true;
 	});
+	
 	document.addEventListener('contextmenu', event => {
 		event.preventDefault();
 		return false;
 	});
+	
+	library.changeLauncherTheme(localStorage.theme);
+	
+	library.changeAccentColorSetting(localStorage.use_accent_color);
+	
+	invoke('track_accent_color');
+	
+	library.checkIfPlayerIsLoggedIn();
 	
 	library.checkLauncherUpdates().then(r => {
 		appWindow.show();
@@ -61,4 +71,9 @@
 			<slot />
 		</div>
 	</main>
+	<style id="accent-color">
+		:root {
+			--system-accent-color: #ffffff;
+		}
+	</style>
 </div>

@@ -13,7 +13,7 @@
 
 .profileUsername {
 	font-weight: bold;
-	font-size: 22px;
+	font-size: 20px;
 	margin: 0px;
 }
 
@@ -38,7 +38,7 @@
 	margin: 0px;
     font-weight: normal;
     word-wrap: break-word;
-    font-size: 15px;
+    font-size: 14px;
     color: #c0c0c0;
 }
 
@@ -107,4 +107,21 @@
 
 .show svg {
 	opacity: 1;
+}
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .profilePost {
+	background-color: #94949414;
+	border-radius: 0px;
+}
+
+[launcher-theme="mica"] .profileReplyButton {
+	background: #94949417;
+}
+
+[launcher-theme="mica"] .profileReplyButton:hover {
+	background: #94949427;
 }

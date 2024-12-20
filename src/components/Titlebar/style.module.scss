@@ -33,3 +33,15 @@
 .titleButtonClose:hover {
 	background-color: #f84242;
 }
+
+/*
+	Mica theme
+*/
+
+[launcher-theme="mica"] .titleButtonMinimize:hover {
+	background-color: #D9D9D924;
+}
+
+[launcher-theme="mica"] .titleButtonClose {
+	border-top-right-radius: 0px;
+}

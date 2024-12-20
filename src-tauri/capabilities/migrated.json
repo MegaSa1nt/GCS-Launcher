@@ -16,6 +16,7 @@
     "core:window:allow-set-resizable",
     "core:window:allow-hide",
     "core:window:allow-show",
+    "core:window:allow-set-effects",
     "shell:default",
     "shell:allow-open",
     "fs:default",
@@ -83,6 +84,7 @@
     "sql:allow-load",
     "sql:allow-execute",
     "notification:default",
-    "process:default"
+    "process:default",
+    "os:default"
   ]
 }

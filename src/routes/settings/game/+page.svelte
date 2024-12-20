@@ -84,7 +84,7 @@
 			</button>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -100,7 +100,7 @@
 			</button>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -116,7 +116,7 @@
 			</button>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
@@ -134,7 +134,7 @@
 			/>
 		</div>
 		
-		<hr>
+		<hr class={style.settingsHR}>
 		
 		<div class={style.settingDiv}>
 			<div class={style.versionIcon}>

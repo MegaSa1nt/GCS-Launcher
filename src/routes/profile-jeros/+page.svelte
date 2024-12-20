@@ -94,7 +94,9 @@
 				<div class={style.usernameAndIcons}>
 					<div class={style.mainUsername}>
 						<h1>{profileData.userName}</h1>
-						<h2 style={['color: #', profileData.clan.color].join('')}>{profileData.clan.name}</h2>
+						{#if Object.keys(profileData.clan).length}
+							<h2 style={['color: #', profileData.clan.color].join('')}>{profileData.clan.name}</h2>
+						{/if}
 					</div>
 					<div class={style.headerIcons}>
 						<img class={style.iconBig} src={profileIcons.cube} />
@@ -121,33 +123,35 @@
 					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
 					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
 				</div>
-				<div class={style.profileStat}>
-					<Star color="#FFFFFF"/> {profileData.stats.stars}
-				</div>
-				<div class={style.profileStat}>
-					<Moon color="#FFFFFF"/> {profileData.stats.moons}
-				</div>
-				<div class={style.profileStat}>
-					<Gem color="#FFFFFF"/> {profileData.stats.diamonds}
-				</div>
-				<div class={style.profileStat}>
-					<Coins color="#fffd6b"/> {profileData.stats.goldCoins}
-				</div>
-				<div class={style.profileStat}>
-					<Coins color="#FFFFFF"/> {profileData.stats.userCoins}
-				</div>
-				<div class={style.profileStat}>
-					<Angry color="#FFFFFF"/> {profileData.stats.demons}
-				</div>
-				<div class={style.profileStat}>
-					<Hammer color="#FFFFFF"/> {profileData.stats.creatorPoints}
+				<div class={style.onlyStats}>
+					<div class={style.profileStat}>
+						<Star color="#FFFFFF"/> {profileData.stats.stars}
+					</div>
+					<div class={style.profileStat}>
+						<Moon color="#FFFFFF"/> {profileData.stats.moons}
+					</div>
+					<div class={style.profileStat}>
+						<Gem color="#FFFFFF"/> {profileData.stats.diamonds}
+					</div>
+					<div class={style.profileStat}>
+						<Coins color="#fffd6b"/> {profileData.stats.goldCoins}
+					</div>
+					<div class={style.profileStat}>
+						<Coins color="#FFFFFF"/> {profileData.stats.userCoins}
+					</div>
+					<div class={style.profileStat}>
+						<Angry color="#FFFFFF"/> {profileData.stats.demons}
+					</div>
+					<div class={style.profileStat}>
+						<Hammer color="#FFFFFF"/> {profileData.stats.creatorPoints}
+					</div>
 				</div>
 			</div>
 			<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
 				<div class={style.profilePostsSkeleton}>
-					<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
+					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				</div>
 				{#each profileData.posts as post}
 					<ProfilePostSecond postID={post.commentID} username={profileData.userName} postText={post.post} likes={post.likes} dislikes={post.dislikes} timestamp={post.timestamp} />
