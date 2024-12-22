@@ -18,9 +18,14 @@
 Для сборки:
 `npm run tauri build`
 
-Туториал по настройке:
-*позже*
+Туториал по настройке: https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/INTRODUCTION.md
 
 Спасибо:
 - @Unitoshka за базу лаунчера
 - @jerosajose за стиль профиля 2
+
+- @M336G за французский
+- @JaharvisXD за малайский
+- @thelazycat2011 за вьетнамский
+- Kvafendoriy за татарский
+- @xStormyy за немецкий

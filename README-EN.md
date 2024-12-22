@@ -18,9 +18,14 @@ For running dev-build:
 For building:
 `npm run tauri build`
 
-Setup tutorial:
-*later*
+Setup tutorial: https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/INTRODUCTION.md
 
 Thanks:
 - @Unitoshka for launcher base
 - @jerosajose for profile style 2
+
+- @M336G for French
+- @JaharvisXD for Malaysian
+- @thelazycat2011 for Vietnamese
+- Kvafendoriy for Tatar
+- @xStormyy for German
