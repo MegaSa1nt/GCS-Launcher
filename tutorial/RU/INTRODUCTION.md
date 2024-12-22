@@ -7,6 +7,9 @@
 
 Следуйте гайду поэтапно, иначе могут возникнуть проблемы.
 
+> [!NOTE]
+> Перед началом вам нужно установить (необходимые зависимости)[https://tauri.app/start/prerequisites/]
+
 1. [Установка бэкэнда обновлений](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/SETUP-UPDATE-BACKEND.md)
 2. [Сборка Апдейтера — программы для обновления лаунчера](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/BUILD-UPDATER.md)
 3. [Настройка и сборка лаунчера](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/BUILD-LAUNCHER.md)
