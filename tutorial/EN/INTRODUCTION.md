@@ -7,6 +7,9 @@ This guide will help you setup launcher for your GDPS
 
 Please follow guide step-by-step, otherwise you could have problems.
 
+> [!NOTE]
+> Before starting you need to install [required dependencies](https://tauri.app/start/prerequisites/)
+
 1. [Setup update backend](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/SETUP-UPDATE-BACKEND.md)
 2. [Build Updater — app for updating launcher](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/BUILD-UPDATER.md)
 3. [Setup and build launcher](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/BUILD-LAUNCHER.md)
