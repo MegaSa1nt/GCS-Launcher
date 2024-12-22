@@ -16,7 +16,7 @@ const language = {
 const getSettings = async function() {
 	const resourcePath = await window.__TAURI__.path.resourceDir();
 	return {
-		updates_api_url: "https://updates.gcs.icu/",
+		updates_api_url: "https://updates.example.com/",
 		launcher_exe: "launcher.exe",
 		
 		resource_path: resourcePath
