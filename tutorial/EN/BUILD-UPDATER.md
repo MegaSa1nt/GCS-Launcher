@@ -86,4 +86,4 @@ Your Updater is ready!
 
 <hr>
 
-### [Next step](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/BUILD-LAUNCHER.md)
+### [Next step](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/BUILD-LAUNCHER.md)

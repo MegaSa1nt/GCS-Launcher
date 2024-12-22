@@ -87,4 +87,4 @@ There will be many lines in console, as backend is processing every file, wait f
 
 Congratulations, your backend is ready to work! Now just remember its link.
 
-### [Next step](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/RU/BUILD-UPDATER.md)
+### [Next step](https://github.com/MegaSa1nt/GCS-Client/blob/new/tutorial/EN/BUILD-UPDATER.md)
