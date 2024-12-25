@@ -25,20 +25,20 @@
 	};
 	
 	var profileIcons = {
-		main: "https://gdicon.oat.zone/icon.png?type=cube&value=1&color1=0&color2=3",
-		cube: "https://gdicon.oat.zone/icon.png?type=cube&value=1&color1=0&color2=3",
-		ship: "https://gdicon.oat.zone/icon.png?type=ship&value=1&color1=0&color2=3",
-		ball: "https://gdicon.oat.zone/icon.png?type=ball&value=1&color1=0&color2=3",
-		ufo: "https://gdicon.oat.zone/icon.png?type=ufo&value=1&color1=0&color2=3",
-		wave: "https://gdicon.oat.zone/icon.png?type=wave&value=1&color1=0&color2=3",
-		robot: "https://gdicon.oat.zone/icon.png?type=robot&value=1&color1=0&color2=3",
-		spider: "https://gdicon.oat.zone/icon.png?type=spider&value=1&color1=0&color2=3",
-		swing: "https://gdicon.oat.zone/icon.png?type=swing&value=1&color1=0&color2=3",
-		jetpack: "https://gdicon.oat.zone/icon.png?type=jetpack&value=1&color1=0&color2=3"
+		main: "https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3",
+		cube: "https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3",
+		ship: "https://icons.gcs.icu/icon.png?type=ship&value=1&color1=0&color2=3",
+		ball: "https://icons.gcs.icu/icon.png?type=ball&value=1&color1=0&color2=3",
+		ufo: "https://icons.gcs.icu/icon.png?type=ufo&value=1&color1=0&color2=3",
+		wave: "https://icons.gcs.icu/icon.png?type=wave&value=1&color1=0&color2=3",
+		robot: "https://icons.gcs.icu/icon.png?type=robot&value=1&color1=0&color2=3",
+		spider: "https://icons.gcs.icu/icon.png?type=spider&value=1&color1=0&color2=3",
+		swing: "https://icons.gcs.icu/icon.png?type=swing&value=1&color1=0&color2=3",
+		jetpack: "https://icons.gcs.icu/icon.png?type=jetpack&value=1&color1=0&color2=3"
 	};
 	
 	function getIconURL(type, icon, color1, color2, color3, glow) {
-		return "https://gdicon.oat.zone/icon.png?type=" + type + "&value=" + icon + "&color1=" + color1 + "&color2=" + color2 + (glow ? "&glow=1&color3=" + color3 : "");
+		return "https://icons.gcs.icu/icon.png?type=" + type + "&value=" + icon + "&color1=" + color1 + "&color2=" + color2 + (glow ? "&glow=1&color3=" + color3 : "");
 	}
 	
 	library.getProfile(localStorage.accountID).then(r => {
