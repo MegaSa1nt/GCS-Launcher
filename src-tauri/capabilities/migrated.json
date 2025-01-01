@@ -7,16 +7,6 @@
   ],
   "permissions": [
     "core:default",
-    "core:window:default",
-    "core:window:allow-start-dragging",
-    "core:window:allow-close",
-    "core:window:allow-minimize",
-    "core:window:allow-set-maximizable",
-    "core:window:allow-set-shadow",
-    "core:window:allow-set-resizable",
-    "core:window:allow-hide",
-    "core:window:allow-show",
-    "core:window:allow-set-effects",
     "shell:default",
     "shell:allow-open",
     "fs:default",
@@ -79,10 +69,6 @@
         }
       ]
     },
-    "sql:default",
-    "sql:allow-select",
-    "sql:allow-load",
-    "sql:allow-execute",
     "notification:default",
     "process:default",
     "os:default"

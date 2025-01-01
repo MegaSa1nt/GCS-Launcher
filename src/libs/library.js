@@ -1,11 +1,9 @@
 import { invoke } from '@tauri-apps/api/core';
 import { appCacheDir, resolve, resourceDir, join, sep } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
-import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
-import Database from '@tauri-apps/plugin-sql';
 import { sendNotification } from '@tauri-apps/plugin-notification';
 import { exit } from '@tauri-apps/plugin-process';
 import { version } from '@tauri-apps/plugin-os';
@@ -76,23 +74,7 @@ library.initializeEvents = async function() {
 	if(typeof window.recursive_check == 'undefined') window.recursive_check = [];
 	if(typeof window.game_folders == 'undefined') window.game_folders = [];
 	if(typeof window.notifications == 'undefined') window.notifications = [];
-	const dbPath = await resolve(await appCacheDir(), "files.db")
-	if(typeof window.db == 'undefined') window.db = await Database.load("sqlite:" + dbPath);
-	await db.execute(`CREATE TABLE IF NOT EXISTS 'files' (
-		'file' varchar(255) NOT NULL DEFAULT '',
-		'md5' varchar(255) NOT NULL DEFAULT '',
-		PRIMARY KEY ('file')
-	);
-	CREATE TABLE IF NOT EXISTS 'folders' (
-		'folder' varchar(255) NOT NULL DEFAULT '',
-		PRIMARY KEY ('folder')
-	);`);
 }
-
-const gameCheckInterval = setInterval(async function() {
-	const settings = await library.getSettings();
-	library.checkProcess(settings.game_exe);
-},	500);
 
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
@@ -105,7 +87,6 @@ library.initializeVariables = function() {
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
-	if(typeof localStorage.use_accent_color == 'undefined') localStorage.use_accent_color = 'false';
 }
 
 library.getSettings = function() {
@@ -126,6 +107,7 @@ library.getSettings = function() {
 
 library.checkUpdates = function() {
 	return new Promise(async function(r) {
+		r(false);
 		if(window.isCheckingUpdate) r(false);
 		await library.changeIsCheckingUpdateState(true);
 		const settings = await library.getSettings();
@@ -244,13 +226,11 @@ library.changePendingUpdateState = async function(state) {
 library.openOrInstallGame = async function() {
 	if(isGameRunning) return;
 	if(isPendingUpdate) return library.updateGame();
-	clearInterval(gameCheckInterval);
 	const settings = await library.getSettings();
 	await library.changeIsGameStartingState(true);
 	await open(await join(settings.resource_path, settings.game_exe)).then(res => {
 		library.changeIsGameStartingState(false);
 		library.changeIsGameRunningState(true);
-		setTimeout(() => {const gameCheckInterval = setInterval(() => library.checkProcess(settings.game_exe), 500)}, 1250);
 	}).catch(err => {
 		library.changeIsGameStartingState(false);
 		library.changeIsGameRunningState(false);
@@ -607,11 +587,6 @@ library.changeLauncherTheme = function(theme) {
 				break;
 		}
 	});
-}
-
-library.changeAccentColorSetting = function(doUseAccentColor) {
-	localStorage.use_accent_color = doUseAccentColor;
-	document.getElementById("launcher-contents").setAttribute("accent-color", doUseAccentColor);
 }
 
 library.getNotifications = function() {

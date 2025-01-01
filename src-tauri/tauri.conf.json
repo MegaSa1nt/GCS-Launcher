@@ -30,7 +30,7 @@
       "allowDowngrades": false
     },
     "targets": ["nsis"],
-	"resources": ["./bin/hpatch.exe", "./updater.exe"]
+	"resources": []
   },
   "productName": "GCS-Launcher",
   "mainBinaryName": "launcher",
@@ -51,7 +51,7 @@
         "theme": "Dark",
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
         "transparent": true,
-        "useHttpsScheme": true,
+        "useHttpsScheme": false,
 		"visible": false
       }
     ],

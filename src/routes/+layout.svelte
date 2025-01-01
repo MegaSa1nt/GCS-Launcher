@@ -4,7 +4,6 @@
 	import SettingsSidebar from '../components/SettingsSidebar/settingsSidebar.svelte';
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
-	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
 	import { invoke } from '@tauri-apps/api/core';
@@ -14,11 +13,6 @@
 			setInterval(() => library.checkUpdates(), localStorage.updates_interval);
 		}
 	});
-
-	const appWindow = getCurrentWindow();
-	
-	appWindow.setMaximizable(false);
-	appWindow.setResizable(false);
 
 	onNavigate((navigation) => {
 		if(!document.startViewTransition) return;
@@ -46,16 +40,12 @@
 		return false;
 	});
 	
-	library.changeLauncherTheme(localStorage.theme);
-	
-	library.changeAccentColorSetting(localStorage.use_accent_color);
-	
-	invoke('track_accent_color');
+	//library.changeLauncherTheme(localStorage.theme);
 	
 	library.checkIfPlayerIsLoggedIn();
 	
 	library.checkLauncherUpdates().then(r => {
-		appWindow.show();
+		console.log(r);
 	});
 </script>
 

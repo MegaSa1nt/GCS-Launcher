@@ -12,10 +12,10 @@ set /P NUMBER="Your choice: "
 
 set /A NUMBER+=0
 if %NUMBER% EQU 1 (
-	npm run tauri dev
+	npm run tauri android dev -- --host
 )
 if %NUMBER% EQU 2 (
-	npm run tauri build
+	npm run tauri android build
 ) else (
 	goto :wrong
 )
