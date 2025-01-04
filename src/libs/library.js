@@ -87,6 +87,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
+	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
 }
 
 library.getSettings = function() {
@@ -531,22 +532,45 @@ library.logout = function() {
 	localStorage.accountID = 0;
 }
 
-library.timeConverter = function(timestamp, min = false) { // This is function from old launcher version, so it was written poor
-	const a = new Date(timestamp * 1000);
-	var months = '';
-	if(!min) months = [strings.months.full.january, strings.months.full.february, strings.months.full.march, strings.months.full.april, strings.months.full.may, strings.months.full.june, strings.months.full.july, strings.months.full.august, strings.months.full.september, strings.months.full.october, strings.months.full.november, strings.months.full.december];
-	else months = [strings.months.short.january, strings.months.short.february, strings.months.short.march, strings.months.short.april, strings.months.short.may, strings.months.short.june, strings.months.short.july, strings.months.short.august, strings.months.short.september, strings.months.short.october, strings.months.short.november, strings.months.short.december];
-	const year = a.getFullYear();
-	const month = months[a.getMonth()];
-	const date = a.getDate();
-	var time = '';
-	if(!min) time = date + ' ' + month + ' ' + year;
-	else {
-		const b = new Date();
-		if(a.getFullYear() == b.getFullYear()) time = date + ' ' + month;
-		else time = date + ' ' + month + ' ' + year;
+library.timeConverter = function(timestamp, min = false) {
+	const currentTime = new Date();
+	var passedTime = Math.round(currentTime.getTime() / 1000) - timestamp;
+	var unitType = '';
+	switch(true) {
+		case passedTime >= 31536000:
+			passedTime = Math.round(passedTime / 31536000);
+			unitType = 'year';
+			break;
+		case passedTime >= 2592000:
+			passedTime = Math.round(passedTime / 2592000);	
+			unitType = 'month';
+			break;
+		case passedTime >= 604800:
+			passedTime = Math.round(passedTime / 604800);
+			unitType = 'week';
+			break;
+		case passedTime >= 86400:
+			passedTime = Math.round(passedTime / 86400);
+			unitType = 'day';
+			break;
+		case passedTime >= 3600:
+			passedTime = Math.round(passedTime / 3600);
+			unitType = 'hour';
+			break;
+		case passedTime >= 60:
+			passedTime = Math.round(passedTime / 60);
+			unitType = 'minute';
+			break;
+		case passedTime >= 0:
+			unitType = 'second';
+			break;
 	}
-	return time;
+	const options = {
+		numeric: "auto",
+		style: min ? "short" : "long"
+	}
+	const rtf = new Intl.RelativeTimeFormat(localStorage.language, options);
+	return rtf.format(-1 * passedTime, unitType);
 }
 
 library.checkLauncherUpdates = function() {
@@ -555,9 +579,7 @@ library.checkLauncherUpdates = function() {
 			fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
 				const version = await getVersion();
 				if(version != response) {
-					open("updater.exe").then(r => {
-						exit(0);
-					});
+					console.error('ОБНОВЛЕНИЕ ЛАУНЧЕРА');
 				} else {
 					r(true);
 				}
@@ -570,20 +592,14 @@ library.checkLauncherUpdates = function() {
 
 library.changeLauncherTheme = function(theme) {
 	return new Promise(r => {
-		const appWindow = getCurrentWindow();
 		document.dispatchEvent(themeChangeEvent);
 		document.getElementById("launcher-contents").setAttribute("launcher-theme", theme);
 		switch(theme) {
 			case 'main':
 				document.getElementById("launcher-background").style.display = "block";
-				appWindow.clearEffects();
-				appWindow.setShadow(false);
 				break;
 			case 'mica':
-				let micaEffect = library.isWindows11() ? Effect.Mica : Effect.Acrylic;
 				document.getElementById("launcher-background").style.display = "none";
-				appWindow.setEffects({ effects: [ micaEffect ] });
-				appWindow.setShadow(true);
 				break;
 		}
 	});
@@ -701,6 +717,7 @@ library.getPluralType = function(number) {
 }
 
 library.isWindows11 = function() {
+	return false;
 	let windowsVersion = version().split('.');
 	return Number(windowsVersion[2]) >= 22000;
 }

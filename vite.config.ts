@@ -1,8 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
 
-//const host = process.env.TAURI_DEV_HOST;
-const host = "0.0.0.0";
+const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
 	plugins: [

@@ -1,8 +1,9 @@
 <script>
-	import { Star, Moon, Gem, Coins, Angry, Hammer } from 'lucide-svelte';
+	import { Star, Moon, Gem, Coins, Angry, Hammer, Bell, Settings } from 'lucide-svelte';
 	import style from './style.module.scss';
 	import ProfilePost from '../../components/ProfilePost/profilePost.svelte';
 	import library from '../../libs/library.js';
+	import { goto } from '$app/navigation';
 	
 	var isProfileLoaded = '';
 	
@@ -81,6 +82,9 @@
 				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan, style.profileIconsDivSkeleton].join(' ')}></span>
 			</div>
+			
+			
+			<!--
 			<div class={style.usernameDiv}>
 				<div class={style.mainIcon}>
 					<img src={profileIcons.main} />
@@ -92,6 +96,9 @@
 					{/if}
 				</div>
 			</div>
+			-->
+			
+			
 			<div class={style.headerIcons}>
 				<img class={style.iconBig} src={profileIcons.cube} />
 				<img class={style.iconSmall} src={profileIcons.ship} />

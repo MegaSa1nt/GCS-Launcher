@@ -57,22 +57,6 @@
 			{/each}
 		</div>
 	{/if}
-
-	<div class={style.launchBlock}>
-		<div class={style.launchContent}>
-			<div class={style.loadGame}>
-				<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
-					<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
-					<PlayButtonIcon state={buttonState} />
-				</div>
-				<a class={style.displayContents} href="/settings">
-					<div class={style.settingsButton}>
-						<Settings color='#FFFFFF' size={35} />
-					</div>
-				</a>
-			</div>
-		</div>
-	</div>
 </div>
 
 <style>

@@ -3,6 +3,7 @@
     import style from './style.module.scss';
     import { page } from '$app/stores';
 	import library from '../../libs/library.js';
+	import PlayButtonIcon from '../../components/PlayButtonIcon/playButtonIcon.svelte';
 
 	library.initializeVariables();
 
@@ -35,6 +36,17 @@
 	
 	let newNotifications = window.hasNewNotifications;
 	document.addEventListener("notificationChange", (event) => newNotifications = window.hasNewNotifications);
+	
+	export let buttonState = window.playButtonState;
+	export let buttonIsAvailable = window.playButtonIsAvailable;
+	export let updatingAnimation = window.gameUpdatingAnimation;
+	
+	document.addEventListener("playButtonStateChange", function(event) {
+		buttonState = window.playButtonState;
+		buttonIsAvailable = window.playButtonIsAvailable;
+		updatingAnimation = window.gameUpdatingAnimation;
+	});
+	updatePlayButtonState();
 </script>
 
 <div class={style.sidebar}>
@@ -42,23 +54,21 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
+		<div class={style.positionButton}>
+			<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
+				<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
+				<span class={style.positionPlayIcon}>
+					<PlayButtonIcon state={buttonState} />
+				</span>
+			</div>
+		</div>
 		{#if !localStorage.auth.length}
 			<a class={style.button} href={"/settings/login"}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
 			</a>
-			<a class={style.button} href={"/settings/login"}>
-				<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
-			</a>
 		{:else}
 			<a class={style.button} href={"/profile-" + sidebarProfileType}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
-			</a>
-			<a class={style.button} href={"/notifications"}>
-				{#if newNotifications}
-					<BellDot color={notificationsColor} size={30} strokeWidth={2.25} />
-				{:else}
-					<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
-				{/if}
 			</a>
 		{/if}
 	</div>

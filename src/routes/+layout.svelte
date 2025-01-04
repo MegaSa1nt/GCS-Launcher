@@ -1,8 +1,8 @@
 <script>
 	import style from './style.module.scss';
+	import Header from '../components/Header/header.svelte';
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
 	import SettingsSidebar from '../components/SettingsSidebar/settingsSidebar.svelte';
-	import Titlebar from '../components/Titlebar/titlebar.svelte';
 	import { onNavigate } from '$app/navigation';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
@@ -24,17 +24,6 @@
 		});
 	});
 	
-	document.addEventListener('keydown', event => {
-		switch(event.key) {
-			case 'F5':
-			case 'Tab':
-				event.preventDefault();
-				return false;
-				break;
-		}
-		return true;
-	});
-	
 	document.addEventListener('contextmenu', event => {
 		event.preventDefault();
 		return false;
@@ -51,15 +40,11 @@
 
 <div class="app">
 	<main class={style.main}>
-		<Titlebar />
-		{#if !$page.url.pathname.startsWith("/settings")}
-			<Sidebar />
-		{:else}
-			<SettingsSidebar />
-		{/if}
+		<Header />
 		<div class={style.content}>
 			<slot />
 		</div>
+		<Sidebar />
 	</main>
 	<style id="accent-color">
 		:root {
