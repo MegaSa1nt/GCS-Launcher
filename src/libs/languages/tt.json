@@ -158,6 +158,7 @@
 			"description": "Как часто лаунчер будет проверять обновления игры"
 		},
 		
+		"account": "Аккаунт",
 		"username": "Никнейм",
 		"password": "Пароль",
 		"loginButton": "Аккаунтка керү",
@@ -170,37 +171,6 @@
 			"title": "Аккаунттан чыгу",
 			"description": "Аккаунттан чыгуны теләгәнегезне раслыйсызмы?",
 			"button": "Чыгу"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "гыйнвар",
-			"february": "февраль",
-			"march": "март",
-			"april": "апрель",
-			"may": "май",
-			"june": "июнь",
-			"july": "июль",
-			"august": "август",
-			"september": "сентябрь",
-			"october": "октябрь",
-			"november": "ноябрь",
-			"december": "декабрь"
-		},
-		"short": {
-			"january": "гыйн",
-			"february": "фев",
-			"march": "март",
-			"april": "апр",
-			"may": "май",
-			"june": "июн",
-			"july": "июл",
-			"august": "авг",
-			"september": "сен",
-			"october": "окт",
-			"november": "ноя",
-			"december": "дек"
 		}
 	}
 }

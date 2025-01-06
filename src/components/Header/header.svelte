@@ -1,6 +1,6 @@
 <script>
+	import { Bell, Settings, LogIn } from 'lucide-svelte';
     import style from './style.module.scss';
-	import { Bell, Settings } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import library from '../../libs/library.js';
 	import languageStrings from '../../libs/languages.js';
@@ -11,10 +11,17 @@
 	
 	let username = localStorage.username;
 	let mainIcon = localStorage.main_icon;
+
+	document.addEventListener("profileTypeChange", () => sidebarProfileType = profileTypes[localStorage.profile_type]);
+	
+	document.addEventListener("accountChange", (event) => {
+		username = localStorage.username;
+		mainIcon = localStorage.main_icon;
+	});
 </script>
 
 <div class={style.mobileSettingsHeader}>
-	{#if localStorage.username.length}
+	{#if username.length}
 		<div class={style.usernameSmallDiv} on:click={() => goto("/profile-" + sidebarProfileType)}>
 			<img src={mainIcon} />
 			<p>{username}</p>
@@ -28,8 +35,8 @@
 			</button>
 		</div>
 	{:else}
-		<div class={style.usernameSmallDiv} on:click={() => goto("/settings/login")}>
-			<img src='https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3' />
+		<div class={style.usernameSmallDiv} on:click={() => goto("/settings#login")}>
+			<LogIn size={20} color='#FFFFFF' />
 			<p>{strings.settings.loginButton}</p>
 		</div>
 		<div class={style.profileButtonsDiv}>

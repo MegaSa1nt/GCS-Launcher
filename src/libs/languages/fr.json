@@ -158,6 +158,7 @@
 			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Nom d'utilisateur",
 		"password": "Mot de passe",
 		"loginButton": "Se connecter",
@@ -171,36 +172,5 @@
 			"description": "Êtes-vous sûr de vouloir vous déconnecter ?",
 			"button": "Se déconnecter"
 		}
-	},
-	
-	"months": {
-        "full": {
-            "january": "janvier",
-            "february": "février",
-            "march": "mars",
-            "april": "avril",
-            "may": "mai",
-            "june": "juin",
-            "july": "juillet",
-            "august": "août",
-            "september": "septembre",
-            "october": "octobre",
-            "november": "novembre",
-            "december": "décembre"
-        },
-        "short": {
-            "january": "jan",
-            "february": "fév",
-            "march": "mar",
-            "april": "avr",
-            "may": "mai",
-            "june": "jun",
-            "july": "jul",
-            "august": "aou",
-            "september": "sep",
-            "october": "oct",
-            "november": "nov",
-            "december": "déc"
-        }
-    }
+	}
 }

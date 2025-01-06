@@ -12,6 +12,7 @@ import { printf } from 'fast-printf';
 const library = [];
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
+let accountChangeEvent = new Event("accountChange", {bubbles: true});
 import languageStrings from './languages.js';
 let strings = languageStrings[localStorage.language];
 
@@ -88,6 +89,8 @@ library.initializeVariables = function() {
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
 	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
+	if(typeof localStorage.clan_name == 'undefined') localStorage.clan_name = '';
+	if(typeof localStorage.clan_color == 'undefined') localStorage.clan_color = '';
 }
 
 library.getSettings = function() {
@@ -521,18 +524,37 @@ library.checkIfPlayerIsLoggedIn = async function() {
 			library.logout();
 			return false;
 		}
+		localStorage.username = response.user;
+		localStorage.color = response.color;
+		localStorage.accountID = response.accountID;
+		localStorage.main_icon = response.mainIcon;
+		localStorage.clan_name = response.clan.name;
+		localStorage.clan_color = response.clan.color;
+		document.dispatchEvent(accountChangeEvent);
 		return true;
 	});
 }
 
 library.logout = function() {
-	localStorage.username = '';
 	localStorage.auth = '';
+	localStorage.username = '';
 	localStorage.color = '';
 	localStorage.accountID = 0;
+	localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
+	localStorage.clan_name = '';
+	localStorage.clan_color = '';
+	document.dispatchEvent(accountChangeEvent);
 }
 
 library.timeConverter = function(timestamp, min = false) {
+	if(!min) {
+		const time = new Date(timestamp * 1000);
+		const dayNumber = time.getDate();
+		const day = dayNumber < 10 ? '0' + String(dayNumber) : dayNumber;
+		const monthNumber = time.getMonth() + 1;
+		const month = monthNumber < 10 ? '0' + String(monthNumber) : monthNumber;
+		return day + '.' + month + '.' + time.getFullYear();
+	}
 	const currentTime = new Date();
 	var passedTime = Math.round(currentTime.getTime() / 1000) - timestamp;
 	var unitType = '';
@@ -567,7 +589,7 @@ library.timeConverter = function(timestamp, min = false) {
 	}
 	const options = {
 		numeric: "auto",
-		style: min ? "short" : "long"
+		style: "short"
 	}
 	const rtf = new Intl.RelativeTimeFormat(localStorage.language, options);
 	return rtf.format(-1 * passedTime, unitType);

@@ -22,6 +22,8 @@
     let homeColor = getButtonColor("/");
     let profileColor = getButtonColor("/profile-" + sidebarProfileType);
     let notificationsColor = getButtonColor("/notifications");
+	
+	let usernameCheck = localStorage.auth.length;
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/");
@@ -36,6 +38,10 @@
 	
 	let newNotifications = window.hasNewNotifications;
 	document.addEventListener("notificationChange", (event) => newNotifications = window.hasNewNotifications);
+	
+	document.addEventListener("profileTypeChange", () => sidebarProfileType = profileTypes[localStorage.profile_type]);
+	
+	document.addEventListener("accountChange", (event) => usernameCheck = localStorage.auth.length);
 	
 	export let buttonState = window.playButtonState;
 	export let buttonIsAvailable = window.playButtonIsAvailable;
@@ -62,8 +68,8 @@
 				</span>
 			</div>
 		</div>
-		{#if !localStorage.auth.length}
-			<a class={style.button} href={"/settings/login"}>
+		{#if !usernameCheck}
+			<a class={style.button} href={"/settings#login"}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
 			</a>
 		{:else}

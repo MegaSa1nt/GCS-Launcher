@@ -1,8 +1,9 @@
 <script>
-	import { Star, Moon, Gem, Coins, Angry, Hammer } from 'lucide-svelte';
+	import { Star, Moon, Gem, Coins, Angry, Hammer, Bell, Settings } from 'lucide-svelte';
 	import style from './style.module.scss';
-	import ProfilePostSecond from '../../components/ProfilePostSecond/profilePostSecond.svelte';
+	import ProfilePost from '../../components/ProfilePost/profilePost.svelte';
 	import library from '../../libs/library.js';
+	import { goto } from '$app/navigation';
 	
 	var isProfileLoaded = '';
 	
@@ -17,10 +18,7 @@
 			demons: 0,
 			creatorPoints: 0
 		},
-		clan: {
-			name: 'Не в клане',
-			color: 'c0c0c0'
-		},
+		clan: [],
 		posts: []
 	};
 	
@@ -55,10 +53,6 @@
 			if(profileData.icons.spider == 0) profileData.icons.spider = 1;
 			if(profileData.icons.swing == 0) profileData.icons.swing = 1;
 			if(profileData.icons.jetpack == 0) profileData.icons.jetpack = 1;
-			if(!Object.keys(profileData.clan).length) profileData.clan = {
-				name: 'Не в клане',
-				color: 'c0c0c0'
-			};
 			profileIcons = {
 				main: getIconURL(iconTypes[profileData.icons.currentIcon.iconType], profileData.icons.currentIcon.iconID, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
 				cube: getIconURL('cube', profileData.icons.cube, profileData.icons.colors.mainColor, profileData.icons.colors.secondaryColor, profileData.icons.colors.glowColor, profileData.icons.glow),
@@ -86,77 +80,80 @@
 		<div class={style.profileHeader}>
 			<div class={style.profileHeaderSkeleton}>
 				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan, style.profileIconsDivSkeleton].join(' ')}></span>
 			</div>
+			
+			
+			<!--
 			<div class={style.usernameDiv}>
 				<div class={style.mainIcon}>
 					<img src={profileIcons.main} />
 				</div>
-				<div class={style.usernameAndIcons}>
-					<div class={style.mainUsername}>
-						<h1>{profileData.userName}</h1>
-						{#if Object.keys(profileData.clan).length}
-							<h2 style={['color: #', profileData.clan.color].join('')}>{profileData.clan.name}</h2>
-						{/if}
-					</div>
-					<div class={style.headerIcons}>
-						<img class={style.iconBig} src={profileIcons.cube} />
-						<img class={style.iconSmall} src={profileIcons.ship} />
-						<img class={style.iconBig} src={profileIcons.ball} />
-						<img class={style.iconBig} src={profileIcons.ufo} />
-						<img class={style.iconSmall} src={profileIcons.wave} />
-						<img class={style.iconBig} src={profileIcons.robot} />
-						<img class={style.iconBig} src={profileIcons.spider} />
-						<img class={style.iconBig} src={profileIcons.swing} />
-						<img class={style.iconBig} src={profileIcons.jetpack} />
-					</div>
+				<div class={style.mainUsername}>
+					<h1>{profileData.userName}</h1>
+					{#if Object.keys(profileData.clan).length}
+						<h2 style={['color: #', profileData.clan.color].join('')}>{profileData.clan.name}</h2>
+					{/if}
+				</div>
+			</div>
+			-->
+			
+			
+			<div class={style.headerIcons}>
+				<img class={style.iconBig} src={profileIcons.cube} />
+				<img class={style.iconSmall} src={profileIcons.ship} />
+				<img class={style.iconBig} src={profileIcons.ball} />
+				<img class={style.iconBig} src={profileIcons.ufo} />
+				<img class={style.iconSmall} src={profileIcons.wave} />
+				<img class={style.iconBig} src={profileIcons.robot} />
+				<img class={style.iconBig} src={profileIcons.spider} />
+				<img class={style.iconBig} src={profileIcons.swing} />
+				<img class={style.iconBig} src={profileIcons.jetpack} />
+			</div>
+		</div>
+		<div class={style.profileStatsDiv}>
+			<div class={style.profileStatsSkeleton}>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+			</div>
+			<div class={style.onlyStats}>
+				<div class={style.profileStat}>
+					<Star color="#FFFFFF"/> {profileData.stats.stars}
+				</div>
+				<div class={style.profileStat}>
+					<Moon color="#FFFFFF"/> {profileData.stats.moons}
+				</div>
+				<div class={style.profileStat}>
+					<Gem color="#FFFFFF"/> {profileData.stats.diamonds}
+				</div>
+				<div class={style.profileStat}>
+					<Coins color="#fffd6b"/> {profileData.stats.goldCoins}
+				</div>
+				<div class={style.profileStat}>
+					<Coins color="#FFFFFF"/> {profileData.stats.userCoins}
+				</div>
+				<div class={style.profileStat}>
+					<Angry color="#FFFFFF"/> {profileData.stats.demons}
+				</div>
+				<div class={style.profileStat}>
+					<Hammer color="#FFFFFF"/> {profileData.stats.creatorPoints}
 				</div>
 			</div>
 		</div>
-		<div class={style.profileMainContent}>
-			<div class={[style.profileStatsDiv, style.profileStats].join(" ")}>
-				<div class={[style.profileStatsSkeleton, style.profileStatsSkel].join(" ")}>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				</div>
-				<div class={style.onlyStats}>
-					<div class={style.profileStat}>
-						<Star color="#FFFFFF"/> {profileData.stats.stars}
-					</div>
-					<div class={style.profileStat}>
-						<Moon color="#FFFFFF"/> {profileData.stats.moons}
-					</div>
-					<div class={style.profileStat}>
-						<Gem color="#FFFFFF"/> {profileData.stats.diamonds}
-					</div>
-					<div class={style.profileStat}>
-						<Coins color="#fffd6b"/> {profileData.stats.goldCoins}
-					</div>
-					<div class={style.profileStat}>
-						<Coins color="#FFFFFF"/> {profileData.stats.userCoins}
-					</div>
-					<div class={style.profileStat}>
-						<Angry color="#FFFFFF"/> {profileData.stats.demons}
-					</div>
-					<div class={style.profileStat}>
-						<Hammer color="#FFFFFF"/> {profileData.stats.creatorPoints}
-					</div>
-				</div>
+		<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
+			<div class={style.profilePostsSkeleton}>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 			</div>
-			<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
-				<div class={style.profilePostsSkeleton}>
-					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
-					<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
-				</div>
-				{#each profileData.posts as post}
-					<ProfilePostSecond postID={post.commentID} username={profileData.userName} postText={post.post} likes={post.likes} dislikes={post.dislikes} timestamp={post.timestamp} />
-				{/each}
-			</div>
+			{#each profileData.posts as post}
+				<ProfilePost postID={post.commentID} username={profileData.userName} postText={post.post} likes={post.likes} dislikes={post.dislikes} timestamp={post.timestamp} />
+			{/each}
 		</div>
 	</div>
 </div>

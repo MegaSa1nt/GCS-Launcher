@@ -158,6 +158,7 @@
 			"description": "Wie oft der Launcher für Updates schauen soll."
 		},
 		
+		"account": "Account",
 		"username": "Benutzername",
 		"password": "Passwort",
 		"loginButton": "Einloggen",
@@ -170,37 +171,6 @@
 			"title": "Ausloggen",
 			"description": "Bist du sicher dass du dich ausloggen willst?",
 			"button": "Ausloggen"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "Januar",
-			"february": "Februar",
-			"march": "März",
-			"april": "April",
-			"may": "Mai",
-			"june": "Juni",
-			"july": "Juli",
-			"august": "August",
-			"september": "September",
-			"october": "Oktober",
-			"november": "November",
-			"december": "Dezember"
-		},
-		"short": {
-			"january": "Jan",
-			"february": "Feb",
-			"march": "Mär",
-			"april": "Apr",
-			"may": "Mai",
-			"june": "Jun",
-			"july": "Jul",
-			"august": "Aug",
-			"september": "Sep",
-			"october": "Okt",
-			"november": "Nov",
-			"december": "Dez"
 		}
 	}
 }

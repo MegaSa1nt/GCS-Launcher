@@ -2,7 +2,7 @@
 	import style from './style.module.scss';
 	import Header from '../components/Header/header.svelte';
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
-	import SettingsSidebar from '../components/SettingsSidebar/settingsSidebar.svelte';
+	import Toast from '../components/Toast/toast.svelte';
 	import { onNavigate } from '$app/navigation';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
@@ -29,8 +29,6 @@
 		return false;
 	});
 	
-	//library.changeLauncherTheme(localStorage.theme);
-	
 	library.checkIfPlayerIsLoggedIn();
 	
 	library.checkLauncherUpdates().then(r => {
@@ -40,6 +38,7 @@
 
 <div class="app">
 	<main class={style.main}>
+		<Toast />
 		<Header />
 		<div class={style.content}>
 			<slot />

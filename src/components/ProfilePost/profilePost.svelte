@@ -1,8 +1,9 @@
 <script>
 	import { ThumbsUp, ThumbsDown, MessageCircleMore, LoaderCircle } from 'lucide-svelte';
     import style from './style.module.scss';
-	import library from '../../libs/library.js';
+	import { toast } from '@zerodevx/svelte-toast';
 	import ProfilePostReply from '../../components/ProfilePostReply/profilePostReply.svelte';
+	import library from '../../libs/library.js';
 	import languageStrings from '../../libs/languages.js';
 	let strings = languageStrings[localStorage.language];
 	
@@ -66,7 +67,7 @@
 					<LoaderCircle color="#FFFFFF" size={15} strokeWidth={3} />
 				</span>
 			</div>
-			<h4 class={style.profilePostTime}>{library.timeConverter(timestamp, true)}</h4>
+			<h4 class={style.profilePostTime} on:click={() => toast.push(library.timeConverter(timestamp, false), { duration: 1500 })}>{library.timeConverter(timestamp, true)}</h4>
 		</div>
 	</div>
 	{#if profileReplies.length > 0}

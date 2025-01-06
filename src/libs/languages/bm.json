@@ -158,6 +158,7 @@
 			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Nama User",
 		"password": "Password",
 		"loginButton": "Login ke akaun kamu",
@@ -170,37 +171,6 @@
 			"title": "Logout",
 			"description": "Betulkan kamu nak logout akaun kamu?",
 			"button": "Logout"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "januari",
-			"february": "februari",
-			"march": "mac",
-			"april": "april",
-			"may": "mei",
-			"june": "jun",
-			"july": "julei",
-			"august": "ogos",
-			"september": "september",
-			"october": "oktober",
-			"november": "november",
-			"december": "disember"
-		},
-		"short": {
-			"january": "jan",
-			"february": "feb",
-			"march": "mac",
-			"april": "apr",
-			"may": "mei",
-			"june": "jun",
-			"july": "jul",
-			"august": "ogs",
-			"september": "sep",
-			"october": "okt",
-			"november": "nov",
-			"december": "dis"
 		}
 	}
 }
