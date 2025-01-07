@@ -4,9 +4,10 @@ import { getVersion } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
-import { sendNotification } from '@tauri-apps/plugin-notification';
+import { sendNotification, createChannel, removeChannel, requestPermission } from '@tauri-apps/plugin-notification';
 import { exit } from '@tauri-apps/plugin-process';
 import { version } from '@tauri-apps/plugin-os';
+import { toast } from '@zerodevx/svelte-toast';
 import style from './style.module.scss';
 import { printf } from 'fast-printf';
 const library = [];
@@ -744,20 +745,53 @@ library.isWindows11 = function() {
 	return Number(windowsVersion[2]) >= 22000;
 }
 
-let accentColorChange = listen('accentColorChange', (event) => {
-	let rustColors = event.payload.split('|');
-	let rgb = [Math.round(rustColors[0] * 255), Math.round(rustColors[1] * 255), Math.round(rustColors[2] * 255)].join(',');
-	document.getElementById("accent-color").innerHTML = `
-		:root {
-			--system-accent-color: rgb(${rgb});
-		}
-	`;
-});
+library.toast = function(text) {
+	toast.pop()
+	toast.push(text, { duration: 1500, intro: { x: 0, y: -100 } });
+}
+
+library.initializeAndroidNotifications = function() {
+	removeChannel('default');
+	createChannel({
+		id: "launcher-notifications",
+		name: "Уведомления лаунчера",
+		description: "Это уведомления, которые отправляет сам лаунчер, к примеру, новое обновление лаунчера, игры и так далее."
+	});
+	if(localStorage.enable_notifications == 'false') {
+		requestPermission().then(isGranted => {
+			localStorage.enable_notifications = isGranted == 'granted' ? true : 'asked';
+		});
+	}
+}
+
+window.debug = function(type, isTrue) {
+	switch(type) {
+		case 1:
+			library.changeIsCheckingUpdateState(isTrue);
+			break;
+		case 2:
+			library.changeUpdatingGameState(isTrue);
+			break;
+		case 3:
+			library.changeIsGameStartingState(isTrue);
+			break;
+		case 4:
+			library.changeIsGameRunningState(isTrue);
+			break;
+		case 5:
+			library.changePendingUpdateState(isTrue);
+			break;
+	}
+}
 
 library.styles = style;
 
 library.initializeEvents();
 
+library.initializeAndroidNotifications();
+
 library.getNotifications();
+
+window.library = library;
 
 export default library;

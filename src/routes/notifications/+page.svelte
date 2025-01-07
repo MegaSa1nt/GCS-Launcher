@@ -53,6 +53,18 @@
 			<NotificationSkeleton />
 			<hr class={style.notificationsHR}>
 			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
+			<hr class={style.notificationsHR}>
+			<NotificationSkeleton />
 		{/if}
 		{#each notifications as notification, index}
 			<Notification index={index} action={notification.action} timestamp={notification.time} isChecked={notification.checked} />

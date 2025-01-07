@@ -80,25 +80,8 @@
 		<div class={style.profileHeader}>
 			<div class={style.profileHeaderSkeleton}>
 				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan, style.profileIconsDivSkeleton].join(' ')}></span>
 			</div>
-			
-			
-			<!--
-			<div class={style.usernameDiv}>
-				<div class={style.mainIcon}>
-					<img src={profileIcons.main} />
-				</div>
-				<div class={style.mainUsername}>
-					<h1>{profileData.userName}</h1>
-					{#if Object.keys(profileData.clan).length}
-						<h2 style={['color: #', profileData.clan.color].join('')}>{profileData.clan.name}</h2>
-					{/if}
-				</div>
-			</div>
-			-->
-			
-			
+
 			<div class={style.headerIcons}>
 				<img class={style.iconBig} src={profileIcons.cube} />
 				<img class={style.iconSmall} src={profileIcons.ship} />
@@ -112,14 +95,8 @@
 			</div>
 		</div>
 		<div class={style.profileStatsDiv}>
-			<div class={style.profileStatsSkeleton}>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+			<div class={style.profileHeaderSkeleton}>
+				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
 			</div>
 			<div class={style.onlyStats}>
 				<div class={style.profileStat}>
@@ -147,6 +124,12 @@
 		</div>
 		<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
 			<div class={style.profilePostsSkeleton}>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>

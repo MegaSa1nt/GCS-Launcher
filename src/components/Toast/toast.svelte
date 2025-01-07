@@ -8,7 +8,7 @@
 
 <style>
 	:global(._toastContainer) {
-		top: 2.5% !important;
+		top: 8.5% !important;
 		z-index: 20 !important;
 		width: 100% !important;
 		left: 0 !important;

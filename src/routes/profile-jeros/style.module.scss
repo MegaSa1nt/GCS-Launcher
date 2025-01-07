@@ -41,6 +41,7 @@
 	justify-content: space-around;
 	align-items: center;
 	position: relative;
+	background-color: #D9D9D909;
 }
 
 .onlyStats {
@@ -176,36 +177,37 @@
 .profilePostsSkeletonSpan {
 	border-radius: 10px;
     width: 100%;
-    height: 100%;
+    height: 106px;
 }
 
 .profilePostsSkeleton {
-	position: absolute;
     width: 100%;
-    height: 129%;
+    height: 100%;
     display: flex;
     grid-gap: 10px;
     justify-content: space-around;
-    padding: 10px;
     flex-direction: column;
     top: 0;
     left: 0;
-    z-index: 2;
+    z-index: 3;
 	pointer-events: none;
+	opacity: 1;
+	transition: 0.3s;
 }
 
 .hideSkeleton .profilePostsSkeleton {
-	padding: 10px 0px 10px 10px;
+	opacity: 0;
+    position: absolute;
 }
 
 .mainIcon {
-	max-height: 72px;
     display: flex;
     justify-content: flex-start;
-    width: 77px;
+    width: 116px;
 }
 .mainIcon img {
-	height: 100%;
+	height: auto;
+	width: 100%;
 }
 
 .usernameDiv h2 {
@@ -234,7 +236,6 @@
 .headerIcons {
 	width: 100%;
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 	background-color: #D9D9D909;
@@ -242,7 +243,7 @@
     border-radius: 15px;
 	opacity: 0;
 	transition: 0.3s;
-	grid-gap: 10%;
+	grid-gap: 10px;
 }
 
 .profileHeaderSkeleton {
@@ -275,6 +276,14 @@
 .headerIcons::-webkit-scrollbar-thumb,
 .onlyStats::-webkit-scrollbar-thumb {
 	display: none;
+}
+
+.gridIcons {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+	grid-template-rows: auto;
+	justify-items: center;
+	width: 100%;
 }
 
 /*

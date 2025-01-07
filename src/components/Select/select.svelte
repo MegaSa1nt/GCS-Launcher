@@ -53,10 +53,31 @@
 		opacity: 1;
 		transition: 0.2s;
 	}
+	
+	:global(.svelte-radio input):after {
+		content: '';
+		height: 1em;
+		width: 1em;
+		background: transparent;
+		border-radius: 500px;
+		transition: 0.2s;
+	}
 
 	:global(.svelte-radio input):checked {
 		border: 1px solid var(--accent-color);
 		background: var(--accent-color);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	:global(.svelte-radio input):checked:after {
+		content: '';
+		height: 1em;
+		width: 1em;
+		background: #202020;
+		position: initial;
+		display: block;
 	}
 
 	:global(.svelte-radio input):active {

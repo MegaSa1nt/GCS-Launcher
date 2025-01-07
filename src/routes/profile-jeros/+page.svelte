@@ -80,7 +80,6 @@
 		<div class={style.profileHeader}>
 			<div class={style.profileHeaderSkeleton}>
 				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan, style.profileIconsDivSkeleton].join(' ')}></span>
 			</div>
 			
 			
@@ -100,26 +99,24 @@
 			
 			
 			<div class={style.headerIcons}>
-				<img class={style.iconBig} src={profileIcons.cube} />
-				<img class={style.iconSmall} src={profileIcons.ship} />
-				<img class={style.iconBig} src={profileIcons.ball} />
-				<img class={style.iconBig} src={profileIcons.ufo} />
-				<img class={style.iconSmall} src={profileIcons.wave} />
-				<img class={style.iconBig} src={profileIcons.robot} />
-				<img class={style.iconBig} src={profileIcons.spider} />
-				<img class={style.iconBig} src={profileIcons.swing} />
-				<img class={style.iconBig} src={profileIcons.jetpack} />
+				<div class={style.mainIcon}>
+					<img class={style.iconBig} src={profileIcons.cube} />
+				</div>
+				<div class={style.gridIcons}>
+					<img class={style.iconSmall} src={profileIcons.ship} />
+					<img class={style.iconBig} src={profileIcons.ball} />
+					<img class={style.iconBig} src={profileIcons.ufo} />
+					<img class={style.iconSmall} src={profileIcons.wave} />
+					<img class={style.iconBig} src={profileIcons.robot} />
+					<img class={style.iconBig} src={profileIcons.spider} />
+					<img class={style.iconBig} src={profileIcons.swing} />
+					<img class={style.iconBig} src={profileIcons.jetpack} />
+				</div>
 			</div>
 		</div>
 		<div class={style.profileStatsDiv}>
-			<div class={style.profileStatsSkeleton}>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
-				<span class={[style.skeletonSpan, style.profileStatsSkeletonSpan].join(' ')}></span>
+			<div class={style.profileHeaderSkeleton}>
+				<span class={[style.skeletonSpan, style.profileIconsSkeletonSpan].join(' ')}></span>
 			</div>
 			<div class={style.onlyStats}>
 				<div class={style.profileStat}>
@@ -147,6 +144,12 @@
 		</div>
 		<div class={[style.profileStatsDiv, style.profilePostsDiv].join(" ")}>
 			<div class={style.profilePostsSkeleton}>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
+				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
 				<span class={[style.skeletonSpan, style.profilePostsSkeletonSpan].join(' ')}></span>
