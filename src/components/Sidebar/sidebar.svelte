@@ -60,8 +60,8 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
-		<div class={style.positionButton}>
-			<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
+		<div class={style.positionButton} on:click={() => library.openOrInstallGame()}>
+			<div class={[style.loadButton, buttonIsAvailable].join(' ')}>
 				<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
 				<span class={style.positionPlayIcon}>
 					<PlayButtonIcon state={buttonState} />

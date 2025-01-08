@@ -12,9 +12,9 @@
 	
 	library.getSettings().then(r => gameName = r.gdps_name);
 	
-	export let buttonState = window.playButtonState;
-	export let buttonIsAvailable = window.playButtonIsAvailable;
-	export let updatingAnimation = window.gameUpdatingAnimation;
+	let buttonState = window.playButtonState;
+	let buttonIsAvailable = window.playButtonIsAvailable;
+	let updatingAnimation = window.gameUpdatingAnimation;
 	
 	document.addEventListener("playButtonStateChange", function(event) {
 		buttonState = window.playButtonState;

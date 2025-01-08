@@ -71,6 +71,11 @@
     },
     "notification:default",
     "process:default",
-    "os:default"
+    "os:default",
+    "notification:allow-is-permission-granted",
+    "upload:default",
+    "gcs:default",
+    "gcs:allow-install",
+    "gcs:allow-run"
   ]
 }

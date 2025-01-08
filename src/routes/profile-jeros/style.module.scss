@@ -99,14 +99,11 @@
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #373A3F;
-    border-radius: 100px;
-    border: 2.5px solid #1A1A1A;
+	width: 0px;
 }
 
 ::-webkit-scrollbar {
-	width: 10px;
-  	border-radius: 500px;
+	width: 0px;
 }
 
 .skeletonSpan {

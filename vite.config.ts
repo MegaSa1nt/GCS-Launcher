@@ -12,6 +12,7 @@ export default defineConfig({
 		strictPort: true,
 		host: host || false,
 		port: 5173,
+		hmr: host ? { protocol: "ws", host: host, port: 5173 } : undefined,
 	},
 	envPrefix: ['VITE_', 'TAURI_ENV_*'],
 	build: {

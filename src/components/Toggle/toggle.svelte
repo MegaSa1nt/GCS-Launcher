@@ -98,15 +98,6 @@
 		transition: transform 0.2s ease-in-out;
 		transform: scale(0.8);
 	}
-	
-	button:active:before {
-		transition: transform 0.2s ease-in-out;
-		transform: scale(0.9);
-	}
-	
-	button[aria-checked="true"]:active:before {
-		transform: translateX(1.65rem) scale(0.9);
-	}
 
 	button[aria-checked="true"]:before {
 		transform: translateX(1.65rem) scale(0.8);

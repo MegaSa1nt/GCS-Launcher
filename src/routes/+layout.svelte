@@ -3,6 +3,7 @@
 	import Header from '../components/Header/header.svelte';
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
 	import Toast from '../components/Toast/toast.svelte';
+	import Progress from '../components/Progress/progress.svelte';
 	import { onNavigate } from '$app/navigation';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
@@ -40,10 +41,11 @@
 	<main class={style.main}>
 		<Toast />
 		<Header />
-		<div class={style.content}>
+		<div class="content">
 			<slot />
 		</div>
 		<Sidebar />
+		<Progress />
 	</main>
 	<style id="accent-color">
 		:root {
