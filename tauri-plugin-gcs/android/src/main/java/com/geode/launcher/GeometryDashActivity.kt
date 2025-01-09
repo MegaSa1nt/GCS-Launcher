@@ -1,8 +1,6 @@
-package sa1nt.gcs
+package com.geode.launcher
 
 import android.annotation.SuppressLint
-import android.content.BroadcastReceiver
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -15,13 +13,11 @@ import android.view.WindowManager
 import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.customRobTop.BaseRobTopActivity
 import com.customRobTop.JniToCpp
-import com.geode.launcher.main.LaunchNotification
 import com.geode.launcher.utils.Constants
 import com.geode.launcher.utils.ConstrainedFrameLayout
 import com.geode.launcher.utils.DownloadUtils
@@ -120,27 +116,16 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         returnMessage: String? = null,
         returnExtendedMessage: String? = null
     ) {
-        val launchIntent = Intent(this, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-
-            if (error != null && !returnMessage.isNullOrEmpty()) {
-                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_ERROR, error)
-                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_MESSAGE, returnMessage)
-                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_EXTENDED_MESSAGE, returnExtendedMessage)
-            }
-        }
-
-        startActivity(launchIntent)
+        println(error)
     }
 
-    private fun tryLoadGame() {
+    fun tryLoadGame() {
         val gdPackageInfo = packageManager.getPackageInfo(Constants.PACKAGE_NAME, 0)
 
         setupRedirection(gdPackageInfo)
 
         Cocos2dxHelper.init(this, this)
 
-        GeodeUtils.setContext(this)
         GeodeUtils.setCapabilityListener(this)
 
         tryLoadLibrary(gdPackageInfo, Constants.FMOD_LIB_NAME)
@@ -162,21 +147,21 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
         loadInternalMods()
 
-        setContentView(createView())
-
         setupPostLibraryLoad(gdPackageInfo)
 
         try {
-            loadGeodeLibrary()
+            return loadGeodeLibrary()
         } catch (e: UnsatisfiedLinkError) {
-            handleGeodeException(e)
+            return handleGeodeException(e)
         } catch (e: Exception) {
-            handleGeodeException(e)
+            return handleGeodeException(e)
         }
     }
 
     private fun handleGeodeException(e: Throwable) {
         e.printStackTrace()
+
+        println(e.message)
 
         // ignore load failures if the game is newer than what's supported
         // so people in the future can use their save data
@@ -329,33 +314,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
                 return
             }
 
-            // you know zmx i have 0 clue what this does so im
-            // just gonna like copy the binary from external
-            // also i get 20 million permission denied errors
-            val externalGeodePath = LaunchUtils.getInstalledGeodePath(this)!!
-
-            val copiedPath = File(filesDir.path, "copied")
-            if (copiedPath.exists()) {
-                copiedPath.deleteRecursively()
-            }
-            copiedPath.mkdir()
-
-            val copiedGeodePath = File(copiedPath.path, "Geode.so")
-
-            if (externalGeodePath.exists()) {
-                DownloadUtils.copyFile(
-                    FileInputStream(externalGeodePath),
-                    FileOutputStream(copiedGeodePath)
-                )
-
-                if (copiedGeodePath.exists()) {
-                    println("Loading Geode from ${externalGeodePath.name}")
-                    System.load(copiedGeodePath.path)
-                    return
-                }
-            }
-
-            throw e
+           throw e
         }
     }
 
@@ -383,16 +342,6 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
         this.mGLSurfaceView = glSurfaceView
         frameLayout.addView(this.mGLSurfaceView)
-
-        val showNotification = PreferenceUtils.get(this).getBoolean(PreferenceUtils.Key.ENABLE_REDESIGN)
-        if (showNotification) {
-            val notificationView = ComposeView(this)
-            frameLayout.addView(notificationView)
-
-            notificationView.setContent {
-                LaunchNotification()
-            }
-        }
 
         glSurfaceView.setEGLContextClientVersion(2)
         glSurfaceView.setEGLConfigChooser(5, 6, 5, 0, 16, 8)
@@ -512,8 +461,6 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
-                // the button shouldn't do anything but close
-                .setPositiveButton(R.string.message_box_accept) { _, _ -> }
                 .show()
         }
     }
@@ -584,6 +531,12 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
                 println("Copied internal mod $fileName")
             }
+        }
+    }
+
+    companion object {
+        fun tryLoadGame() {
+            tryLoadGame()
         }
     }
 }

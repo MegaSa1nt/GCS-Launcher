@@ -237,13 +237,13 @@ library.openOrInstallGame = async function() {
 	await invoke("plugin:gcs|run", {payload: {value: settings.game_package}}).then(res => {
 		library.changeIsGameStartingState(false);
 		if(!res.value) {
-			console.log("Failed to run game:", err);
-			library.updateGame();
+			console.log("Failed to run game (after invoking):", err);
+			//library.updateGame();
 		}
 	}).catch(err => {
 		library.changeIsGameStartingState(false);
-		console.log("Failed to run game:", err);
-		library.updateGame();
+		console.log("Failed to run game (failed invoking):", err);
+		//library.updateGame();
 	})
 }
 

@@ -19,6 +19,7 @@ import ru.solrudev.ackpine.session.await
 import ru.solrudev.ackpine.session.parameters.Confirmation
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
+import com.geode.launcher.GeometryDashActivity
 
 @InvokeArg
 class PingArgs {
@@ -70,13 +71,16 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
         val args = invoke.parseArgs(PingArgs::class.java)
         val value = args.value.toString()
         val intent = context.packageManager.getLaunchIntentForPackage(value)
+        val ret = JSObject()
         if(intent != null) {
-            val bool = context.startActivity(intent)
-            val ret = JSObject()
-            ret.put("value", bool)
+            try {
+                GeometryDashActivity.tryLoadGame()
+                ret.put("value", true)
+            } catch(e: Exception) {
+                ret.put("value", e.message)
+            }
             invoke.resolve(ret)
         } else {
-            val ret = JSObject()
             ret.put("value", false)
             invoke.resolve(ret)
         }

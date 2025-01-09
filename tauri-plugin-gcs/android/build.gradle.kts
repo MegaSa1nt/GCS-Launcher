@@ -8,15 +8,40 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 23
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+        @Suppress("UnstableApiUsage")
+        externalNativeBuild {
+            cmake {
+                arguments("-DUSE_TULIPHOOK:BOOL=OFF", "-DANDROID_STL=c++_shared")
+            }
+        }
+
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+
+        //noinspection ChromeOsAbiSupport (not my fault)
+        ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+    }
+
+    splits {
+        abi {
+            isEnable = true
+            reset()
+
+            //noinspection ChromeOsAbiSupport. i'm sorry!
+            include("arm64-v8a", "armeabi-v7a")
+
+            isUniversalApk = true
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -30,9 +55,18 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    externalNativeBuild {
+        cmake {
+            path = file("src/main/cpp/CMakeLists.txt")
+        }
+    }
 }
 
 dependencies {
+    implementation ("com.squareup.okio:okio:3.9.1")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json-okio:1.7.3")
+    implementation ("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("ru.solrudev.ackpine:ackpine-core:0.9.4")
     implementation("ru.solrudev.ackpine:ackpine-ktx:0.9.4")
     implementation("androidx.core:core-ktx:1.9.0")
