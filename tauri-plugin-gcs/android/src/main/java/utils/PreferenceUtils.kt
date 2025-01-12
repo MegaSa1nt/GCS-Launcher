@@ -1,4 +1,4 @@
-package com.geode.launcher.utils
+package sa1nt.gcs.utils
 
 import android.content.Context
 import android.content.SharedPreferences

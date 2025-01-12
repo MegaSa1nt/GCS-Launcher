@@ -1,4 +1,4 @@
-package com.geode.launcher.utils
+package sa1nt.gcs.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -116,21 +116,4 @@ object GamePackageUtils {
 
     private fun validateCertificate(certificate: ByteArray): Boolean =
         certificate.toByteString().sha256().hex() == GAME_CERTIFICATE_HASH
-
-    fun identifyGameLegitimacy(packageManager: PackageManager): Boolean {
-        @Suppress("DEPRECATION")
-        val certificates = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val game = packageManager.getPackageInfo(Constants.PACKAGE_NAME, PackageManager.GET_SIGNING_CERTIFICATES)
-            val signingInfo = game.signingInfo
-
-            signingInfo?.signingCertificateHistory ?: return false
-        } else {
-            val game = packageManager.getPackageInfo(Constants.PACKAGE_NAME, PackageManager.GET_SIGNATURES)
-            game.signatures
-        }
-
-        return certificates?.any {
-            validateCertificate(it.toByteArray())
-        } ?: false
-    }
 }

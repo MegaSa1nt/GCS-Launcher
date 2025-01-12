@@ -1,6 +1,7 @@
 package sa1nt.gcs
 
 import android.app.Activity
+import android.content.Context
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
@@ -19,7 +20,6 @@ import ru.solrudev.ackpine.session.await
 import ru.solrudev.ackpine.session.parameters.Confirmation
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
-import com.geode.launcher.GeometryDashActivity
 
 @InvokeArg
 class PingArgs {
@@ -74,16 +74,25 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
         val ret = JSObject()
         if(intent != null) {
             try {
-                GeometryDashActivity.tryLoadGame()
-                ret.put("value", true)
+                scope.launch {
+                    val geode = runGeode(context)
+                    ret.put("value", geode)
+                    invoke.resolve(ret)
+                }
             } catch(e: Exception) {
                 ret.put("value", e.message)
+                invoke.resolve(ret)
             }
-            invoke.resolve(ret)
         } else {
             ret.put("value", false)
             invoke.resolve(ret)
         }
     }
 
+    private suspend fun runGeode(context: Context) {
+        activity.runOnUiThread(Runnable() {
+            val gda = GeometryDashActivity()
+            gda.tryLoadGame(activity, context)
+        })
+    }
 }

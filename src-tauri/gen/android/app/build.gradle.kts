@@ -23,6 +23,13 @@ android {
         targetSdk = 34
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()
         versionName = tauriProperties.getProperty("tauri.android.versionName", "1.0")
+
+				@Suppress("UnstableApiUsage")
+				externalNativeBuild {
+					cmake {
+						arguments("-DUSE_TULIPHOOK:BOOL=OFF", "-DANDROID_STL=c++_shared")
+					}
+				}
     }
     buildTypes {
         getByName("debug") {
@@ -51,6 +58,11 @@ android {
     buildFeatures {
         buildConfig = true
     }
+	externalNativeBuild {
+		cmake {
+			path = file("src/main/cpp/CMakeLists.txt")
+		}
+	}
 }
 
 rust {

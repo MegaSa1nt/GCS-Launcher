@@ -1,4 +1,4 @@
-package com.geode.launcher.utils
+package sa1nt.gcs.utils
 
 import android.os.Build
 import android.os.FileUtils

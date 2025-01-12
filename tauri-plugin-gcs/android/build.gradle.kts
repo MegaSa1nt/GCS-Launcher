@@ -8,16 +8,11 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 24
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        @Suppress("UnstableApiUsage")
-        externalNativeBuild {
-            cmake {
-                arguments("-DUSE_TULIPHOOK:BOOL=OFF", "-DANDROID_STL=c++_shared")
-            }
-        }
+
 
         vectorDrawables {
             useSupportLibrary = true
@@ -55,18 +50,13 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/cpp/CMakeLists.txt")
-        }
-    }
 }
 
 dependencies {
-    implementation ("com.squareup.okio:okio:3.9.1")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json-okio:1.7.3")
-    implementation ("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
+    implementation("com.squareup.okio:okio:3.9.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-okio:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.1")
     implementation("ru.solrudev.ackpine:ackpine-core:0.9.4")
     implementation("ru.solrudev.ackpine:ackpine-ktx:0.9.4")
     implementation("androidx.core:core-ktx:1.9.0")

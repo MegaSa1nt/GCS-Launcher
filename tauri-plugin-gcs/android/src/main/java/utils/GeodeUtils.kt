@@ -1,4 +1,4 @@
-package com.geode.launcher.utils
+package sa1nt.gcs.utils
 
 import android.Manifest
 import android.content.ActivityNotFoundException
@@ -149,7 +149,7 @@ object GeodeUtils {
     }
 
     fun isGeodeUri(uri: Uri): Boolean {
-        return "com.geode.launcher.user" == uri.authority
+        return "sa1nt.gcs.user" == uri.authority
     }
 
     private const val INTERNAL_PERMISSION_PREFIX = "geode.permission_internal"

@@ -1,4 +1,4 @@
-package com.geode.launcher.utils
+package sa1nt.gcs.utils
 
 import android.content.Context
 import android.os.Build
@@ -50,7 +50,7 @@ object LaunchUtils {
         // deprecated, but seems to be the best choice of directory (i forced mat to test it)
         // also, is getting the first item the correct choice here?? what do they mean
         @Suppress("DEPRECATION")
-        val dir = context.externalMediaDirs.first()
+        val dir = context.dataDir
 
         // prevent having resources added to system gallery
         // accessing this file every time the directory is read may be a little wasteful...

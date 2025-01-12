@@ -1,6 +1,8 @@
-package com.geode.launcher
+package sa1nt.gcs
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
 import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -18,21 +20,19 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.customRobTop.BaseRobTopActivity
 import com.customRobTop.JniToCpp
-import com.geode.launcher.utils.Constants
-import com.geode.launcher.utils.ConstrainedFrameLayout
-import com.geode.launcher.utils.DownloadUtils
-import com.geode.launcher.utils.GamePackageUtils
-import com.geode.launcher.utils.GeodeUtils
-import com.geode.launcher.utils.LaunchUtils
-import com.geode.launcher.utils.PreferenceUtils
+import sa1nt.gcs.utils.Constants
+import sa1nt.gcs.utils.ConstrainedFrameLayout
+import sa1nt.gcs.utils.DownloadUtils
+import sa1nt.gcs.utils.GamePackageUtils
+import sa1nt.gcs.utils.GeodeUtils
+import sa1nt.gcs.utils.LaunchUtils
+import sa1nt.gcs.utils.PreferenceUtils
 import org.cocos2dx.lib.Cocos2dxEditText
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView
 import org.cocos2dx.lib.Cocos2dxHelper
 import org.cocos2dx.lib.Cocos2dxRenderer
 import org.fmod.FMOD
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.io.IOException
 
 enum class DisplayMode {
@@ -71,7 +71,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
         try {
             createVersionFile()
-            tryLoadGame()
+            tryLoadGame(this, this)
         } catch (e: UnsatisfiedLinkError) {
             Log.e("GeodeLauncher", "Library linkage failure", e)
 
@@ -105,7 +105,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
     }
 
     private fun createVersionFile() {
-        val versionPath = File(filesDir, "game_version.txt")
+        val versionPath = File(this.filesDir, "game_version.txt")
         val gameVersion = GamePackageUtils.getGameVersionCode(packageManager)
 
         versionPath.writeText("$gameVersion")
@@ -119,19 +119,19 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         println(error)
     }
 
-    fun tryLoadGame() {
-        val gdPackageInfo = packageManager.getPackageInfo(Constants.PACKAGE_NAME, 0)
+    fun tryLoadGame(activity: Activity, context: Context) {
+        val gdPackageInfo = context.packageManager.getPackageInfo(Constants.PACKAGE_NAME, 0)
 
-        setupRedirection(gdPackageInfo)
+        setupRedirection(gdPackageInfo, context)
 
-        Cocos2dxHelper.init(this, this)
+        Cocos2dxHelper.init(context, this)
 
         GeodeUtils.setCapabilityListener(this)
 
         tryLoadLibrary(gdPackageInfo, Constants.FMOD_LIB_NAME)
         tryLoadLibrary(gdPackageInfo, Constants.COCOS_LIB_NAME)
 
-        if (GamePackageUtils.getGameVersionCode(packageManager) >= 39L) {
+        if (GamePackageUtils.getGameVersionCode(context.packageManager) >= 39L) {
             /*
             val customSymbols = PreferenceUtils.get(this).getBoolean(PreferenceUtils.Key.CUSTOM_SYMBOL_LIST)
             if (customSymbols) {
@@ -142,26 +142,26 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
             // this fix requires geode v3, which is 2.206+
             // there is a short period in which 2.206 users will still have geode v2, but whatever. ig
-            LauncherFix.performExceptionsRenaming()
+            //LauncherFix.performExceptionsRenaming()
         }
 
-        loadInternalMods()
+        loadInternalMods(context)
 
-        setupPostLibraryLoad(gdPackageInfo)
+        setContentView(createView(context))
+
+        setupPostLibraryLoad(gdPackageInfo, activity)
 
         try {
-            return loadGeodeLibrary()
+            loadGeodeLibrary(context)
         } catch (e: UnsatisfiedLinkError) {
-            return handleGeodeException(e)
+            handleGeodeException(e)
         } catch (e: Exception) {
-            return handleGeodeException(e)
+            handleGeodeException(e)
         }
     }
 
     private fun handleGeodeException(e: Throwable) {
         e.printStackTrace()
-
-        println(e.message)
 
         // ignore load failures if the game is newer than what's supported
         // so people in the future can use their save data
@@ -170,16 +170,16 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         }
     }
 
-    private fun setupRedirection(packageInfo: PackageInfo) {
+    private fun setupRedirection(packageInfo: PackageInfo, context: Context) {
         try {
-            GamePackageUtils.addAssetsFromPackage(assets, packageInfo)
+            //GamePackageUtils.addAssetsFromPackage(assets, packageInfo)
         } catch (e: NoSuchMethodException) {
             Log.e("GeodeLauncher", "Failed to add asset redirection", e)
         }
 
         try {
             // fixes bugs specific to the new app directory, such as package name
-            val saveDir = LaunchUtils.getSaveDirectory(this)
+            val saveDir = LaunchUtils.getSaveDirectory(context)
             saveDir.mkdir()
 
             // make sure it's loaded, just in case
@@ -193,7 +193,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         }
     }
 
-    private fun setupPostLibraryLoad(packageInfo: PackageInfo) {
+    private fun setupPostLibraryLoad(packageInfo: PackageInfo, activity: Activity) {
         // call native functions after native libraries init
         JniToCpp.setupHSSAssets(
             packageInfo.applicationInfo!!.sourceDir,
@@ -201,7 +201,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         )
         Cocos2dxHelper.nativeSetApkPath(packageInfo.applicationInfo!!.sourceDir)
 
-        BaseRobTopActivity.setCurrentActivity(this)
+        BaseRobTopActivity.setCurrentActivity(activity)
     }
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
@@ -259,7 +259,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
         // copy the library to a path we can access
         // there doesn't seem to be a way to load a library from a file descriptor
-        val libraryCopy = File(cacheDir, "lib$libraryName.so")
+        val libraryCopy = File(this.cacheDir, "lib$libraryName.so")
 
         libraryCopy.outputStream().use { libraryOutput ->
             libraryFd.createInputStream().use { inputStream ->
@@ -275,7 +275,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
     private fun getNativeLibraryDirectory(applicationInfo: ApplicationInfo): String {
         // native libraries have been extracted, so the path is same as usual
         if (applicationInfo.flags and ApplicationInfo.FLAG_EXTRACT_NATIVE_LIBS == ApplicationInfo.FLAG_EXTRACT_NATIVE_LIBS) {
-            return applicationInfo.nativeLibraryDir
+            //return applicationInfo.nativeLibraryDir
         }
 
         // might be split apks, select the best path for the library
@@ -298,17 +298,17 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
     }
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
-    private fun loadGeodeLibrary() {
+    private fun loadGeodeLibrary(context: Context) {
         // Load Geode if exists
         // bundling the object with the application allows for nicer backtraces
         try {
             // put libgeode.so in jniLibs/armeabi-v7a to get this
-            System.loadLibrary("geode")
-            return
+            //System.loadLibrary("geode")
+            //return
         } catch (e: UnsatisfiedLinkError) {
             // but users may prefer it stored with data
             val geodeFilename = LaunchUtils.geodeFilename
-            val geodePath = File(filesDir.path, "launcher/$geodeFilename")
+            val geodePath = File(context.filesDir.path, "launcher/$geodeFilename")
             if (geodePath.exists()) {
                 System.load(geodePath.path)
                 return
@@ -318,12 +318,12 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         }
     }
 
-    private fun createView(): FrameLayout {
+    private fun createView(context: Context): FrameLayout {
         val frameLayoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
-        val frameLayout = ConstrainedFrameLayout(this)
+        val frameLayout = ConstrainedFrameLayout(context)
         frameLayout.layoutParams = frameLayoutParams
 
         if (displayMode == DisplayMode.LIMITED) {
@@ -334,11 +334,11 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        val editText = Cocos2dxEditText(this)
+        val editText = Cocos2dxEditText(context)
         editText.layoutParams = editTextLayoutParams
         frameLayout.addView(editText)
 
-        val glSurfaceView = Cocos2dxGLSurfaceView(this)
+        val glSurfaceView = Cocos2dxGLSurfaceView(context)
 
         this.mGLSurfaceView = glSurfaceView
         frameLayout.addView(this.mGLSurfaceView)
@@ -506,17 +506,17 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
      * Copies a mod from the launcher's assets to the Geode mods directory.
      * This method is not recommended for casual use, the new mod will not be automatically removed.
      */
-    private fun loadInternalMods() {
+    private fun loadInternalMods(context: Context) {
         val internalModBase = "mods"
 
         val modListing = try {
-            assets.list(internalModBase)
+            context.assets.list(internalModBase)
         } catch (ioe: IOException) {
             emptyArray<String>()
         }
 
         val modDirectory = File(
-            LaunchUtils.getBaseDirectory(this),
+            LaunchUtils.getBaseDirectory(context),
             "game/geode/mods"
         )
 
@@ -526,17 +526,11 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             if (fileName.endsWith(".geode")) {
                 val modOutput = File(modDirectory, fileName)
 
-                val mod = assets.open("$internalModBase/$fileName")
+                val mod = context.assets.open("$internalModBase/$fileName")
                 DownloadUtils.copyFile(mod, modOutput.outputStream())
 
                 println("Copied internal mod $fileName")
             }
-        }
-    }
-
-    companion object {
-        fun tryLoadGame() {
-            tryLoadGame()
         }
     }
 }
