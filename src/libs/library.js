@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core';
-import { appCacheDir, resolve, downloadDir, join, sep } from '@tauri-apps/api/path';
+import { appCacheDir, resolve, downloadDir, join, sep, cacheDir } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
@@ -109,6 +109,7 @@ library.getSettings = function() {
 	library.initializeVariables();
 	return new Promise(async function(r) {
 		const resourcePath = await downloadDir();
+		const geodePath = resourcePath.replace("Android" + await sep() + "data", "Android" + await sep() + "media").replace("files" + await sep() + "Download", "game" + await sep() + "geode");
 		r({
 			updates_api_url: "https://updates.gcs.icu/",
 			dashboard_api_url: "https://api.gcs.icu/",
@@ -116,14 +117,14 @@ library.getSettings = function() {
 			game_package: "com.sa1ntsh.greencatssrv",
 			
 			update_time: localStorage.update_time,
-			resource_path: resourcePath
+			resource_path: resourcePath,
+			geode_path: geodePath
 		});
 	});
 }
 
 library.checkUpdates = function() {
 	return new Promise(async function(r) {
-		r(false);
 		if(window.isCheckingUpdate) r(false);
 		await library.changeIsCheckingUpdateState(true);
 		const settings = await library.getSettings();
@@ -238,13 +239,13 @@ library.openOrInstallGame = async function() {
 		library.changeIsGameStartingState(false);
 		if(!res.value) {
 			console.log("Failed to run game (after invoking):", err);
-			//library.updateGame();
+			library.updateGame();
 		}
 	}).catch(err => {
 		library.changeIsGameStartingState(false);
 		console.log("Failed to run game (failed invoking):", err);
-		//library.updateGame();
-	})
+		library.updateGame();
+	});
 }
 
 library.updateGame = async function() {
@@ -253,10 +254,10 @@ library.updateGame = async function() {
 	library.changePendingUpdateState(false);
 	const settings = await library.getSettings();
 	console.log('Starting downloading game...');
-	var decreaseEventFiresByTwenty = 0;
+	var decreaseEventFires = 0;
 	download(settings.updates_api_url + "download/android", await join(settings.resource_path, "/android.apk"), (progress) => {
-		decreaseEventFiresByTwenty++;
-		if(decreaseEventFiresByTwenty % 20 === 0) library.changeProgressState(progress.progressTotal, progress.total, 'Загрузка...', Math.round(progress.progressTotal / 1024 / 102.4) / 10 + " МБ", Math.round(progress.total / 1024 / 102.4) / 10 + " МБ", Math.round(progress.transferSpeed / 1024 / 102.4) / 10 + " МБ/c");
+		decreaseEventFires++;
+		if(decreaseEventFires % 200 === 0) library.changeProgressState(progress.progressTotal, progress.total, 'Загрузка...', Math.round(progress.progressTotal / 104857.6) / 10 + " МБ", Math.round(progress.total / 104857.6) / 10 + " МБ", Math.round(progress.transferSpeed /104857.6) / 10 + " МБ/c");
 	}).then(async (r) => {
 		library.changeUpdatingGameState(false);
 		library.changeIsCheckingUpdateState(true);
@@ -267,6 +268,7 @@ library.updateGame = async function() {
 		console.error('Failed downloading APK file:', err);
 		library.changeProgressState(0, 0, '', '', '', '');
 		library.changeUpdatingGameState(false);
+		library.changePendingUpdateState(true);
 		library.cleanTemporaryFiles();
 	});
 }
@@ -452,7 +454,7 @@ library.sendNotification = async function(title, body) {
 }
 
 library.checkIfPlayerIsLoggedIn = async function() {
-	if(!localStorage.auth.length) return false;
+	if(!localStorage.auth || !localStorage.auth.length) return false;
 	const settings = await library.getSettings();
 	fetch(settings.dashboard_api_url + "login.php?auth=" + localStorage.auth).then(r => r.json()).then(response => {
 		if(!response.success) {
@@ -567,7 +569,7 @@ library.getNotifications = function() {
 		if(!localStorage.auth.length) r({ notifies: [] });
 		const settings = await library.getSettings();
 		fetch(settings.dashboard_api_url + "notify.php?auth=" + localStorage.auth).then(res => res.json()).then(response => {
-			if(!response.success) r({ notifies: [] });
+			if(!response.success || !response.notifies) return r({ notifies: [] });
 			
 			hasNewNotifications = response.notifies.some(notification => !notification.checked);
 			
@@ -675,13 +677,17 @@ library.getPluralType = function(number) {
 
 library.isWindows11 = function() {
 	return false;
-	let windowsVersion = version().split('.');
-	return Number(windowsVersion[2]) >= 22000;
 }
 
 library.toast = function(text) {
-	toast.pop()
-	toast.push(text, { duration: 1500, intro: { x: 0, y: -100 } });
+	toast.pop();
+	toast.push(text, {
+		duration: 1500,
+		intro: {
+			x: 0,
+			y: -100
+		}
+	});
 }
 
 library.initializeAndroidNotifications = function() {

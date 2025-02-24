@@ -1,7 +1,7 @@
 <script>
 	/* Credits for toast to https://github.com/zerodevx/svelte-toast */
 	
-	import { SvelteToast } from '@zerodevx/svelte-toast'
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 </script>
 
 <SvelteToast />

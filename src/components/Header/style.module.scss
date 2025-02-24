@@ -58,7 +58,12 @@
 	position: absolute;
 }
 
-.usernameSmallDiv:active,
+.usernameSmallDiv:active {
+	background-color: #D9D9D914;
+	transform: scale(0.97);
+}
+
 .profileButton:active {
 	background-color: #D9D9D914;
+	transform: scale(0.9);
 }

@@ -18,6 +18,7 @@ import ru.solrudev.ackpine.installer.createSession
 import ru.solrudev.ackpine.session.Session
 import ru.solrudev.ackpine.session.await
 import ru.solrudev.ackpine.session.parameters.Confirmation
+import com.geode.launcher.main.onLaunch
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -72,13 +73,10 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
         val value = args.value.toString()
         val intent = context.packageManager.getLaunchIntentForPackage(value)
         val ret = JSObject()
+
         if(intent != null) {
             try {
-                scope.launch {
-                    val geode = runGeode(context)
-                    ret.put("value", geode)
-                    invoke.resolve(ret)
-                }
+                onLaunch(context)
             } catch(e: Exception) {
                 ret.put("value", e.message)
                 invoke.resolve(ret)
@@ -87,12 +85,5 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
             ret.put("value", false)
             invoke.resolve(ret)
         }
-    }
-
-    private suspend fun runGeode(context: Context) {
-        activity.runOnUiThread(Runnable() {
-            val gda = GeometryDashActivity()
-            gda.tryLoadGame(activity, context)
-        })
     }
 }

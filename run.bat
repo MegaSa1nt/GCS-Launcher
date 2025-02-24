@@ -16,7 +16,7 @@ if %NUMBER% EQU 1 (
 	npm run tauri android dev -- --host
 )
 if %NUMBER% EQU 2 (
-	npm run tauri android build
+	npm run tauri android build -- --target aarch64 --target armv7
 ) 
 if %NUMBER% EQU 3 (
 	npm run tauri android dev -- --open --host

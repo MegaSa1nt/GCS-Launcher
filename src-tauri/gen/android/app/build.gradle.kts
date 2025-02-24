@@ -1,3 +1,4 @@
+import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
@@ -16,6 +17,9 @@ val tauriProperties = Properties().apply {
 android {
     compileSdk = 34
     namespace = "sa1nt.gcs"
+
+		ndkVersion = "27.2.12479018"
+	
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
         applicationId = "sa1nt.gcs"
@@ -30,7 +34,24 @@ android {
 						arguments("-DUSE_TULIPHOOK:BOOL=OFF", "-DANDROID_STL=c++_shared")
 					}
 				}
+
+				ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a")
     }
+
+		val keystorePropertiesFile = rootProject.file("signing.properties")
+		val keystoreProperties = Properties().apply {
+				load(FileInputStream(keystorePropertiesFile))
+		}
+		signingConfigs {
+			create("release") {
+					storeFile = file(keystoreProperties["store"] as String)
+					storePassword = keystoreProperties["storePassword"] as String
+					keyAlias = keystoreProperties["keyAlias"] as String
+					keyPassword = keystoreProperties["keyPassword"] as String
+			}
+	
+		}
+	
     buildTypes {
         getByName("debug") {
             manifestPlaceholders["usesCleartextTraffic"] = "true"
@@ -45,11 +66,7 @@ android {
         }
         getByName("release") {
             isMinifyEnabled = true
-            proguardFiles(
-                *fileTree(".") { include("**/*.pro") }
-                    .plus(getDefaultProguardFile("proguard-android-optimize.txt"))
-                    .toList().toTypedArray()
-            )
+						signingConfig = signingConfigs["release"]
         }
     }
     kotlinOptions {
@@ -58,11 +75,17 @@ android {
     buildFeatures {
         buildConfig = true
     }
-	externalNativeBuild {
-		cmake {
-			path = file("src/main/cpp/CMakeLists.txt")
+		externalNativeBuild {
+			cmake {
+				path = file("src/main/cpp/CMakeLists.txt")
+			}
 		}
-	}
+
+		packaging {
+			jniLibs {
+				useLegacyPackaging = true
+			}
+		}
 }
 
 rust {
