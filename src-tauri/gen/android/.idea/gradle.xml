@@ -23,7 +23,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
             <option value="$PROJECT_DIR$/../../../tauri-plugin-gcs/android" />
-            <option value="$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-2.1.1/mobile/android" />
+            <option value="$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-2.0.6/mobile/android" />
             <option value="$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-plugin-fs-2.0.3/android" />
             <option value="$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-plugin-notification-2.0.1/android" />
             <option value="$USER_HOME$/.cargo/registry/src/index.crates.io-6f17d22bba15001f/tauri-plugin-shell-2.0.2/android" />
@@ -32,5 +32,6 @@
         <option name="resolveExternalAnnotations" value="false" />
       </GradleProjectSettings>
     </option>
+    <option name="parallelModelFetch" value="true" />
   </component>
 </project>

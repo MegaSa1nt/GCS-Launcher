@@ -14,3 +14,10 @@ package-lock.json
 src-tauri/Cargo.lock
 gcs.jks
 src-tauri/gen/android/signing.properties
+src-tauri/gen/android/.idea/render.experimental.xml
+src-tauri/gen/android/app/arm/*
+src-tauri/gen/android/app/arm64/*
+src-tauri/gen/android/app/universal/*
+src-tauri/gen/android/buildSrc/*
+src-tauri/gen/android/app/build/*
+tauri-plugin-gcs/android/build/*

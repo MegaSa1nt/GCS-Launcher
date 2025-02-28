@@ -17,8 +17,10 @@ android {
             useSupportLibrary = true
         }
 
-        //noinspection ChromeOsAbiSupport (not my fault)
-        ndk.abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        ndk {
+            abiFilters.removeAll(listOf("x86", "x86_64"))
+            abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+        }
     }
 
     splits {
