@@ -68,7 +68,13 @@ android {
             }
         }
         getByName("release") {
-            isMinifyEnabled = true
+				  	isDebuggable = true
+				  	isJniDebuggable = true
+            isMinifyEnabled = false
+						proguardFiles(
+							getDefaultProguardFile("proguard-android-optimize.txt"),
+							"proguard-rules.pro"
+						)
 						signingConfig = signingConfigs["release"]
         }
     }

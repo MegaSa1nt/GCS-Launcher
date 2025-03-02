@@ -147,9 +147,10 @@
 					localStorage.clan_color = response.clan.color;
 					document.dispatchEvent(accountChangeEvent);
 					library.getNotifications();
+					isLoggingIn = isLogging = false;
 					goto("/");
 				} else {
-					isLogging = false;
+					isLoggingIn = isLogging = false;
 					library.logout();
 					isLoginErrored = true;
 					switch(response.error) {
@@ -165,6 +166,7 @@
 					}
 				}
 			}).catch(e => {
+				isLoggingIn = isLogging = true;
 				library.logout();
 				isLoginErrored = true;
 				errorText = strings.settings.error.unexpectedError;

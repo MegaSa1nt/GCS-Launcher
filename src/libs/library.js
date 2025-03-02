@@ -109,7 +109,7 @@ library.getSettings = function() {
 	library.initializeVariables();
 	return new Promise(async function(r) {
 		const resourcePath = await downloadDir();
-		const geodePath = resourcePath.replace("Android" + await sep() + "data", "Android" + await sep() + "media").replace("files" + await sep() + "Download", "game" + await sep() + "geode");
+		const geodePath = resourcePath.replace("Android" + await sep() + "data", "Android" + await sep() + "media").replace("files" + await sep() + "Download", "");
 		r({
 			updates_api_url: "https://updates.gcs.icu/",
 			dashboard_api_url: "https://api.gcs.icu/",

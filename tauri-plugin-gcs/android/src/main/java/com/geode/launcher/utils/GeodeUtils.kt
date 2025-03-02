@@ -23,6 +23,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
 import com.geode.launcher.UserDirectoryProvider
+import com.geode.launcher.activityresult.GeodeOpenFileActivityResult
+import com.geode.launcher.activityresult.GeodeOpenFilesActivityResult
+import com.geode.launcher.activityresult.GeodeSaveFileActivityResult
 import java.io.File
 import java.lang.ref.WeakReference
 import kotlin.system.exitProcess
@@ -31,7 +34,10 @@ import kotlin.system.exitProcess
 @Suppress("unused", "KotlinJniMissingFunction")
 object GeodeUtils {
     private lateinit var activity: WeakReference<AppCompatActivity>
+    private lateinit var openFileResultLauncher: ActivityResultLauncher<GeodeOpenFileActivityResult.OpenFileParams>
     private lateinit var openDirectoryResultLauncher: ActivityResultLauncher<Uri?>
+    private lateinit var openFilesResultLauncher: ActivityResultLauncher<GeodeOpenFilesActivityResult.OpenFileParams>
+    private lateinit var saveFileResultLauncher: ActivityResultLauncher<GeodeSaveFileActivityResult.SaveFileParams>
     private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var internalRequestPermissionsLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var internalRequestAllFilesLauncher: ActivityResultLauncher<Intent>
@@ -41,6 +47,19 @@ object GeodeUtils {
 
     fun setContext(activity: AppCompatActivity) {
         this.activity = WeakReference(activity)
+
+        openFileResultLauncher = activity.registerForActivityResult(GeodeOpenFileActivityResult()) { uri ->
+            if(uri != null) {
+                val path = FileUtils.getRealPathFromURI(activity, uri)
+                if (path != null) {
+                    selectFileCallback(path)
+                    return@registerForActivityResult
+                }
+            }
+
+            failedCallback()
+        }
+
         openDirectoryResultLauncher = activity.registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
             if (it != null) {
                 val path = FileUtils.getRealPathFromURI(activity, it)
@@ -55,6 +74,32 @@ object GeodeUtils {
 
         requestPermissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
             permissionCallback(isGranted)
+        }
+        openFilesResultLauncher = activity.registerForActivityResult(GeodeOpenFilesActivityResult()) { result ->
+            if (result.isEmpty()) {
+                failedCallback()
+                return@registerForActivityResult
+            }
+            val paths: Array<String> = Array(result.size) {"n = $it"}
+            for (i in result.indices) {
+                val path = FileUtils.getRealPathFromURI(activity, result[i])
+                if (path != null) {
+                    paths[i] = path
+                }
+            }
+            selectFilesCallback(paths)
+            return@registerForActivityResult
+        }
+
+        saveFileResultLauncher = activity.registerForActivityResult(GeodeSaveFileActivityResult()) { uri ->
+            if (uri != null) {
+                val path = FileUtils.getRealPathFromURI(activity, uri)
+                if (path != null) {
+                    selectFileCallback(path)
+                    return@registerForActivityResult
+                }
+            }
+            failedCallback()
         }
 
         internalRequestPermissionsLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -213,6 +258,48 @@ object GeodeUtils {
     }
 
     @JvmStatic
+    fun selectFile(path: String): Boolean {
+        var uri: Uri?
+        DocumentFile.fromFile(File(path)).also {
+            uri = it.uri
+        }
+
+        return try {
+            checkForFilePermissions(
+                onSuccess = {
+                    openFileResultLauncher.launch(GeodeOpenFileActivityResult.OpenFileParams(arrayOf("*/*"), uri))
+                },
+                onFailure = { failedCallback() }
+            )
+
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        }
+    }
+
+    @JvmStatic
+    fun selectFiles(path: String): Boolean {
+        var uri: Uri?
+        DocumentFile.fromFile(File(path)).also {
+            uri = it.uri
+        }
+
+        return try {
+            checkForFilePermissions(
+                onSuccess = {
+                    openFilesResultLauncher.launch(GeodeOpenFilesActivityResult.OpenFileParams(arrayOf("*/*"), uri))
+                },
+                onFailure = { failedCallback() }
+            )
+
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        }
+    }
+
+    @JvmStatic
     fun selectFolder(path: String): Boolean {
         var uri: Uri?
         DocumentFile.fromFile(File(path)).also {
@@ -232,6 +319,24 @@ object GeodeUtils {
             false
         }
 
+    }
+
+    @JvmStatic
+    fun createFile(path: String): Boolean {
+        val initialPath = File(path)
+
+        return try {
+            checkForFilePermissions(
+                onSuccess = {
+                    saveFileResultLauncher.launch(GeodeSaveFileActivityResult.SaveFileParams(null, initialPath))
+                },
+                onFailure = { failedCallback() }
+            )
+
+            true
+        } catch (e: ActivityNotFoundException) {
+            false
+        }
     }
 
     @JvmStatic

@@ -1,7 +1,6 @@
 package com.geode.launcher
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -326,7 +325,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         } catch (e: UnsatisfiedLinkError) {
             // but users may prefer it stored with data
             val geodeFilename = LaunchUtils.geodeFilename
-            val geodePath = File(filesDir.path, "launcher/$geodeFilename")
+            val geodePath = File(filesDir.path, geodeFilename)
             if (geodePath.exists()) {
                 System.load(geodePath.path)
                 return

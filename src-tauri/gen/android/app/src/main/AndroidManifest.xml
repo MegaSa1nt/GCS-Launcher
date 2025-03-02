@@ -47,11 +47,11 @@
 						android:name="android.app.lib_name"
 						android:value="cocos2dcpp" />
 				</activity>
-			<activity
-				android:name="org.cocos2dx.lib.Cocos2dxEditText"
-				android:theme="@style/Base.Theme.AppCompat"
-				tools:ignore="Instantiatable">
-			</activity>
+				<activity
+					android:name="org.cocos2dx.lib.Cocos2dxEditText"
+					android:theme="@style/Base.Theme.AppCompat"
+					tools:ignore="Instantiatable">
+				</activity>
         <provider
           android:name="androidx.core.content.FileProvider"
           android:authorities="${applicationId}.provider"

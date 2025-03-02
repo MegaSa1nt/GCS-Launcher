@@ -5432,7 +5432,8 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 [[package]]
 name = "wry"
 version = "0.50.1"
-source = "git+https://github.com/tauri-apps/wry?branch=fix/android-borrow-panic#154d52abe5741f912adc6320a949b93e4bdfdfe9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2a5eabce267929af61619166232d5221aeec2d7af8712bc33cf54a78416ad711"
 dependencies = [
  "base64 0.22.1",
  "block2 0.6.0",
