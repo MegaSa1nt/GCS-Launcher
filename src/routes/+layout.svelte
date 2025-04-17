@@ -4,16 +4,14 @@
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
 	import Toast from '../components/Toast/toast.svelte';
 	import Progress from '../components/Progress/progress.svelte';
+	import { join } from '@tauri-apps/api/path';
+	import { remove } from '@tauri-apps/plugin-fs';
+	import { invoke } from '@tauri-apps/api/core';
 	import { onNavigate } from '$app/navigation';
 	import library from '../libs/library.js';
 	import { page } from '$app/stores';
-	import { invoke } from '@tauri-apps/api/core';
-	
-	library.checkUpdates().then(r => {
-		if(localStorage.updates_interval != 0) {
-			setInterval(() => library.checkUpdates(), localStorage.updates_interval);
-		}
-	});
+
+	invoke("plugin:gcs|openInstallSettings");
 
 	onNavigate((navigation) => {
 		if(!document.startViewTransition) return;
@@ -33,7 +31,18 @@
 	library.checkIfPlayerIsLoggedIn();
 	
 	library.checkLauncherUpdates().then(r => {
-		console.log(r);
+		if(!r) return library.updateLauncher();
+
+		library.getSettings().then(async (settings) => {
+			const launcherPath = await join(settings.resource_path, "/launcher.apk")
+			await remove(launcherPath).catch(err => console.log("Launcher APK was not found. Nothing to delete!"));
+		});
+		
+		library.checkUpdates().then(r => {
+			if(localStorage.updates_interval != 0) {
+				setInterval(() => library.checkUpdates(), localStorage.updates_interval);
+			}
+		});
 	});
 </script>
 

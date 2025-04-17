@@ -98,8 +98,28 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Установка...",
+		"installingFirstPart": "Сейчас...",
+		"installingSecondPart": "...почти!",
+		"installingPressInstallFirstPart": "Нажмите...",
+		"installingPressInstallSecondPart": "...установить!",
+		
+		"downloadingGame": "Загрузка игры...",
+		"megabytes": "%1$s МБ",
+		"downloadingGeode": "Загрузка Geode...",
+		"extractingGeode": "Распаковка Geode...",
+		"downloadingLauncher": "Загрузка лаунчера...",
+		
+		"files-1": "%1$s файл",
+		"files-2": "%1$s файла",
+		"files-3": "%1$s файлов"
+	},
+	
 	"settings": {
 		"title": "Настройки",
+		
+		"notLoggedIn": "Войдите в аккаунт!",
 		
 		"launcher": "Лаунчер",
 		"notifications": {

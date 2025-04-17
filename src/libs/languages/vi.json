@@ -98,8 +98,28 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Installing...",
+		"installingFirstPart": "Almost...",
+		"installingSecondPart": "...right now!",
+		"installingPressInstallFirstPart": "Press...",
+		"installingPressInstallSecondPart": "...install!",
+		
+		"downloadingGame": "Downloading game...",
+		"megabytes": "%1$s MB",
+		"downloadingGeode": "Downloading Geode...",
+		"extractingGeode": "Extracting Geode...",
+		"downloadingLauncher": "Downloading launcher...",
+		
+		"files-1": "%1$s file",
+		"files-2": "%1$s files",
+		"files-3": "%1$s files"
+	},
+	
 	"settings": {
 		"title": "Cài đặt",
+		
+		"notLoggedIn": "Login to account!",
 		
 		"launcher": "Trình khởi chạy",
 		"notifications": {

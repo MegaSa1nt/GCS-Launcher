@@ -35,6 +35,14 @@
       ]
     },
     {
+      "identifier": "fs:allow-create",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
+    {
       "identifier": "fs:scope",
       "allow": [
         {
@@ -76,6 +84,8 @@
     "upload:default",
     "gcs:default",
     "gcs:allow-install",
-    "gcs:allow-run"
+    "gcs:allow-run",
+    "download:default",
+    "download:allow-create"
   ]
 }

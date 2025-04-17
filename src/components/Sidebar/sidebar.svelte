@@ -2,8 +2,12 @@
 	import { Home, User, Bell, BellDot } from 'lucide-svelte';
     import style from './style.module.scss';
     import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import library from '../../libs/library.js';
 	import PlayButtonIcon from '../../components/PlayButtonIcon/playButtonIcon.svelte';
+	import languageStrings from '../../libs/languages.js';
+	let strings = languageStrings[localStorage.language];
+	document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
 
 	library.initializeVariables();
 
@@ -53,6 +57,11 @@
 		updatingAnimation = window.gameUpdatingAnimation;
 	});
 	updatePlayButtonState();
+	
+	function openLoginPage() {
+		library.toast(strings.settings.notLoggedIn);
+		goto("/settings#login");
+	}
 </script>
 
 <div class={style.sidebar}>
@@ -69,7 +78,7 @@
 			</div>
 		</div>
 		{#if !usernameCheck}
-			<a class={style.button} href={"/settings#login"}>
+			<a class={style.button} on:click={() => openLoginPage()}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
 			</a>
 		{:else}

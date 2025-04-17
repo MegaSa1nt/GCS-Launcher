@@ -28,3 +28,11 @@ impl<R: Runtime> Gcs<R> {
     })
   }
 }
+
+impl<R: Runtime> Gcs<R> {
+  pub fn openInstallSettings(&self, payload: PingRequest) -> crate::Result<PingResponse> {
+    Ok(PingResponse {
+      value: payload.value,
+    })
+  }
+}

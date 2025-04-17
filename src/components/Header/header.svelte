@@ -5,6 +5,7 @@
 	import library from '../../libs/library.js';
 	import languageStrings from '../../libs/languages.js';
 	let strings = languageStrings[localStorage.language];
+	document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
 	
 	const profileTypes = ['gd', 'launcher', 'jeros'];
 	let sidebarProfileType = profileTypes[localStorage.profile_type];

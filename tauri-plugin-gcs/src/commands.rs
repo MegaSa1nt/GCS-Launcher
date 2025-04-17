@@ -19,3 +19,11 @@ pub(crate) async fn run<R: Runtime>(
 ) -> Result<PingResponse> {
     app.gcs().run(payload)
 }
+
+#[command]
+pub(crate) async fn openInstallSettings<R: Runtime>(
+    app: AppHandle<R>,
+    payload: PingRequest,
+) -> Result<PingResponse> {
+    app.gcs().openInstallSettings(payload)
+}

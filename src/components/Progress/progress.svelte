@@ -4,10 +4,6 @@
     import { page } from '$app/stores';
 	import library from '../../libs/library.js';
 	
-    page.subscribe(() => {
-        
-    });
-	
 	let progressValue = window.progress_value;
 	let progressMax = window.progress_max;
 	let progressValueText = window.progress_value_text;

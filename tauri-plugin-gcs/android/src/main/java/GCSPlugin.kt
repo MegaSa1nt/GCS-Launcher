@@ -1,14 +1,18 @@
 package sa1nt.gcs
 
 import android.app.Activity
-import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.provider.Settings
+import android.os.Build
+import androidx.core.content.ContextCompat.startActivity
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
 import app.tauri.annotation.TauriPlugin
 import app.tauri.plugin.Invoke
 import app.tauri.plugin.JSObject
 import app.tauri.plugin.Plugin
-import android.net.Uri
+import com.geode.launcher.main.onLaunch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,9 +22,9 @@ import ru.solrudev.ackpine.installer.createSession
 import ru.solrudev.ackpine.session.Session
 import ru.solrudev.ackpine.session.await
 import ru.solrudev.ackpine.session.parameters.Confirmation
-import com.geode.launcher.main.onLaunch
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
+
 
 @InvokeArg
 class PingArgs {
@@ -36,6 +40,22 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
         scope.launch {
             installSuspended(invoke)
         }
+    }
+
+    @Command
+    fun openInstallSettings(invoke: Invoke) {
+        val canInstallApps = context.packageManager.canRequestPackageInstalls()
+
+        if(!canInstallApps) {
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + context.packageName))
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            startActivity(context, intent, null)
+        }
+
+        val ret = JSObject()
+        ret.put("value", true)
+        invoke.resolve(ret)
     }
 
     private suspend fun installSuspended(invoke: Invoke) {

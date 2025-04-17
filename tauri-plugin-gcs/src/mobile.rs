@@ -37,4 +37,10 @@ impl<R: Runtime> Gcs<R> {
       .run_mobile_plugin("run", payload)
       .map_err(Into::into)
   }
+  pub fn openInstallSettings(&self, payload: PingRequest) -> crate::Result<PingResponse> {
+    self
+      .0
+      .run_mobile_plugin("openInstallSettings", payload)
+      .map_err(Into::into)
+  }
 }

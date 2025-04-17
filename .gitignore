@@ -21,3 +21,4 @@ src-tauri/gen/android/app/universal/*
 src-tauri/gen/android/buildSrc/*
 src-tauri/gen/android/app/build/*
 tauri-plugin-gcs/android/build/*
+src-tauri/gen/android/.idea/deploymentTargetSelector.xml

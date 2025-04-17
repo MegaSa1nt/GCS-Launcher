@@ -49,7 +49,7 @@
           "minimum": 1.0
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -111,7 +111,7 @@
           "type": "string"
         },
         "description": {
-          "description": "Human-readable description of what the permission does. Tauri internal convention is to use <h4> headings in markdown content for Tauri documentation generation purposes.",
+          "description": "Human-readable description of what the permission does. Tauri internal convention is to use `<h4>` headings in markdown content for Tauri documentation generation purposes.",
           "type": [
             "string",
             "null"
@@ -297,27 +297,44 @@
         {
           "description": "Enables the install command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-install"
+          "const": "allow-install",
+          "markdownDescription": "Enables the install command without any pre-configured scope."
         },
         {
           "description": "Denies the install command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-install"
+          "const": "deny-install",
+          "markdownDescription": "Denies the install command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the openInstallSettings command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-openInstallSettings",
+          "markdownDescription": "Enables the openInstallSettings command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the openInstallSettings command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-openInstallSettings",
+          "markdownDescription": "Denies the openInstallSettings command without any pre-configured scope."
         },
         {
           "description": "Enables the run command without any pre-configured scope.",
           "type": "string",
-          "const": "allow-run"
+          "const": "allow-run",
+          "markdownDescription": "Enables the run command without any pre-configured scope."
         },
         {
           "description": "Denies the run command without any pre-configured scope.",
           "type": "string",
-          "const": "deny-run"
+          "const": "deny-run",
+          "markdownDescription": "Denies the run command without any pre-configured scope."
         },
         {
-          "description": "Default permissions for the plugin",
+          "description": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-install`\n- `allow-run`\n- `allow-openInstallSettings`",
           "type": "string",
-          "const": "default"
+          "const": "default",
+          "markdownDescription": "Default permissions for the plugin\n#### This default permission set includes:\n\n- `allow-install`\n- `allow-run`\n- `allow-openInstallSettings`"
         }
       ]
     }

@@ -2,22 +2,23 @@ import { invoke } from '@tauri-apps/api/core';
 import { appCacheDir, resolve, downloadDir, join, sep, cacheDir } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
 import { listen } from '@tauri-apps/api/event';
-import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
+import { remove, readDir, readFile, writeFile, create, BaseDirectory, rename, mkdir } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
 import { sendNotification, createChannel, removeChannel, requestPermission } from '@tauri-apps/plugin-notification';
 import { exit } from '@tauri-apps/plugin-process';
 import { version } from '@tauri-apps/plugin-os';
-import { download } from '@tauri-apps/plugin-upload';
 import { toast } from '@zerodevx/svelte-toast';
 import style from './style.module.scss';
 import { printf } from 'fast-printf';
+import fetchProgress from 'fetch-progress';
+import { create as download } from 'tauri-plugin-download';
+
 const library = [];
+
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
 let accountChangeEvent = new Event("accountChange", {bubbles: true});
 let progressChangeEvent = new Event("progressChange", {bubbles: true});
-import languageStrings from './languages.js';
-let strings = languageStrings[localStorage.language];
 
 document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
 
@@ -42,6 +43,7 @@ window.updatePlayButtonState = () => {
 			break;
 		case isPendingUpdate:
 		case isPendingAPKInstallation:
+		case isPendingGeodeUpdate:
 			window.gameUpdatingAnimation = '';
 			window.playButtonIsAvailable = style.isAvailable;
 			window.playButtonState = 2;
@@ -70,6 +72,7 @@ library.initializeEvents = async function() {
 	if(typeof window.isPendingUpdate == 'undefined') window.isPendingUpdate = false;
 	if(typeof window.hasNewNotifications == 'undefined') window.hasNewNotifications = false;
 	if(typeof window.isPendingAPKInstallation == 'undefined') window.isPendingAPKInstallation = false;
+	if(typeof window.isPendingGeodeUpdate == 'undefined') window.isPendingGeodeUpdate = false;
 	
 	// Rare type of events
 	if(typeof window.isLoggingIn == 'undefined') window.isLoggingIn = false;
@@ -87,10 +90,12 @@ library.initializeEvents = async function() {
 	if(typeof window.progress_max_text == 'undefined') window.progress_max_text = '';
 	if(typeof window.progress_title_text == 'undefined') window.progress_title_text = '';
 	if(typeof window.progress_speed_text == 'undefined') window.progress_speed_text = '';
+	if(typeof window.pending_apk == 'undefined') window.pending_apk = '';
 }
 
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
+	if(typeof localStorage.geode_update_time == 'undefined') localStorage.geode_update_time = 0;
 	if(typeof localStorage.profile_type == 'undefined') localStorage.profile_type = 1;
 	if(typeof localStorage.enable_notifications == 'undefined') localStorage.enable_notifications = 'true';
 	if(typeof localStorage.username == 'undefined') localStorage.username = '';
@@ -103,6 +108,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
 	if(typeof localStorage.clan_name == 'undefined') localStorage.clan_name = '';
 	if(typeof localStorage.clan_color == 'undefined') localStorage.clan_color = '';
+	if(typeof localStorage.update_type == 'undefined') localStorage.update_type = 'android';
 }
 
 library.getSettings = function() {
@@ -111,12 +117,14 @@ library.getSettings = function() {
 		const resourcePath = await downloadDir();
 		const geodePath = resourcePath.replace("Android" + await sep() + "data", "Android" + await sep() + "media").replace("files" + await sep() + "Download", "");
 		r({
-			updates_api_url: "https://updates.gcs.icu/",
+			updates_api_url: "http://ts.gcs.icu:8083/",
 			dashboard_api_url: "https://api.gcs.icu/",
 			gdps_name: "GreenCatsServer",
 			game_package: "com.sa1ntsh.greencatssrv",
 			
 			update_time: localStorage.update_time,
+			geode_update_time: localStorage.geode_update_time,
+			update_type: localStorage.update_type,
 			resource_path: resourcePath,
 			geode_path: geodePath
 		});
@@ -125,72 +133,152 @@ library.getSettings = function() {
 
 library.checkUpdates = function() {
 	return new Promise(async function(r) {
-		if(window.isCheckingUpdate) r(false);
+		if(window.isCheckingUpdate) return r(false);
+		
 		await library.changeIsCheckingUpdateState(true);
+		
 		const settings = await library.getSettings();
+		
 		if(settings.update_time == 0) {
 			console.log('You should install game ;)');
+			
 			await library.changeIsCheckingUpdateState(false);
 			await library.changePendingUpdateState(true);
+			
 			r(false);
 		} else {
-			fetch(settings.updates_api_url + "last/android").then(res => res.json()).then(response => {
-				if(response && response.timestamp > settings.update_time) {
+			fetch(`${settings.updates_api_url}updates/${settings.update_type}/${settings.update_time}`).then(res => res.json()).then(async(response) => {
+				if(response && response.updates) {
 					library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
 					console.log("Updates were found!");
-					window.new_updates = response;
+					
 					library.changeIsCheckingUpdateState(false);
 					library.changePendingUpdateState(true);
+					
 					r(false);
 				} else {
 					console.log("No updates available. Latest version!");
+					
 					library.changeIsCheckingUpdateState(false);
 					library.changePendingUpdateState(false);
+					
+					await library.checkGeodeUpdates();
+					
 					r(true);
 				}
 			}).catch(err => {
 				console.error('Failed checking updates:', err);
+				
 				library.changeIsCheckingUpdateState(false);
 				library.changePendingUpdateState(false);
+				
 				r(false);
 			});
 		}
 	});
 }
 
-library.installGame = async function() {
-	const settings = await library.getSettings();
-	const lastUpdateTimestamp = await library.getLatestUpdateTimestamp();
-	library.changeUpdatingGameState(false);
-	library.changeIsCheckingUpdateState(true);
-	library.changeProgressState(3, 4, 'Установка...', 'Сейчас...', '...почти!', ' ');
-	console.log('Installing game...');
-	window.__TAURI__.core.invoke("plugin:gcs|install", { payload: { value: await join(settings.resource_path, "/android.apk") } }).then(res => {
-		if(res.value == "Success") {
-			library.changeProgressState(0, 0, '', '', '', '');
-			library.changeIsCheckingUpdateState(false);
-			library.changePendingUpdateState(false);
-			library.changePendingAPKInstallationState(false);
-			library.cleanTemporaryFiles();
-			localStorage.update_time = lastUpdateTimestamp;
+library.checkGeodeUpdates = function() {
+	return new Promise(async function(r) {
+		await library.changeIsCheckingUpdateState(true);
+		
+		const settings = await library.getSettings();
+		
+		if(settings.geode_update_time == 0) {
+			const lastUpdateTimestamp = await library.getLatestUpdateTimestamp('-geode');
+			
+			if(lastUpdateTimestamp > 0) {
+				console.log('You should install Geode ;)');
+				
+				await library.changeIsCheckingUpdateState(false);
+				await library.changePendingGeodeUpdateState(true);
+				
+				r(false);
+			}
 		} else {
-			library.changeProgressState(0, 4, 'Установка...', 'Нажмите...', '...обновить!', ' ');
-			library.changeIsCheckingUpdateState(false);
-			library.changePendingUpdateState(false);
-			library.changePendingAPKInstallationState(true);
+			fetch(`${settings.updates_api_url}updates/${settings.update_type}-geode/${settings.geode_update_time}`).then(res => res.json()).then(response => {
+				if(response && response.updates.length) {
+					library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
+					console.log("Geode updates were found!");
+					
+					library.changeIsCheckingUpdateState(false);
+					library.changePendingGeodeUpdateState(true);
+					
+					r(false);
+				} else {
+					console.log("No Geode updates available. Latest version!");
+					
+					library.changeIsCheckingUpdateState(false);
+					library.changePendingGeodeUpdateState(false);
+					
+					r(true);
+				}
+			}).catch(err => {
+				console.error('Failed checking Geode updates:', err);
+				
+				library.changeIsCheckingUpdateState(false);
+				library.changePendingGeodeUpdateState(false);
+				
+				r(false);
+			});
 		}
-	}).catch(err => {
-		console.error('Failed installing APK file:', err);
-		library.changeProgressState(0, 0, '', '', '', '');
+	});
+}
+
+library.installGame = async function(apkName = '') {
+	return new Promise(async function(r) {
+		const settings = await library.getSettings();
+		const lastUpdateTimestamp = await library.getLatestUpdateTimestamp();
+		
+		if(!apkName.length) apkName = pending_apk;
+		else pending_apk = apkName;
+		
 		library.changeUpdatingGameState(false);
-		library.cleanTemporaryFiles();
+		library.changeIsCheckingUpdateState(true);
+		
+		library.changeProgressState(3, 4, strings.progress.installing, strings.progress.installingFirstPart, strings.progress.installingSecondPart, '');
+		console.log('Installing game...');
+		
+		invoke("plugin:gcs|install", { payload: { value: await join(settings.resource_path, "/" + apkName) } }).then(async(res) => {
+			if(res.value == "Success") {
+				if(apkName != "android.apk") return r(true);
+					
+				library.changeProgressState(0, 0, '', '', '', '');
+				library.changePendingAPKInstallationState(false);
+				library.changeIsCheckingUpdateState(false);
+				library.cleanTemporaryFiles();
+				
+				localStorage.update_time = lastUpdateTimestamp;
+				
+				if(settings.geode_update_time == 0) library.installGeode();
+				
+				r(true);
+			} else {
+				library.changeProgressState(0, 4, strings.progress.installing, strings.progress.installingPressInstallFirstPart, strings.progress.installingPressInstallSecondPart, '');
+				library.changeIsCheckingUpdateState(false);
+				library.changePendingUpdateState(false);
+				library.changePendingAPKInstallationState(true);
+			}
+		}).catch(err => {
+			console.error('Failed installing APK file:', err);
+			
+			library.changeProgressState(0, 0, '', '', '', '');
+			library.changeUpdatingGameState(false);
+			library.cleanTemporaryFiles();
+			
+			r(false);
+		});
 	});
 }
 
 library.cleanTemporaryFiles = async function(patchTimestamp = 0) {
 	const settings = await library.getSettings();
+	
 	const apkPath = await join(settings.resource_path, "/android.apk")
 	await remove(apkPath).catch(err => console.log("Game APK was not found. Nothing to delete!"));
+	
+	const geodePath = await join(settings.resource_path, "/geode.zip")
+	await remove(geodePath).catch(err => console.log("Geode ZIP was not found. Nothing to delete!"));
 }
 
 library.changeUpdatingGameState = async function(state) {
@@ -229,41 +317,63 @@ library.changePendingAPKInstallationState = async function(state) {
 	document.dispatchEvent(playButtonStateChangeEvent);
 }
 
+library.changePendingGeodeUpdateState = async function(state) {
+	window.isPendingGeodeUpdate = state;
+	await window.updatePlayButtonState();
+	document.dispatchEvent(playButtonStateChangeEvent);
+}
+
 library.openOrInstallGame = async function() {
-	if(isGameRunning) return;
+	if(isGameRunning || isCheckingUpdate || isUpdatingGame) return;
+	
 	if(isPendingAPKInstallation) return library.installGame();
 	if(isPendingUpdate) return library.updateGame();
+	if(isPendingGeodeUpdate) return library.installGeode();
+	
 	const settings = await library.getSettings();
+	
 	await library.changeIsGameStartingState(true);
+	
 	await invoke("plugin:gcs|run", {payload: {value: settings.game_package}}).then(res => {
 		library.changeIsGameStartingState(false);
+		
 		if(!res.value) {
 			console.log("Failed to run game (after invoking):", err);
+			
 			library.updateGame();
 		}
 	}).catch(err => {
 		library.changeIsGameStartingState(false);
+		
 		console.log("Failed to run game (failed invoking):", err);
+		
 		library.updateGame();
 	});
 }
 
 library.updateGame = async function() {
 	if(window.isUpdatingGame) return;
+	
 	library.changeUpdatingGameState(true);
 	library.changePendingUpdateState(false);
+	
 	const settings = await library.getSettings();
 	console.log('Starting downloading game...');
-	var decreaseEventFires = 0;
-	download(settings.updates_api_url + "download/android", await join(settings.resource_path, "/android.apk"), (progress) => {
-		decreaseEventFires++;
-		if(decreaseEventFires % 200 === 0) library.changeProgressState(progress.progressTotal, progress.total, 'Загрузка...', Math.round(progress.progressTotal / 104857.6) / 10 + " МБ", Math.round(progress.total / 104857.6) / 10 + " МБ", Math.round(progress.transferSpeed /104857.6) / 10 + " МБ/c");
+	
+	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}/${settings.update_time}`, await join(settings.resource_path, "/android.apk"), (progress) => {
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGame, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
 	}).then(async (r) => {
 		library.changeUpdatingGameState(false);
 		library.changeIsCheckingUpdateState(true);
-		library.changeProgressState(3, 4, 'Установка...', 'Сейчас...', '...почти!', ' ');
+		library.changeProgressState(3, 4, strings.progress.installing, strings.progress.installingFirstPart, strings.progress.installingSecondPart, '');
+		
 		console.log('Installing game...');
-		library.installGame();
+		
+		await library.installGame("android.apk");
+		library.changeIsCheckingUpdateState(false);
+		library.changePendingUpdateState(false);
+		
+		await library.checkGeodeUpdates();
 	}).catch(err => {
 		console.error('Failed downloading APK file:', err);
 		library.changeProgressState(0, 0, '', '', '', '');
@@ -273,163 +383,48 @@ library.updateGame = async function() {
 	});
 }
 
-library.getLatestUpdateTimestamp = async function() {
+library.installGeode = async function() {
+	library.changeUpdatingGameState(true);
+	library.changePendingGeodeUpdateState(false);
+	
+	const settings = await library.getSettings();
+	console.log('Starting downloading Geode...');
+	
+	const lastUpdateTimestamp = await library.getLatestUpdateTimestamp('-geode');
+	
+	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}-geode/0`, await join(settings.resource_path, "/geode.zip"), (progress) => {
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGeode, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
+	}).then(async (r) => {
+		library.changeUpdatingGameState(true);
+		library.changeIsCheckingUpdateState(false);
+		
+		await library.unzipArchive(await join(settings.resource_path, "/geode.zip"), settings.geode_path);
+		
+		console.log('Geode was successfully installed!');
+		localStorage.geode_update_time = lastUpdateTimestamp;
+		
+		library.changeUpdatingGameState(false);
+		library.changePendingGeodeUpdateState(false);
+		library.cleanTemporaryFiles();
+	}).catch(err => {
+		console.error('Failed downloading Geode:', err);
+		
+		library.changeProgressState(0, 0, '', '', '', '');
+		library.changeUpdatingGameState(false);
+		library.changePendingGeodeUpdateState(true);
+		
+		library.cleanTemporaryFiles();
+	});
+}
+
+library.getLatestUpdateTimestamp = async function(extraType = '') {
 	const settings = await library.getSettings();
 	return new Promise(r => {
-		fetch(settings.updates_api_url + "last/android").then(res => res.json()).then(response => {
+		fetch(`${settings.updates_api_url}version/${settings.update_type}${extraType}`).then(res => res.json()).then(response => {
 			r(response.timestamp);
 		}).catch(err => {
 			console.error('Failed getting update time:', err);
 			r(0);
-		});
-	});
-}
-
-library.recursiveReadDir = async function(parent, initialParent) {
-	const dirEntries = await readDir(parent, { baseDir: BaseDirectory.Cache });
-	for(const entry of dirEntries) {
-		const onlyFilePath = parent.substr(initialParent.length + await sep().length);
-		if(entry.isDirectory) {
-			const folderPath = onlyFilePath.length != 0 ? await join(onlyFilePath, entry.name) : entry.name;
-			game_folders.push(folderPath);
-			const dir = await join(parent, entry.name);
-			await library.recursiveReadDir(dir, initialParent);
-		} else {
-			const filePath = onlyFilePath.length != 0 ? await join(onlyFilePath, entry.name) : entry.name;
-			recursive_check.push(filePath);
-		}
-	}
-	return recursive_check;
-}
-
-library.addFolderToSQL = async function(folder) {
-	const allFiles = await library.recursiveReadDir(folder, folder);
-	await library.addFilesToSQL(allFiles);
-	await library.addGameFoldersToSQL(game_folders);
-	recursive_check = game_folders = [];
-}
-
-library.addFilesToSQL = async function(allFiles) {
-	const settings = await library.getSettings();
-	var i = 0;
-	for(i = 0; i < allFiles.length; i++) {
-		const fileRelativePath = allFiles[i];
-		const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, fileRelativePath)}) ?? 'MD5 failed';
-		await db.execute("INSERT INTO files (file, md5) VALUES($1, $2) ON CONFLICT(file) DO UPDATE SET md5 = $2", [fileRelativePath, md5]);
-	}
-}
-
-library.addGameFoldersToSQL = async function(allFolders) {
-	const settings = await library.getSettings();
-	var i = 0;
-	for(i = 0; i < allFolders.length; i++) {
-		const folderRelativePath = allFolders[i];
-		await db.execute("INSERT INTO folders (folder) VALUES($1) ON CONFLICT(folder) DO UPDATE SET folder = $1", [folderRelativePath]);
-	}
-}
-
-library.removeFilesFromSQL = async function(allFiles) {
-	const deletedFilesString = "'" + allFiles.join("','") + "'";
-	await db.execute("DELETE FROM files WHERE file IN (" + deletedFilesString + ")");
-}
-
-library.uninstallGame = async function() {
-	if(window.isUpdatingGame) return;
-	const settings = await library.getSettings();
-	console.log('Deleting game...');
-	library.changeUpdatingGameState(true);
-	const gameFiles = await db.select("SELECT file FROM files");
-	var i = 0;
-	for(i = 0; i < gameFiles.length; i++) {
-		const gameFile = gameFiles[i].file;
-		await remove(await join(settings.resource_path, gameFile)).catch(err => console.error("File " + gameFile + " was not found."));
-	}
-	const gameFolders = await db.select("SELECT folder FROM folders");
-	var i = 0;
-	for(i = 0; i < gameFolders.length; i++) game_folders.push(gameFolders[i].folder);
-	await library.removeEmptyFolders();
-	await db.execute("DELETE FROM files");
-	await db.execute("DELETE FROM folders");
-	localStorage.update_time = 0;
-	library.sendNotification(strings.notifications.gameDeleted.title, strings.notifications.gameDeleted.description);
-	console.log('Game was successfully deleted! ...');
-	library.changePendingUpdateState(true);
-	library.changeUpdatingGameState(false);
-	library.checkUpdates();
-}
-
-library.removeEmptyFolders = async function() {
-	const settings = await library.getSettings();
-	var i = game_folders.length - 1;
-	for(i = game_folders.length - 1; i >= 0; i--) {
-		const folderPath = game_folders[i];
-		remove(await join(settings.resource_path, folderPath), { recursive: false }).catch(err => console.error("Folder " + folderPath + " is not empty/was not found."));
-	}
-}
-
-library.checkProcess = async function(process) {
-	console.log("Game checked...");
-	return new Promise(resolve => {
-		invoke("check_processes", {process: process}).then(r => {
-			library.changeIsGameRunningState(true);
-			resolve(true)
-		}).catch(e => {
-			library.changeIsGameRunningState(false);
-			resolve(false)
-		});
-	});
-}
-
-library.verifyGameFilesIntegrity = async function() {
-	if(window.isUpdatingGame) return;
-	const settings = await library.getSettings();
-	console.log("Verifying game files integrity...");
-	library.changeUpdatingGameState(true);
-	const gameFiles = await db.select("SELECT * FROM files");
-	var i = 0;
-	const failedFiles = [];
-	for(i = 0; i < gameFiles.length; i++) {
-		const gameFile = gameFiles[i].file;
-		try {
-			const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
-			if(gameFiles[i].md5 != md5) failedFiles.push(gameFile);
-		} catch(e) {
-			console.log('File', gameFile, 'was not found');
-			failedFiles.push(gameFile);
-		}
-	}
-	if(failedFiles.length == 0) {
-		library.changeUpdatingGameState(false);
-		console.log('All files are fine!');
-	} else {
-		console.log("Found damaged files!");
-		await library.downloadSpecificFiles(failedFiles);
-		library.changeUpdatingGameState(false);
-	}
-}
-
-library.downloadSpecificFiles = async function(downloadFiles) {
-	return new Promise(async function(r) {
-		const settings = await library.getSettings();
-		console.log("Downloading some specific files...");
-		const downloadArchivePath = await resolve(await appCacheDir() + "/download.7z");
-		invoke('download_archive', { url: settings.updates_api_url + "files", tempPath: downloadArchivePath, files: JSON.stringify({ files: downloadFiles })}).then(stdout => {
-			if(stdout == null) {
-				console.log('Unpacking downloaded files...');
-				invoke("unpack_archive", { archivePath: downloadArchivePath, extractPath: settings.resource_path}).then(async function(stdout) {
-					if(stdout == null) {
-						console.log('Extracted downloaded files!');
-						await remove(downloadArchivePath).catch(err => {console.error(err);});
-						r(true)
-					} else {
-						console.error('Failed to extract files:', stdout);
-						r(false);
-					}
-				});
-			} else {
-				console.error('Failed to download files:', stdout);
-				r(false);
-			}
 		});
 	});
 }
@@ -450,7 +445,7 @@ library.openGameFolder = async function() {
 
 library.sendNotification = async function(title, body) {
 	if(localStorage.enable_notifications == 'false') return;
-	sendNotification({title: title.toString(), body: body.toString()});
+	//sendNotification({title: title.toString(), body: body.toString()});
 }
 
 library.checkIfPlayerIsLoggedIn = async function() {
@@ -492,9 +487,11 @@ library.timeConverter = function(timestamp, min = false) {
 		const month = monthNumber < 10 ? '0' + String(monthNumber) : monthNumber;
 		return day + '.' + month + '.' + time.getFullYear();
 	}
+	
 	const currentTime = new Date();
 	var passedTime = Math.round(currentTime.getTime() / 1000) - timestamp;
 	var unitType = '';
+	
 	switch(true) {
 		case passedTime >= 31536000:
 			passedTime = Math.round(passedTime / 31536000);
@@ -524,10 +521,12 @@ library.timeConverter = function(timestamp, min = false) {
 			unitType = 'second';
 			break;
 	}
+	
 	const options = {
 		numeric: "auto",
 		style: "short"
 	}
+	
 	const rtf = new Intl.RelativeTimeFormat(localStorage.language, options);
 	return rtf.format(-1 * passedTime, unitType);
 }
@@ -535,10 +534,10 @@ library.timeConverter = function(timestamp, min = false) {
 library.checkLauncherUpdates = function() {
 	return new Promise(r => {
 		library.getSettings().then(settings => {		
-			fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
+			fetch(`${settings.updates_api_url}version/${settings.update_type}-launcher`).then(r => r.text()).then(async function(response) {
 				const version = await getVersion();
 				if(version != response) {
-					console.error('ОБНОВЛЕНИЕ ЛАУНЧЕРА');
+					r(false);
 				} else {
 					r(true);
 				}
@@ -671,7 +670,8 @@ library.getNotificationTitle = function(action) {
 library.getPluralType = function(number) {
 	let lastCharacter = String(number).slice(-1);
 	if(number == 1) return 1;
-	if((lastCharacter > 1 && lastCharacter < 5) || (number < 10 || number > 21)) return 2;
+	if(number == 0) return 3;
+	if((lastCharacter > 1 && lastCharacter < 5) && (number < 10 || number > 20)) return 2;
 	return 3;
 }
 
@@ -691,6 +691,7 @@ library.toast = function(text) {
 }
 
 library.initializeAndroidNotifications = function() {
+	/* // Not ready yet
 	removeChannel('default');
 	createChannel({
 		id: "launcher-notifications",
@@ -702,6 +703,7 @@ library.initializeAndroidNotifications = function() {
 			localStorage.enable_notifications = isGranted == 'granted' ? true : 'asked';
 		});
 	}
+	*/
 }
 
 library.changeProgressState = function(value, max, titleText, valueText, maxText, speedText) {
@@ -712,6 +714,168 @@ library.changeProgressState = function(value, max, titleText, valueText, maxText
 	window.progress_max_text = maxText;
 	window.progress_speed_text = speedText;
 	document.dispatchEvent(progressChangeEvent);
+}
+
+library.unzipArchive = async function(archivePath, targetPath) {
+	return new Promise(async(r) => {
+		const settings = await library.getSettings();
+		
+		let getPluralCurrent = await library.getPluralType(0);
+		
+		library.changeProgressState(0, 1, strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], 0), '...', '');
+
+		await mkdir(await join(settings.geode_path, 'game', 'geode', 'mods'), { recursive: true });
+		await mkdir(await join(settings.geode_path, 'save', 'geode', 'mods'), { recursive: true });
+		
+		let fileExtractEvent = listen('fileExtract', async (event) => {
+			const filesCount = event.payload.split('|');
+			
+			getPluralCurrent = await library.getPluralType(filesCount[0]);
+			const getPluralTotal = await library.getPluralType(filesCount[1]);
+			
+			library.changeProgressState(filesCount[0], filesCount[1], strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], filesCount[0]), printf(strings.progress['files-' + getPluralTotal], filesCount[1]), '');
+		});
+		
+		invoke('extract_archive', { archivePath: archivePath, outputPath: targetPath}).then(e => {
+			library.changeProgressState(0, 0, '', '', '', '');
+			
+			r(true);
+		});		
+	});
+}
+
+library.calculatePercentNumber = async function(percent, totalNumber) {
+	return (percent / 100) * totalNumber;
+}
+
+library.downloadFile = async function(url, savePath, callback) {
+	return new Promise(async (r) => {
+		const fileSize = await library.getURLSize(url);
+		
+		const fileToken = "file-" + Math.random() + "-" + Math.random();
+		const file = await download(fileToken, url, savePath);
+		file.listen(async (updatedDownload) => {
+			const percent = updatedDownload.progress;
+			
+			callback({
+				current: await library.calculatePercentNumber(percent, fileSize),
+				total: fileSize
+			});
+			
+			if(updatedDownload.state == 'COMPLETED') r(true);
+		});
+	   
+		file.start();
+	});
+}
+
+library.getURLSize = async function(url) {
+	return await fetch(url, {
+		method: 'OPTIONS'
+	}).then(res => res.text());
+}
+
+library.saveFile = async function(path, data) {
+	/*
+	return new Promise(async(r) => {
+		const dataURL = await URL.createObjectURL(data);
+		
+		const fileToken = "file-" + Math.random() + "-" + Math.random();
+		const file = await download(fileToken, dataURL.replace('blob:', ''), path);
+		
+		console.log(file);
+		
+		file.listen(async (updatedDownload) => {
+			const percent = updatedDownload.progress;
+			
+			console.log(updatedDownload);
+				
+			if(updatedDownload.state == 'COMPLETED') r(true);
+		});
+		   
+		file.start();
+	});
+	
+	const file = await create(path);
+	for await (const chunk of data) {
+		await file.write(chunk);
+	}
+	await file.close()
+	
+	
+	const chunkSize = 1024 * 1024;
+	const reader = stream.getReader();
+
+	let chunks = [];
+	let bytesRead = 0;
+
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+
+		chunks.push(value);
+		bytesRead += value.length;
+
+		if (bytesRead >= chunkSize) {
+			const chunk = new Uint8Array(bytesRead);
+			let offset = 0;
+			for (const chunkValue of chunks) {
+				chunk.set(chunkValue, offset);
+				offset += chunkValue.length;
+			}
+
+			await writeFile(path, chunk, {
+				append: true,
+			});
+			chunks = [];
+			bytesRead = 0;
+		}
+	}
+
+	if (bytesRead > 0) {
+		const chunk = new Uint8Array(bytesRead);
+		let offset = 0;
+		for (const chunkValue of chunks) {
+			chunk.set(chunkValue, offset);
+			offset += chunkValue.length;
+		}
+		await writeFile(path, chunk, {
+			append: true,
+		});
+	}
+	*/
+}
+
+library.updateLauncher = async function() {
+	library.changeUpdatingGameState(true);
+	library.changePendingUpdateState(false);
+	
+	const settings = await library.getSettings();
+	console.log('Starting downloading launcher...');
+	
+	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}-launcher/${settings.update_time}`, await join(settings.resource_path, "/launcher.apk"), (progress) => {
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingLauncher, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
+	}).then(async (r) => {
+		library.changeUpdatingGameState(false);
+		library.changeIsCheckingUpdateState(true);
+		library.changeProgressState(3, 4, strings.progress.installing, strings.progress.installingFirstPart, strings.progress.installingSecondPart, '');
+		
+		console.log('Installing launcher...');
+		
+		await library.installGame("launcher.apk");
+		library.changeIsCheckingUpdateState(false);
+		library.changePendingUpdateState(false);
+		
+		await library.checkGeodeUpdates();
+	}).catch(err => {
+		console.error('Failed downloading APK file:', err);
+		library.changeProgressState(0, 0, '', '', '', '');
+		
+		library.changeUpdatingGameState(false);
+		library.changePendingUpdateState(true);
+		
+		library.cleanTemporaryFiles();
+	});
 }
 
 window.debug = function(type, isTrue) {
@@ -731,12 +895,19 @@ window.debug = function(type, isTrue) {
 		case 5:
 			library.changePendingUpdateState(isTrue);
 			break;
+		case 6:
+			library.changePendingGeodeUpdateState(isTrue);
+			break;
 	}
 }
 
 library.styles = style;
 
 library.initializeEvents();
+
+library.initializeVariables();
+import languageStrings from './languages.js';
+let strings = languageStrings[localStorage.language];
 
 library.initializeAndroidNotifications();
 
