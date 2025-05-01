@@ -20,86 +20,112 @@
 			"description": "Le launcher a trouvé une nouvelle mise à jour pour le jeu !"
 		},
 		
-		"new": "New notifications",
+		"new": "Nouvelles notifications",
 		
 		"unknown": {
-			"title": "Unknown notification",
-			"description": "You received unknown notification 🤨"
+			"title": "Notification inconnue",
+			"description": "Vous avez reçu une notification... inconnue 🤨"
 		},
 		
 		"several": {
-			"title-1": "%1$s new notification",
-			"title-2": "%1$s new notifications",
-			"title-3": "%1$s new notifications",
-			"description-1": "You received %1$s new notification!",
-			"description-2": "You received %1$s new notifications!",
-			"description-3": "You received %1$s new notifications!"
+			"title-1": "%1$s nouvelles notification",
+			"title-2": "%1$s nouvelles notifications",
+			"title-3": "%1$s nouvelles notifications",
+			"description-1": "Vous avez reçu %1$s nouvelle notification !",
+			"description-2": "Vous avez reçu %1$s nouvelle notifications !",
+			"description-3": "Vous avez reçu %1$s nouvelle notifications !"
 		},
 		
 		"first": {
 			"levelRated": {
-				"title": "Your level was rated",
-				"description-1": "Congratulations! Your level %1$s was rated with %2$s star 🎉",
-				"description-2": "Congratulations! Your level %1$s was rated with %2$s stars 🎉",
-				"description-3": "Congratulations! Your level %1$s was rated with %2$s stars 🎉"
+				"title": "Votre niveau a été rate",
+				"description-1": "Félicitations ! Votre niveau %1$s a reçu un rate avec %2$s étoile 🎉",
+				"description-2": "Félicitations ! Your level %1$s a reçu un rate avec %2$s étoiles 🎉",
+				"description-3": "Félicitations ! Your level %1$s a reçu un rate avec %2$s étoiles 🎉"
 			},
 			"levelUnrated": {
-				"title": "Your level was unrated",
-				"description": "Your level %1$s lost rate 😢"
+				"title": "Votre niveau a été unrate",
+				"description": "Votre niveau %1$s a perdu son rate 😢"
 			}
 		},
 		"second": {
 			"unbanned": {
-				"title": "You were unbanned",
-				"description-0": "You were unbanned in unknown for launcher thing! 🥳",
-				"description-1": "You were unbanned from players leaderboard! 🥳",
-				"description-2": "You were unbanned from creators leaderboard! 🥳",
-				"description-3": "Moderator unbanned uploading levels to you! 🥳",
-				"description-4": "Moderator unbanned commenting levels to you! 🥳",
-				"description-5": "Moderator unbanned your account! 🥳"
+				"title": "Vous avez été débanni(e)",
+				"description-0": "Vous avez été débanni(e) du truc du launcher ! 🥳",
+				"description-1": "Vous avez été débanni(e) du classement des meilleurs joueurs ! 🥳",
+				"description-2": "Vous avez été débanni(e) du classement des meilleurs créateurs ! 🥳",
+				"description-3": "Un modérateur vous a redonné le droit de mettre en ligne des niveaux ! 🥳",
+				"description-4": "Un modérateur vous a redonné le droit de commenter ! 🥳",
+				"description-5": "Un modérateur a débanni votre compte ! 🥳"
 			},
 			"banned": {
-				"title": "You were banned",
-				"description-0": "You were banned in unknown for launcher thing! 😭",
-				"description-1": "You were banned from players leaderboard! 😭",
-				"description-2": "You were banned from creators leaderboard! 😭",
-				"description-3": "Moderator banned uploading levels to you! 😭",
-				"description-4": "Moderator banned commenting levels to you! 😭",
-				"description-5": "Moderator banned your account! 😭"
+				"title": "Vous avez été banni(e)",
+				"description-0": "Vous avez été banni(e) du truc du launcher 😭",
+				"description-1": "Vous avez été banni(e) du classement des meilleurs joueurs 😭",
+				"description-2": "Vous avez été banni(e) du classement des meilleurs créateurs 😭",
+				"description-3": "Un modérateur vous a interdit de mettre en ligne des niveaux ! 😭",
+				"description-4": "Un modérateur vous a interdit de commenter ! 😭",
+				"description-5": "Un modérateur a banni votre compte ! 😭"
 			}
 		},
 		"third": {
-			"title": "New clan join request",
-			"description": "Someone sent join request to your clan %1$s! 😊"
+			"title": "Nouvelle demande d'adhésion à votre clan",
+			"description": "Quelqu'un souhaite rejoindre votre clan %1$s ! 😊"
 		},
 		"fourth": {
 			"joined": {
-				"title": "Someone joined clan",
-				"description": "Someone joined your clan %1$s! 😱"
+				"title": "Nouvelle recrue",
+				"description": "Quelqu'un a rejoint votre clan %1$s ! 😱"
 			},
 			"left": {
-				"title": "Someone left clan",
-				"description": "One of members of your clan %1$s left it! 😔"
+				"title": "Départ d'un membre",
+				"description": "Quelqu'un a quitté votre clan %1$s ! 😔"
 			}
 		},
 		"fifth": {
-			"title": "You were kicked",
-			"description": "You were kicked from clan %1$s by its owner! 😔"
+			"title": "Vous avez été expulsé(e)",
+			"description": "Le propriétaire du clan %1$s vous a expulsé de celui-ci ! 😔"
 		},
 		"sixth": {
 			"accepted": {
-				"title": "Join request was accepted",
-				"description": "Owner of clan %1$s accepted your join request! 😀"
+				"title": "Demande d'adhésion acceptée",
+				"description": "Le propriétaire du clan %1$s a accepté votre demande d'adhésion ! 😀"
 			},
 			"denied": {
-				"title": "Join request was denied",
-				"description": "Owner of clan %1$s denied your join request! 😥"
+				"title": "Demande d'adhésion réfusée",
+				"description": "Le propriétaire du clan %1$s a refusé votre demande d'adhésion ! 😥"
 			}
 		}
 	},
 	
+	"progress": {
+		"installing": "Installation...",
+		"installingFirstPart": "On y est...",
+		"installingSecondPart": "...presque !",
+		"installingPressInstallFirstPart": "Appuyez sur...",
+		"installingPressInstallSecondPart": "...installer !",
+		
+		"downloadingGame": "Téléchargement du jeu...",
+		"extractingGame": "Extraction du jeu...",
+		"downloadingPatch": "Téléchargement du patch...",
+		"extractingPatch": "Extraction du patch...",
+		"patchingGame": "Installation du patch...",
+		"savingFiles": "Enregistrement des fichiers...",
+		"savingFolders": "Enregistrement des dossiers...",
+		"deletingGame": "Suppression du jeu...",
+		
+		"megabytes": "%1$s Mo",
+		"downloadingLauncher": "Téléchargement du launcher...",
+		
+		"files-1": "%1$s fichier",
+		"files-2": "%1$s fichiers",
+		"files-3": "%1$s fichiers"
+	},
+	
 	"settings": {
 		"title": "Paramètres",
+		
+		"notLoggedIn": "Connectez-vous !",
 		
 		"launcher": "Launcher",
 		"notifications": {
@@ -120,24 +146,24 @@
 		"versions": {
 			"launcher": "Version %1$s",
 			"game": "%1$s",
-			"checkUpdates": "Check updates",
-			"notInstalled": "Not installed"
+			"checkUpdates": "Vérifier les mises à jour",
+			"notInstalled": "Pas installé"
 		},
 		"intervals": {
-			"every10Minutes": "Every 10 minutes",
-			"every30Minutes": "Every 30 minutes",
-			"every1Hour": "Every hour",
-			"every6Hours": "Every 6 hours",
-			"onlyAtStartup": "Only at startup"
+			"every10Minutes": "Toutes les 10 minutes",
+			"every30Minutes": "Toutes les 30 minutes",
+			"every1Hour": "Toutes les heures",
+			"every6Hours": "Toutes les 6 heures",
+			"onlyAtStartup": "Uniquement au démarrage"
 		},
 		"themes": {
-			"title": "Launcher theme",
-			"description": "Choose theme you like most!",
-			"default": "Default"
+			"title": "Thème du launcher",
+			"description": "Choissisez le thème qui vous plaît le plus !",
+			"default": "Par défaut"
 		},
 		"accentColor": {
-			"title": "System color",
-			"description": "Should launcher use accent color or keep default one"
+			"title": "Couleur système",
+			"description": "Est-ce que le launcher devrait utilisé la couleur par défaut du système ou celle du launcher"
 		},
 		
 		"game": "Jeu",
@@ -154,10 +180,11 @@
 			"description": "Supprimer les fichiers du jeu de votre ordinateur"
 		},
 		"updatesInterval": {
-			"title": "Checking updates",
-			"description": "How often launcher will check game updates"
+			"title": "Vérification des mises à jour",
+			"description": "À quelle intervalle le launcher devrait-il vérifier s'il y a des mises à jour"
 		},
 		
+		"account": "Compte",
 		"username": "Nom d'utilisateur",
 		"password": "Mot de passe",
 		"loginButton": "Se connecter",
@@ -171,36 +198,5 @@
 			"description": "Êtes-vous sûr de vouloir vous déconnecter ?",
 			"button": "Se déconnecter"
 		}
-	},
-	
-	"months": {
-        "full": {
-            "january": "janvier",
-            "february": "février",
-            "march": "mars",
-            "april": "avril",
-            "may": "mai",
-            "june": "juin",
-            "july": "juillet",
-            "august": "août",
-            "september": "septembre",
-            "october": "octobre",
-            "november": "novembre",
-            "december": "décembre"
-        },
-        "short": {
-            "january": "jan",
-            "february": "fév",
-            "march": "mar",
-            "april": "avr",
-            "may": "mai",
-            "june": "jun",
-            "july": "jul",
-            "august": "aou",
-            "september": "sep",
-            "october": "oct",
-            "november": "nov",
-            "december": "déc"
-        }
-    }
+	}
 }

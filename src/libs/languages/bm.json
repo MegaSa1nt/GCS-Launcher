@@ -98,8 +98,34 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Installing...",
+		"installingFirstPart": "Almost...",
+		"installingSecondPart": "...right now!",
+		"installingPressInstallFirstPart": "Press...",
+		"installingPressInstallSecondPart": "...install!",
+		
+		"downloadingGame": "Downloading game...",
+		"extractingGame": "Extracting game...",
+		"downloadingPatch": "Downloading patch...",
+		"extractingPatch": "Extracting patch...",
+		"patchingGame": "Patching game...",
+		"savingFiles": "Saving files...",
+		"savingFolders": "Saving folders...",
+		"deletingGame": "Deleting game...",
+		
+		"megabytes": "%1$s MB",
+		"downloadingLauncher": "Downloading launcher...",
+		
+		"files-1": "%1$s file",
+		"files-2": "%1$s files",
+		"files-3": "%1$s files"
+	},
+	
 	"settings": {
 		"title": "Settings",
+		
+		"notLoggedIn": "Login to account!",
 		
 		"launcher": "Pelancar",
 		"notifications": {
@@ -158,6 +184,7 @@
 			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Nama User",
 		"password": "Password",
 		"loginButton": "Login ke akaun kamu",
@@ -170,37 +197,6 @@
 			"title": "Logout",
 			"description": "Betulkan kamu nak logout akaun kamu?",
 			"button": "Logout"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "januari",
-			"february": "februari",
-			"march": "mac",
-			"april": "april",
-			"may": "mei",
-			"june": "jun",
-			"july": "julei",
-			"august": "ogos",
-			"september": "september",
-			"october": "oktober",
-			"november": "november",
-			"december": "disember"
-		},
-		"short": {
-			"january": "jan",
-			"february": "feb",
-			"march": "mac",
-			"april": "apr",
-			"may": "mei",
-			"june": "jun",
-			"july": "jul",
-			"august": "ogs",
-			"september": "sep",
-			"october": "okt",
-			"november": "nov",
-			"december": "dis"
 		}
 	}
 }

@@ -13,93 +13,119 @@
 		},
 		"gameDeleted": {
 			"title": "Game đã được xóa",
-			"description": "Game đã được xóa thành công... (tại saaaaaaaaaaaaaaaaaao)"
+			"description": "Game đã được xóa thành công..."
 		},
 		"foundUpdate": {
-			"title": "Bản cập nhật mới!",
-			"description": "Trình khởi chạy đã tìm được bản cập nhật mới cho Game"
+			"title": "Game có bản cập nhật mới!",
+			"description": "Trình khởi chạy đã tìm được bản cập nhật mới cho game"
 		},
 		
-		"new": "New notifications",
+		"new": "Có thông báo mới",
 		
 		"unknown": {
-			"title": "Unknown notification",
-			"description": "You received unknown notification 🤨"
+			"title": "Thông báo không xác định",
+			"description": "Bạn nhận được thông báo không xác định 🤨"
 		},
 		
 		"several": {
-			"title-1": "%1$s new notification",
-			"title-2": "%1$s new notifications",
-			"title-3": "%1$s new notifications",
-			"description-1": "You received %1$s new notification!",
-			"description-2": "You received %1$s new notifications!",
-			"description-3": "You received %1$s new notifications!"
+			"title-1": "%1$s thông báo mới",
+			"title-2": "%1$s thông báo mới",
+			"title-3": "%1$s thông báo mới",
+			"description-1": "Bạn nhận được %1$s thông báo mới!",
+			"description-2": "Bạn nhận được %1$s thông báo mới!",
+			"description-3": "Bạn nhận được %1$s thông báo mới!"
 		},
 		
 		"first": {
 			"levelRated": {
-				"title": "Your level was rated",
-				"description-1": "Congratulations! Your level %1$s was rated with %2$s star 🎉",
-				"description-2": "Congratulations! Your level %1$s was rated with %2$s stars 🎉",
-				"description-3": "Congratulations! Your level %1$s was rated with %2$s stars 🎉"
+				"title": "Level của bạn đã được đánh giá",
+				"description-1": "Xin chúc mừng! Level %1$s đã được đánh giá với %2$s sao 🎉",
+				"description-2": "Xin chúc mừng! Level %1$s đã được đánh giá với %2$s sao 🎉",
+				"description-3": "Xin chúc mừng! Level %1$s đã được đánh giá với %2$s sao 🎉"
 			},
 			"levelUnrated": {
-				"title": "Your level was unrated",
-				"description": "Your level %1$s lost rate 😢"
+				"title": "Level của bạn đã bị gỡ đánh giá",
+				"description": "Level %1$s của bạn đã bị gỡ đánh giá 😢"
 			}
 		},
 		"second": {
 			"unbanned": {
-				"title": "You were unbanned",
-				"description-0": "You were unbanned in unknown for launcher thing! 🥳",
-				"description-1": "You were unbanned from players leaderboard! 🥳",
-				"description-2": "You were unbanned from creators leaderboard! 🥳",
-				"description-3": "Moderator unbanned uploading levels to you! 🥳",
-				"description-4": "Moderator unbanned commenting levels to you! 🥳",
-				"description-5": "Moderator unbanned your account! 🥳"
+				"title": "Bạn đã được gỡ cấm",
+				"description-0": "Bạn đã được gỡ cấm trong mục không xác định liên quan đến trình khởi chạy! 🥳",
+				"description-1": "Bạn đã được gỡ cấm trong bảng xếp hạng người chơi! 🥳",
+				"description-2": "Bạn đã được gỡ cấm trong bảng xếp hạng người sáng tạo! 🥳",
+				"description-3": "Người điều hành đã gỡ cấm bạn trong việc tải lên các level! 🥳",
+				"description-4": "Người điều hành đã gỡ cấm bạn trong việc bình luận các level! 🥳",
+				"description-5": "Người điều hành đã gỡ cấm tài khoản của bạn! 🥳"
 			},
 			"banned": {
-				"title": "You were banned",
-				"description-0": "You were banned in unknown for launcher thing! 😭",
-				"description-1": "You were banned from players leaderboard! 😭",
-				"description-2": "You were banned from creators leaderboard! 😭",
-				"description-3": "Moderator banned uploading levels to you! 😭",
-				"description-4": "Moderator banned commenting levels to you! 😭",
-				"description-5": "Moderator banned your account! 😭"
+				"title": "Bạn đã bị cấm",
+				"description-0": "Bạn đã bị cấm trong mục không xác định liên quan đến trình khởi chạy! 😭",
+				"description-1": "Bạn đã bị cấm trong bảng xếp hạng người chơi! 😭",
+				"description-2": "Bạn đã bị cấm trong bảng xếp hạng người sáng tạo! 😭",
+				"description-3": "Người điều hành đã cấm bạn trong việc tải lên các level! 😭",
+				"description-4": "Người điều hành đã cấm bạn trong việc bình luận các level! 😭",
+				"description-5": "Người điều hành đã cấm tài khoản của bạn! 😭"
 			}
 		},
 		"third": {
-			"title": "New clan join request",
-			"description": "Someone sent join request to your clan %1$s! 😊"
+			"title": "Yêu cầu vào clan mới",
+			"description": "Ai đó gửi yêu cầu vào clan của bạn %1$s! 😊"
 		},
 		"fourth": {
 			"joined": {
-				"title": "Someone joined clan",
-				"description": "Someone joined your clan %1$s! 😱"
+				"title": "Ai đó đã vào clan",
+				"description": "Ai đó đã vào clan của bạn %1$s! 😱"
 			},
 			"left": {
-				"title": "Someone left clan",
-				"description": "One of members of your clan %1$s left it! 😔"
+				"title": "Ai đó đã rời khỏi clan",
+				"description": "Một trong những thành viên clan %1$s đã rời đi! 😔"
 			}
 		},
 		"fifth": {
-			"title": "You were kicked",
-			"description": "You were kicked from clan %1$s by its owner! 😔"
+			"title": "Bạn đã bị đuổi",
+			"description": "Bạn bị đuổi khỏi clan %1$s bởi chủ clan! 😔"
 		},
 		"sixth": {
 			"accepted": {
-				"title": "Join request was accepted",
-				"description": "Owner of clan %1$s accepted your join request! 😀"
+				"title": "Yêu cầu vào clan đã được chấp nhận",
+				"description": "Chủ của clan %1$s đã chấp nhận yêu cầu của bạn! 😀"
 			},
 			"denied": {
-				"title": "Join request was denied",
-				"description": "Owner of clan %1$s denied your join request! 😥"
+				"title": "Yêu cầu vào clan đã bị từ chối",
+				"description": "Chủ của clan %1$s đã từ chối yêu cầu của bạn! 😥"
 			}
 		}
 	},
 	
+	"progress": {
+		"installing": "Installing...",
+		"installingFirstPart": "Almost...",
+		"installingSecondPart": "...right now!",
+		"installingPressInstallFirstPart": "Press...",
+		"installingPressInstallSecondPart": "...install!",
+		
+		"downloadingGame": "Downloading game...",
+		"extractingGame": "Extracting game...",
+		"downloadingPatch": "Downloading patch...",
+		"extractingPatch": "Extracting patch...",
+		"patchingGame": "Patching game...",
+		"savingFiles": "Saving files...",
+		"savingFolders": "Saving folders...",
+		"deletingGame": "Deleting game...",
+		
+		"megabytes": "%1$s MB",
+		"downloadingLauncher": "Downloading launcher...",
+		
+		"files-1": "%1$s file",
+		"files-2": "%1$s files",
+		"files-3": "%1$s files"
+	},
+	
 	"settings": {
 		"title": "Cài đặt",
+		
+		"notLoggedIn": "Login to account!",
 		
 		"launcher": "Trình khởi chạy",
 		"notifications": {
@@ -115,29 +141,29 @@
 		},
 		"language": {
 			"title": "Ngôn ngữ",
-			"description": "Lựa chọn ngôn ngữ mà bạn biết! (Ừa thật đấy)"
+			"description": "Lựa chọn ngôn ngữ mà bạn biết!"
 		},
 		"versions": {
-			"launcher": "Version %1$s",
+			"launcher": "Phiên bản %1$s",
 			"game": "%1$s",
-			"checkUpdates": "Check updates",
-			"notInstalled": "Not installed"
+			"checkUpdates": "Kiểm tra bản cập nhật",
+			"notInstalled": "Không được cài đặt"
 		},
 		"intervals": {
-			"every10Minutes": "Every 10 minutes",
-			"every30Minutes": "Every 30 minutes",
-			"every1Hour": "Every hour",
-			"every6Hours": "Every 6 hours",
-			"onlyAtStartup": "Only at startup"
+			"every10Minutes": "Cứ mỗi 10 phút",
+			"every30Minutes": "Cứ mỗi 30 phút",
+			"every1Hour": "Cứ mỗi 1 giờ",
+			"every6Hours": "Cứ mỗi 6 hours",
+			"onlyAtStartup": "Chỉ khi khởi động"
 		},
 		"themes": {
-			"title": "Launcher theme",
-			"description": "Choose theme you like most!",
-			"default": "Default"
+			"title": "Chủ đề của trình khởi chạy",
+			"description": "Chọn chủ đề mà bạn thích!",
+			"default": "Mặc định"
 		},
 		"accentColor": {
-			"title": "System color",
-			"description": "Should launcher use accent color or keep default one"
+			"title": "Màu của hệ thống",
+			"description": "Trình khởi chạy nên dùng màu có điểm nhấn hay giữ nguyên màu mặc định"
 		},
 		
 		"game": "Game",
@@ -158,6 +184,7 @@
 			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Tên đăng nhập",
 		"password": "Mật khẩu",
 		"loginButton": "Đăng nhập",
@@ -170,37 +197,6 @@
 			"title": "Đăng xuất",
 			"description": "Bạn có muốn đăng xuất không?",
 			"button": "Đăng xuất"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "Tháng 1",
-			"february": "Tháng 2",
-			"march": "Tháng 3",
-			"april": "Tháng 4",
-			"may": "Tháng 5",
-			"june": "Tháng 6",
-			"july": "Tháng 7",
-			"august": "Tháng 8",
-			"september": "Tháng 9",
-			"october": "Tháng 10",
-			"november": "Tháng 11",
-			"december": "Tháng 12"
-		},
-		"short": {
-			"january": "Tháng 1,",
-			"february": "Tháng 2,",
-			"march": "Tháng 3,",
-			"april": "Tháng 4,",
-			"may": "Tháng 5,",
-			"june": "Tháng 6,",
-			"july": "Tháng 7,",
-			"august": "Tháng 8,",
-			"september": "Tháng 9,",
-			"october": "Tháng 10,",
-			"november": "Tháng 11,",
-			"december": "Tháng 12,"
 		}
 	}
 }

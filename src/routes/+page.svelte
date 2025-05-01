@@ -2,6 +2,7 @@
 	import { Settings } from 'lucide-svelte';
 	import style from './style.module.scss';
 	import library from '../libs/library.js';
+	import Progress from '../components/Progress/progress.svelte';
 	import PlayButtonIcon from '../components/PlayButtonIcon/playButtonIcon.svelte';
 	import NotificationShort from "../components/NotificationShort/notificationShort.svelte";
 	import languageStrings from '../libs/languages.js';
@@ -57,14 +58,17 @@
 			{/each}
 		</div>
 	{/if}
-
+	
 	<div class={style.launchBlock}>
+		<Progress />
+		
 		<div class={style.launchContent}>
 			<div class={style.loadGame}>
 				<div on:click={() => library.openOrInstallGame()} class={[style.loadButton, buttonIsAvailable].join(' ')}>
 					<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
 					<PlayButtonIcon state={buttonState} />
 				</div>
+				
 				<a class={style.displayContents} href="/settings">
 					<div class={style.settingsButton}>
 						<Settings color='#FFFFFF' size={35} />

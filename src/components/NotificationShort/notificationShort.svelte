@@ -25,7 +25,7 @@
 			<span class={[style.notificationTypeSquare, notificationType].join(' ')}></span>
 			{notificationTitle}
 			<span class={style.notificationCircle}></span>
-			<p>
+			<p on:click={() => library.toast(library.timeConverter(timestamp, false))}>
 				{library.timeConverter(timestamp, true)}
 			</p>
 		</h2>

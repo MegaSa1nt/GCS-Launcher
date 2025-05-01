@@ -34,7 +34,7 @@
   },
   "productName": "GCS-Launcher",
   "mainBinaryName": "launcher",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "identifier": "sa1nt.gcs",
   "plugins": {},
   "app": {
@@ -51,7 +51,7 @@
         "theme": "Dark",
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
         "transparent": true,
-        "useHttpsScheme": true,
+        "useHttpsScheme": false,
 		"visible": false
       }
     ],

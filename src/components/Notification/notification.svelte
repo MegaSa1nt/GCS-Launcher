@@ -30,7 +30,7 @@
 			{#if !isChecked}
 				<span class={style.notificationCircle}></span>
 			{/if}
-			<p>
+			<p on:click={() => library.toast(library.timeConverter(timestamp, false))}>
 				{library.timeConverter(timestamp, true)}
 			</p>
 		</h2>
