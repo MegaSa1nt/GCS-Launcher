@@ -118,7 +118,7 @@ library.getSettings = function() {
 		const resourcePath = await downloadDir();
 		const geodePath = resourcePath.replace("Android" + await sep() + "data", "Android" + await sep() + "media").replace("files" + await sep() + "Download", "");
 		r({
-			updates_api_url: "http://ts.gcs.icu:8083/",
+			updates_api_url: "https://updates-new.gcs.icu/",
 			dashboard_api_url: "https://api.gcs.icu/",
 			gdps_name: "GreenCatsServer",
 			game_package: "com.sa1ntsh.greencatssrv",
@@ -471,6 +471,7 @@ library.checkIfPlayerIsLoggedIn = async function() {
 			library.logout();
 			return false;
 		}
+		
 		localStorage.username = response.user;
 		localStorage.color = response.color;
 		localStorage.accountID = response.accountID;

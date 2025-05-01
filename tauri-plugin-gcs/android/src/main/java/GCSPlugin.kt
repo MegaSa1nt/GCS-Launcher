@@ -109,18 +109,12 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
     fun run(invoke: Invoke) {
         val args = invoke.parseArgs(PingArgs::class.java)
         val value = args.value.toString()
-        val intent = context.packageManager.getLaunchIntentForPackage(value)
         val ret = JSObject()
 
-        if(intent != null) {
-            try {
-                onLaunch(context)
-            } catch(e: Exception) {
-                ret.put("value", e.message)
-                invoke.resolve(ret)
-            }
-        } else {
-            ret.put("value", "false")
+        try {
+            onLaunch(context)
+        } catch(e: Exception) {
+            ret.put("value", e.message)
             invoke.resolve(ret)
         }
     }
