@@ -19,6 +19,18 @@
 			"title": "Обновление игры",
 			"description": "Лаунчер нашёл обновление для игры!"
 		},
+		"foundGeodeUpdate": {
+			"title": "Обновление Geode",
+			"description": "Лаунчер нашёл обновление для Geode!"
+		},
+		"geodeInstalled": {
+			"title": "Geode установлен",
+			"description": "Geode был успешно установлен!"
+		},
+		"geodeUpdated": {
+			"title": "Geode обновлён",
+			"description": "Geode был успешно обновлён!"
+		},
 		
 		"new": "Новые уведомления",
 		

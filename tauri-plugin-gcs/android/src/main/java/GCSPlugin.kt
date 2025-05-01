@@ -1,10 +1,15 @@
 package sa1nt.gcs
 
+import android.Manifest
 import android.app.Activity
+import android.content.Context.POWER_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.PowerManager
 import android.provider.Settings
-import android.os.Build
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
 import app.tauri.annotation.Command
 import app.tauri.annotation.InvokeArg
@@ -44,17 +49,30 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
 
     @Command
     fun openInstallSettings(invoke: Invoke) {
+        val canWriteFiles = ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        if(!canWriteFiles) {
+            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 1000)
+        }
+
+        val pm = context.getSystemService(POWER_SERVICE) as PowerManager?
+        val isBatterySaved = !pm!!.isIgnoringBatteryOptimizations(context.packageName)
+        if (isBatterySaved) {
+            val batteryIntent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS, Uri.parse("package:" + context.packageName))
+            batteryIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+            startActivity(context, batteryIntent, null)
+        }
+
         val canInstallApps = context.packageManager.canRequestPackageInstalls()
-
         if(!canInstallApps) {
-            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + context.packageName))
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val installIntent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + context.packageName))
+            installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-            startActivity(context, intent, null)
+            startActivity(context, installIntent, null)
         }
 
         val ret = JSObject()
-        ret.put("value", true)
+        ret.put("value", "$canWriteFiles|$isBatterySaved|$canInstallApps")
         invoke.resolve(ret)
     }
 
@@ -102,7 +120,7 @@ class GCSPlugin(private val activity: Activity): Plugin(activity) {
                 invoke.resolve(ret)
             }
         } else {
-            ret.put("value", false)
+            ret.put("value", "false")
             invoke.resolve(ret)
         }
     }

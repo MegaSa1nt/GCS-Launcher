@@ -109,6 +109,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.clan_name == 'undefined') localStorage.clan_name = '';
 	if(typeof localStorage.clan_color == 'undefined') localStorage.clan_color = '';
 	if(typeof localStorage.update_type == 'undefined') localStorage.update_type = 'android';
+	if(typeof localStorage.notifications_check_time == 'undefined') localStorage.notifications_check_time = 0;
 }
 
 library.getSettings = function() {
@@ -155,6 +156,8 @@ library.checkUpdates = function() {
 					library.changeIsCheckingUpdateState(false);
 					library.changePendingUpdateState(true);
 					
+					await library.checkGeodeUpdates();
+					
 					r(false);
 				} else {
 					console.log("No updates available. Latest version!");
@@ -198,7 +201,7 @@ library.checkGeodeUpdates = function() {
 		} else {
 			fetch(`${settings.updates_api_url}updates/${settings.update_type}-geode/${settings.geode_update_time}`).then(res => res.json()).then(response => {
 				if(response && response.updates.length) {
-					library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
+					library.sendNotification(strings.notifications.foundGeodeUpdate.title, strings.notifications.foundGeodeUpdate.description);
 					console.log("Geode updates were found!");
 					
 					library.changeIsCheckingUpdateState(false);
@@ -248,9 +251,11 @@ library.installGame = async function(apkName = '') {
 				library.changeIsCheckingUpdateState(false);
 				library.cleanTemporaryFiles();
 				
+				if(localStorage.update_time == 0) library.sendNotification(strings.notifications.gameInstalled.title, strings.notifications.gameInstalled.description);
+				else library.sendNotification(strings.notifications.gameUpdated.title, strings.notifications.gameUpdated.description);
 				localStorage.update_time = lastUpdateTimestamp;
 				
-				if(settings.geode_update_time == 0) library.installGeode();
+				if(settings.geode_update_time == 0 || isPendingGeodeUpdate) library.installGeode();
 				
 				r(true);
 			} else {
@@ -260,11 +265,19 @@ library.installGame = async function(apkName = '') {
 				library.changePendingAPKInstallationState(true);
 			}
 		}).catch(err => {
-			console.error('Failed installing APK file:', err);
+			console.error('Failed installing APK file:', err); // No one had any issues with installing, but saving, that person installed update
 			
 			library.changeProgressState(0, 0, '', '', '', '');
 			library.changeUpdatingGameState(false);
+			library.changePendingAPKInstallationState(false);
+			library.changeIsCheckingUpdateState(false);
 			library.cleanTemporaryFiles();
+			
+			if(localStorage.update_time == 0) library.sendNotification(strings.notifications.gameInstalled.title, strings.notifications.gameInstalled.description);
+			else library.sendNotification(strings.notifications.gameUpdated.title, strings.notifications.gameUpdated.description);
+			localStorage.update_time = lastUpdateTimestamp;
+			
+			if(settings.geode_update_time == 0 || isPendingGeodeUpdate) library.installGeode();
 			
 			r(false);
 		});
@@ -361,19 +374,17 @@ library.updateGame = async function() {
 	console.log('Starting downloading game...');
 	
 	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}/${settings.update_time}`, await join(settings.resource_path, "/android.apk"), (progress) => {
-		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGame, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGame, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), progress.percent + '%');
 	}).then(async (r) => {
 		library.changeUpdatingGameState(false);
 		library.changeIsCheckingUpdateState(true);
 		library.changeProgressState(3, 4, strings.progress.installing, strings.progress.installingFirstPart, strings.progress.installingSecondPart, '');
 		
-		console.log('Installing game...');
+		console.log('Downloading completed!');
 		
 		await library.installGame("android.apk");
 		library.changeIsCheckingUpdateState(false);
 		library.changePendingUpdateState(false);
-		
-		await library.checkGeodeUpdates();
 	}).catch(err => {
 		console.error('Failed downloading APK file:', err);
 		library.changeProgressState(0, 0, '', '', '', '');
@@ -388,17 +399,21 @@ library.installGeode = async function() {
 	library.changePendingGeodeUpdateState(false);
 	
 	const settings = await library.getSettings();
+	
 	console.log('Starting downloading Geode...');
 	
 	const lastUpdateTimestamp = await library.getLatestUpdateTimestamp('-geode');
 	
 	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}-geode/0`, await join(settings.resource_path, "/geode.zip"), (progress) => {
-		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGeode, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGeode, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), progress.percent + '%');
 	}).then(async (r) => {
 		library.changeUpdatingGameState(true);
 		library.changeIsCheckingUpdateState(false);
 		
 		await library.unzipArchive(await join(settings.resource_path, "/geode.zip"), settings.geode_path);
+		
+		if(localStorage.geode_update_time == 0) library.sendNotification(strings.notifications.geodeInstalled.title, strings.notifications.geodeInstalled.description);
+		else library.sendNotification(strings.notifications.geodeUpdated.title, strings.notifications.geodeUpdated.description);
 		
 		console.log('Geode was successfully installed!');
 		localStorage.geode_update_time = lastUpdateTimestamp;
@@ -445,7 +460,7 @@ library.openGameFolder = async function() {
 
 library.sendNotification = async function(title, body) {
 	if(localStorage.enable_notifications == 'false') return;
-	//sendNotification({title: title.toString(), body: body.toString()});
+	sendNotification({channelId: "launcher-notifications", title: title.toString(), body: body.toString()});
 }
 
 library.checkIfPlayerIsLoggedIn = async function() {
@@ -566,26 +581,27 @@ library.changeLauncherTheme = function(theme) {
 library.getNotifications = function() {
 	return new Promise(async function(r) {
 		if(!localStorage.auth.length) r({ notifies: [] });
+		
 		const settings = await library.getSettings();
 		fetch(settings.dashboard_api_url + "notify.php?auth=" + localStorage.auth).then(res => res.json()).then(response => {
 			if(!response.success || !response.notifies) return r({ notifies: [] });
 			
-			hasNewNotifications = response.notifies.some(notification => !notification.checked);
+			hasNewNotifications = response.notifies.some(notification => !notification.checked && notification.time > localStorage.notifications_check_time);
 			
 			let notificationChangeEvent = new CustomEvent("notificationChange", { detail: response });
 			document.dispatchEvent(notificationChangeEvent);
 			
-			if(isNotificationsLoading) {
-				if(response.counts.new > 0) {
-					if(response.counts.new == 1) {
-						let unreadNotification = response.notifies.filter((notification) => !notification.checked)[0].action;
-						let notificationTitle = library.getNotificationTitle(unreadNotification);
-						library.sendNotification(notificationTitle.title, notificationTitle.description);
-					} else {
-						let getPlural = library.getPluralType(response.counts.new);
-						library.sendNotification(printf(strings.notifications.several['title-' + getPlural], response.counts.new), printf(strings.notifications.several['description-' + getPlural], response.counts.new));
-					}
+			if(hasNewNotifications) {
+				if(response.counts.new == 1) {
+					let unreadNotification = response.notifies.filter((notification) => !notification.checked && notification.time > localStorage.notifications_check_time)[0].action;
+					let notificationTitle = library.getNotificationTitle(unreadNotification);
+					library.sendNotification(notificationTitle.title, notificationTitle.description);
+				} else {
+					let getPlural = library.getPluralType(response.counts.new);
+					library.sendNotification(printf(strings.notifications.several['title-' + getPlural], response.counts.new), printf(strings.notifications.several['description-' + getPlural], response.counts.new));
 				}
+				
+				localStorage.notifications_check_time = Math.round(Date.now() / 1000);
 			}
 			
 			isNotificationsLoading = false;
@@ -669,14 +685,13 @@ library.getNotificationTitle = function(action) {
 
 library.getPluralType = function(number) {
 	let lastCharacter = String(number).slice(-1);
+	
 	if(number == 1) return 1;
 	if(number == 0) return 3;
+	
 	if((lastCharacter > 1 && lastCharacter < 5) && (number < 10 || number > 20)) return 2;
+	
 	return 3;
-}
-
-library.isWindows11 = function() {
-	return false;
 }
 
 library.toast = function(text) {
@@ -691,7 +706,6 @@ library.toast = function(text) {
 }
 
 library.initializeAndroidNotifications = function() {
-	/* // Not ready yet
 	removeChannel('default');
 	createChannel({
 		id: "launcher-notifications",
@@ -703,7 +717,6 @@ library.initializeAndroidNotifications = function() {
 			localStorage.enable_notifications = isGranted == 'granted' ? true : 'asked';
 		});
 	}
-	*/
 }
 
 library.changeProgressState = function(value, max, titleText, valueText, maxText, speedText) {
@@ -722,7 +735,7 @@ library.unzipArchive = async function(archivePath, targetPath) {
 		
 		let getPluralCurrent = await library.getPluralType(0);
 		
-		library.changeProgressState(0, 1, strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], 0), '...', '');
+		library.changeProgressState(0, 1, strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], 0), '...', '0%');
 
 		await mkdir(await join(settings.geode_path, 'game', 'geode', 'mods'), { recursive: true });
 		await mkdir(await join(settings.geode_path, 'save', 'geode', 'mods'), { recursive: true });
@@ -733,7 +746,9 @@ library.unzipArchive = async function(archivePath, targetPath) {
 			getPluralCurrent = await library.getPluralType(filesCount[0]);
 			const getPluralTotal = await library.getPluralType(filesCount[1]);
 			
-			library.changeProgressState(filesCount[0], filesCount[1], strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], filesCount[0]), printf(strings.progress['files-' + getPluralTotal], filesCount[1]), '');
+			const percent = await (Math.round((filesCount[0] / filesCount[1]) * 1000) / 10);
+			
+			library.changeProgressState(filesCount[0], filesCount[1], strings.progress.extractingGeode, printf(strings.progress['files-' + getPluralCurrent], filesCount[0]), printf(strings.progress['files-' + getPluralTotal], filesCount[1]), percent + '%');
 		});
 		
 		invoke('extract_archive', { archivePath: archivePath, outputPath: targetPath}).then(e => {
@@ -759,7 +774,8 @@ library.downloadFile = async function(url, savePath, callback) {
 			
 			callback({
 				current: await library.calculatePercentNumber(percent, fileSize),
-				total: fileSize
+				total: fileSize,
+				percent: (Math.round(percent * 10) / 10)
 			});
 			
 			if(updatedDownload.state == 'COMPLETED') r(true);
@@ -775,77 +791,6 @@ library.getURLSize = async function(url) {
 	}).then(res => res.text());
 }
 
-library.saveFile = async function(path, data) {
-	/*
-	return new Promise(async(r) => {
-		const dataURL = await URL.createObjectURL(data);
-		
-		const fileToken = "file-" + Math.random() + "-" + Math.random();
-		const file = await download(fileToken, dataURL.replace('blob:', ''), path);
-		
-		console.log(file);
-		
-		file.listen(async (updatedDownload) => {
-			const percent = updatedDownload.progress;
-			
-			console.log(updatedDownload);
-				
-			if(updatedDownload.state == 'COMPLETED') r(true);
-		});
-		   
-		file.start();
-	});
-	
-	const file = await create(path);
-	for await (const chunk of data) {
-		await file.write(chunk);
-	}
-	await file.close()
-	
-	
-	const chunkSize = 1024 * 1024;
-	const reader = stream.getReader();
-
-	let chunks = [];
-	let bytesRead = 0;
-
-	while (true) {
-		const { done, value } = await reader.read();
-		if (done) break;
-
-		chunks.push(value);
-		bytesRead += value.length;
-
-		if (bytesRead >= chunkSize) {
-			const chunk = new Uint8Array(bytesRead);
-			let offset = 0;
-			for (const chunkValue of chunks) {
-				chunk.set(chunkValue, offset);
-				offset += chunkValue.length;
-			}
-
-			await writeFile(path, chunk, {
-				append: true,
-			});
-			chunks = [];
-			bytesRead = 0;
-		}
-	}
-
-	if (bytesRead > 0) {
-		const chunk = new Uint8Array(bytesRead);
-		let offset = 0;
-		for (const chunkValue of chunks) {
-			chunk.set(chunkValue, offset);
-			offset += chunkValue.length;
-		}
-		await writeFile(path, chunk, {
-			append: true,
-		});
-	}
-	*/
-}
-
 library.updateLauncher = async function() {
 	library.changeUpdatingGameState(true);
 	library.changePendingUpdateState(false);
@@ -854,7 +799,7 @@ library.updateLauncher = async function() {
 	console.log('Starting downloading launcher...');
 	
 	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}-launcher/${settings.update_time}`, await join(settings.resource_path, "/launcher.apk"), (progress) => {
-		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingLauncher, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), "");
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingLauncher, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), progress.percent + '%');
 	}).then(async (r) => {
 		library.changeUpdatingGameState(false);
 		library.changeIsCheckingUpdateState(true);
@@ -865,8 +810,6 @@ library.updateLauncher = async function() {
 		await library.installGame("launcher.apk");
 		library.changeIsCheckingUpdateState(false);
 		library.changePendingUpdateState(false);
-		
-		await library.checkGeodeUpdates();
 	}).catch(err => {
 		console.error('Failed downloading APK file:', err);
 		library.changeProgressState(0, 0, '', '', '', '');
