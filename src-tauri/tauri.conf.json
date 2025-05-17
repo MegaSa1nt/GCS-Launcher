@@ -17,8 +17,8 @@
   },
   "productName": "updater",
   "mainBinaryName": "updater",
-  "version": "1.0.0",
   "identifier": "username.gdps.updater",
+  "version": "2.0.0",
   "plugins": {},
   "app": {
     "windows": [

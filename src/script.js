@@ -25,14 +25,14 @@ const getSettings = async function() {
 
 const installLauncher = async function() {
 	const settings = await getSettings();
-	const configPath = await window.__TAURI__.path.resolve(await window.__TAURI__.path.appCacheDir() + "/launcher.7z");
+	const configPath = await window.__TAURI__.path.resolve(await window.__TAURI__.path.appCacheDir() + "/launcher.zip");
 	console.log('Starting downloading launcher...');
 	text.innerHTML = language.loading;
-	window.__TAURI__.core.invoke('download_file', { url: settings.updates_api_url + "download/launcher/0", tempPath: configPath}).then(stdout => {
+	window.__TAURI__.core.invoke('download_file', { url: `${settings.updates_api_url}download/pc-launcher/0`, tempPath: configPath}).then(async (stdout) => {
 		if(stdout === null) {
 			console.log('Unpacking launcher...');
 			text.innerHTML = language.updating;
-			window.__TAURI__.core.invoke("unpack_archive", { archivePath: configPath, extractPath: settings.resource_path}).then(async function(stdout) {
+			window.__TAURI__.core.invoke("unpack_archive", { archivePath: configPath, outputPath: settings.resource_path + await window.__TAURI__.path.sep()}).then(async function(stdout) {
 				if(stdout === null) {
 					window.__TAURI__.shell.open(settings.launcher_exe).then(res => {
 						text.innerHTML = language.done;

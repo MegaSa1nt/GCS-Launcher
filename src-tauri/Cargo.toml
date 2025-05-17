@@ -1,6 +1,6 @@
 [package]
 name = "gdps-updater"
-version = "1.0.0"
+version = "2.0.0"
 description = "Your GDPS launcher's updater"
 authors = ["YourGDPS"]
 license = ""
@@ -22,6 +22,7 @@ sevenz-rust = "0.5.3"
 reqwest = "0.11.18"
 tauri-plugin-shell = "2.0.2"
 sysinfo = "0.32.0"
+zip = "2.6.1"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
