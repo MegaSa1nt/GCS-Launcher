@@ -1,0 +1,4 @@
+-keep class org.fmod.** { *; }
+-keep class org.cocos2dx.lib.** { *; }
+-keep class com.customRobTop.** { *; }
+-keep public class * extends android.app.Activity

@@ -12,5 +12,13 @@ vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 package-lock.json
 src-tauri/Cargo.lock
-/src-tauri/gen
-bun.lockb
+gcs.jks
+src-tauri/gen/android/signing.properties
+src-tauri/gen/android/.idea/render.experimental.xml
+src-tauri/gen/android/app/arm/*
+src-tauri/gen/android/app/arm64/*
+src-tauri/gen/android/app/universal/*
+src-tauri/gen/android/buildSrc/*
+src-tauri/gen/android/app/build/*
+tauri-plugin-gcs/android/build/*
+src-tauri/gen/android/.idea/deploymentTargetSelector.xml

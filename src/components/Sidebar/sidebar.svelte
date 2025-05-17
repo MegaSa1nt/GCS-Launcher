@@ -2,7 +2,12 @@
 	import { Home, User, Bell, BellDot } from 'lucide-svelte';
     import style from './style.module.scss';
     import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
 	import library from '../../libs/library.js';
+	import PlayButtonIcon from '../../components/PlayButtonIcon/playButtonIcon.svelte';
+	import languageStrings from '../../libs/languages.js';
+	let strings = languageStrings[localStorage.language];
+	document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
 
 	library.initializeVariables();
 
@@ -21,6 +26,8 @@
     let homeColor = getButtonColor("/");
     let profileColor = getButtonColor("/profile-" + sidebarProfileType);
     let notificationsColor = getButtonColor("/notifications");
+	
+	let usernameCheck = localStorage.auth.length;
     
     const updateButtonColors = () => {
         homeColor = getButtonColor("/");
@@ -35,6 +42,26 @@
 	
 	let newNotifications = window.hasNewNotifications;
 	document.addEventListener("notificationChange", (event) => newNotifications = window.hasNewNotifications);
+	
+	document.addEventListener("profileTypeChange", () => sidebarProfileType = profileTypes[localStorage.profile_type]);
+	
+	document.addEventListener("accountChange", (event) => usernameCheck = localStorage.auth.length);
+	
+	export let buttonState = window.playButtonState;
+	export let buttonIsAvailable = window.playButtonIsAvailable;
+	export let updatingAnimation = window.gameUpdatingAnimation;
+	
+	document.addEventListener("playButtonStateChange", function(event) {
+		buttonState = window.playButtonState;
+		buttonIsAvailable = window.playButtonIsAvailable;
+		updatingAnimation = window.gameUpdatingAnimation;
+	});
+	updatePlayButtonState();
+	
+	function openLoginPage() {
+		library.toast(strings.settings.notLoggedIn);
+		goto("/settings#login");
+	}
 </script>
 
 <div class={style.sidebar}>
@@ -42,23 +69,21 @@
 		<a class={style.button} href="/">
 			<Home color={homeColor} size={30} strokeWidth={2.25} />
         </a>
-		{#if !localStorage.auth.length}
-			<a class={style.button} href={"/settings/login"}>
+		<div class={style.positionButton} on:click={() => library.openOrInstallGame()}>
+			<div class={[style.loadButton, buttonIsAvailable].join(' ')}>
+				<span id="play-button-animation" class={[style.loadAnimation, updatingAnimation].join(' ')}></span>
+				<span class={style.positionPlayIcon}>
+					<PlayButtonIcon state={buttonState} />
+				</span>
+			</div>
+		</div>
+		{#if !usernameCheck}
+			<a class={style.button} on:click={() => openLoginPage()}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
-			</a>
-			<a class={style.button} href={"/settings/login"}>
-				<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
 			</a>
 		{:else}
 			<a class={style.button} href={"/profile-" + sidebarProfileType}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
-			</a>
-			<a class={style.button} href={"/notifications"}>
-				{#if newNotifications}
-					<BellDot color={notificationsColor} size={30} strokeWidth={2.25} />
-				{:else}
-					<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
-				{/if}
 			</a>
 		{/if}
 	</div>

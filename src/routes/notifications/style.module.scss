@@ -2,8 +2,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 18px;
-    justify-content: space-between;
-	min-height: 100%;
 }
 
 .button {
@@ -149,7 +147,7 @@ form {
 }
 
 [launcher-theme="mica"] .notificationsBlock {
-	background-color: transparent;
+	background-color: #94949414;
 	padding: 20px;
 	border-radius: 10px;
 }

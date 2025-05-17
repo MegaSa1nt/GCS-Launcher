@@ -20,9 +20,10 @@
 
 	:global(._toastItem) {
 		width: max-content !important;
-		min-height: 0px !important;
+		height: var(--toastHeight, auto);
+		min-height: var(--toastMinHeight, 3.5rem);
 		margin: var(--toastMargin, 0 0 0.5rem 0);
-		padding: 0px 0px !important;
+		padding: var(--toastPadding, 0);
 		background: #222222 !important;
 		color: var(--toastColor, #fff);
 		box-shadow: var(
@@ -35,16 +36,12 @@
 	}
 
 	:global(._toastMsg) {
-		padding: 10px 15px !important;
+		padding: 0.3rem 1rem !important;
 		font-size: 17px !important;
 	}
 
 	:global(._toastBtn),
 	:global(._toastBar) {
 		display: none !important;
-	}
-	
-	:global([launcher-theme="mica"] ._toastItem) {
-		border-radius: 10px !important;
 	}
 </style>

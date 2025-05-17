@@ -19,6 +19,18 @@
 			"title": "Уйнау яңартылуы",
 			"description": "Лаунчер уйнау өчен яңарту тапты!"
 		},
+		"foundGeodeUpdate": {
+			"title": "Обновление Geode",
+			"description": "Лаунчер нашёл обновление для Geode!"
+		},
+		"geodeInstalled": {
+			"title": "Geode установлен",
+			"description": "Geode был успешно установлен!"
+		},
+		"geodeUpdated": {
+			"title": "Geode обновлён",
+			"description": "Geode был успешно обновлён!"
+		},
 		
 		"new": "Новые уведомления",
 		
@@ -106,15 +118,9 @@
 		"installingPressInstallSecondPart": "...установить!",
 		
 		"downloadingGame": "Загрузка игры...",
-		"extractingGame": "Распаковка игры...",
-		"downloadingPatch": "Загрузка патча...",
-		"extractingPatch": "Распаковка патча...",
-		"patchingGame": "Применение патчей...",
-		"savingFiles": "Сохранение файлов...",
-		"savingFolders": "Сохранение папок...",
-		"deletingGame": "Удаление игры...",
-		
 		"megabytes": "%1$s МБ",
+		"downloadingGeode": "Загрузка Geode...",
+		"extractingGeode": "Распаковка Geode...",
 		"downloadingLauncher": "Загрузка лаунчера...",
 		
 		"files-1": "%1$s файл",

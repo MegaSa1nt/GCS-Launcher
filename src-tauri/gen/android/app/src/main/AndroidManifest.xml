@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:tools="http://schemas.android.com/tools"
+	xmlns:android="http://schemas.android.com/apk/res/android">
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+	<uses-permission
+		android:name="android.permission.READ_EXTERNAL_STORAGE"
+		android:maxSdkVersion="32" />
+	<uses-permission
+		android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+		android:maxSdkVersion="32" />
+	<uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+	<uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES"/>
+	<uses-permission android:name="android.permission.VIBRATE"/>
+	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS"/>
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <application
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+        android:usesCleartextTraffic="true"
+				android:extractNativeLibs="true"
+				android:allowNativeHeapPointerTagging="false">
+        <activity
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
+            android:launchMode="singleTask"
+            android:label="@string/main_activity_title"
+            android:name=".MainActivity"
+			android:windowSoftInputMode="adjustResize"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+				<activity
+					android:name="com.geode.launcher.GeometryDashActivity"
+					android:exported="true"
+					android:hardwareAccelerated="true"
+					android:screenOrientation="landscape"
+					android:theme="@style/Theme.NoActionBar.Fullscreen"
+					android:configChanges="orientation|screenSize|smallestScreenSize"
+					android:windowSoftInputMode="stateAlwaysHidden">
+					<meta-data
+						android:name="android.app.lib_name"
+						android:value="cocos2dcpp" />
+				</activity>
+				<activity
+					android:name="org.cocos2dx.lib.Cocos2dxEditText"
+					android:theme="@style/Base.Theme.AppCompat"
+					tools:ignore="Instantiatable">
+				</activity>
+        <provider
+          android:name="androidx.core.content.FileProvider"
+          android:authorities="${applicationId}.provider"
+          android:exported="false"
+          android:grantUriPermissions="true">
+          <meta-data
+            android:name="android.support.FILE_PROVIDER_PATHS"
+            android:resource="@xml/file_paths" />
+        </provider>
+    </application>
+		<queries>
+			<package android:name="com.robtopx.geometryjump" />
+		</queries>
+</manifest>

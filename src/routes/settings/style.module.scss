@@ -49,6 +49,10 @@
 	align-items: center;
 }
 
+.settingDiv:has(fieldset, .loginButton) {
+	flex-direction: column;
+}
+
 .settingDescription {
 	display: flex;
     flex-direction: column;
@@ -127,12 +131,8 @@
 .loginDiv {
 	display: flex;
 	flex-direction: column;
-	background-color: #D9D9D909;
-	padding: 15px;
-	border-radius: 10px;
 	grid-gap: 10px;
-	width: 70%;
-    margin-left: 15%;
+	width: 100%;
 }
 
 .loginButton {
@@ -149,6 +149,7 @@
 	align-items: center;
     justify-content: center;
     grid-gap: 5px;
+	width: 100%;
 }
 
 .loginButton:hover {
@@ -229,6 +230,47 @@ form {
     justify-content: center;
 }
 
+.usernameDiv {
+	display: flex;
+	height: max-content;
+	width: 100%;
+	justify-content: flex-start;
+	grid-gap: 15px;
+	transition: 0.3s;
+}
+
+.usernameDiv h1 {
+	height: max-content;
+	margin: 0px;
+	font-weight: bold;
+	font-size: 25px;
+	line-height: 0.8;
+}
+
+.usernameDiv h2 {
+	font-weight: 400;
+	margin: 0px;
+	font-size: 17px;
+	color: #c0c0c0;
+}
+
+.mainUsername {
+	display: flex;
+    flex-direction: column;
+    justify-content: center;
+    grid-gap: 7px;
+}
+
+.mainIcon {
+	max-height: 60px;
+    display: flex;
+    justify-content: flex-start;
+    width: 60px;
+}
+.mainIcon img {
+	height: 100%;
+}
+
 /*
 	Mica theme
 */
@@ -238,7 +280,7 @@ form {
 }
 
 [launcher-theme="mica"] .contentBlock {
-	background-color: transparent;
+	background-color: #94949414;
 	padding: 20px;
 	border-radius: 10px;
 }

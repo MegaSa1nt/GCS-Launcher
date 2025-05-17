@@ -1,0 +1,69 @@
+.mobileSettingsHeader {
+	display: flex;
+	flex-direction: row;
+	width: calc(100% - 40px);
+	justify-content: space-between;
+	height: 35px;
+	position: fixed;
+	margin: 20px;
+	z-index: 15;
+}
+
+.usernameSmallDiv {
+	display: flex;
+	flex-direction: row;
+	width: max-content;
+	grid-gap: 5px;
+	align-items: center;
+	background-color: #D9D9D909;
+	padding: 5px;
+	border-radius: 10px;
+	backdrop-filter: blur(5px);
+	transition: 0.2s;
+}
+
+.usernameSmallDiv img {
+	width: 25px;
+}
+
+.usernameSmallDiv p {
+	margin: 0px;
+	width: max-content;
+	font-size: 20px;
+	font-weight: 700;
+}
+
+.profileButton {
+	padding: 5px;
+	background-color: #D9D9D909;
+	border-radius: 500px;
+	border: none;
+	position: relative;
+	width: 35px;
+	height: 35px;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+	transition: 0.2s;
+	backdrop-filter: blur(5px);
+}
+
+.profileButtonsDiv {
+	display: flex;
+	grid-gap: 5px;
+	flex-direction: row;
+}
+
+.profileButton svg {
+	position: absolute;
+}
+
+.usernameSmallDiv:active {
+	background-color: #D9D9D914;
+	transform: scale(0.97);
+}
+
+.profileButton:active {
+	background-color: #D9D9D914;
+	transform: scale(0.9);
+}

@@ -40,6 +40,8 @@
 * {
     box-sizing: border-box;
 	font-family: var(--font-body);
+	outline: none;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 }
 
 body {
@@ -55,11 +57,14 @@ body {
 	height: 100vh;
 }
 
-.content {
-	padding: 50px 50px 50px 150px;
+:global(.content) {
+	padding: 65px 20px 95px 20px;
 	width: 100%;
 	height: 100%;
 	overflow-y: scroll;
+	display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 :global(.anim) {
@@ -88,28 +93,10 @@ body {
 
 .mainPageBlock {
 	display: flex;
-    justify-content: flex-start;
 	flex-direction: column;
-	
 	gap: 18px;
-	height: 100%;
-	
+	justify-content: flex-start;
 	position: relative;
-}
-
-.launchBlock {
-	display: flex;
-	flex-direction: row;
-	align-items: flex-end;
-	justify-content: flex-end;
-	
-	width: calc(100% - 20px);
-	
-	gap: 15px;
-	
-	position: absolute;
-    right: 20px;
-    bottom: 20px;
 }
 
 .launchContent {
@@ -117,13 +104,6 @@ body {
 	flex-direction: column;
 	
 	gap: 15px;
-	
-	background-color: #00000015;
-	
-	border: solid 1px #FFFFFF15;
-	border-radius: 20px;
-	
-	padding: 15px;
 }
 
 .loadButton {
@@ -190,7 +170,6 @@ body {
 	pointer-events: none;
 	z-index: 2;
 	filter: brightness(0.5);
-    border: 1px solid #bebebe;
 }
 
 @keyframes load-animation {
@@ -211,12 +190,10 @@ body {
 }
 
 .mainPageNotificationsBlock {
-	width: 66%;
-	max-height: 100%;
+	width: 100%;
 	background-color: #D9D9D909;
 	border-radius: 15px;
-	overflow-y: scroll;
-	padding: 10px 0px 10px 10px;
+	padding: 10px 10px 15px 10px;
 	grid-gap: 10px;
     display: flex;
     flex-direction: column;
@@ -228,14 +205,11 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #373A3F;
-    border-radius: 100px;
-    border: 2.5px solid #1A1A1A;
+	width: 0px;
 }
 
 ::-webkit-scrollbar {
-	width: 10px;
-  	border-radius: 500px;
+	width: 0px;
 }
 
 .mainPageNotificationsH2 {
@@ -264,16 +238,12 @@ body {
 }
 
 [launcher-theme="mica"] .mainPageBlock {
-	background-color: transparent;
+	background-color: #94949414;
 	padding: 20px;
 	border-radius: 10px;
 }
 
 [launcher-theme="mica"] .launchBlock {
-	width: calc(100% - 40px);
-}
-
-[launcher-theme="mica"] .launchContent {
 	background-color: #94949414;
 	border-radius: 10px;
 	padding: 10px;

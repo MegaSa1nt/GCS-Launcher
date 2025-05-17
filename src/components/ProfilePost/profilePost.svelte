@@ -1,8 +1,8 @@
 <script>
 	import { ThumbsUp, ThumbsDown, MessageCircleMore, LoaderCircle } from 'lucide-svelte';
     import style from './style.module.scss';
-	import library from '../../libs/library.js';
 	import ProfilePostReply from '../../components/ProfilePostReply/profilePostReply.svelte';
+	import library from '../../libs/library.js';
 	import languageStrings from '../../libs/languages.js';
 	let strings = languageStrings[localStorage.language];
 	

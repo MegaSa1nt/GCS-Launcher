@@ -1,0 +1,13 @@
+# Automatically generated - DO NOT EDIT!
+
+"$schema" = "../../schemas/schema.json"
+
+[[permission]]
+identifier = "allow-openInstallSettings"
+description = "Enables the openInstallSettings command without any pre-configured scope."
+commands.allow = ["openInstallSettings"]
+
+[[permission]]
+identifier = "deny-openInstallSettings"
+description = "Denies the openInstallSettings command without any pre-configured scope."
+commands.deny = ["openInstallSettings"]

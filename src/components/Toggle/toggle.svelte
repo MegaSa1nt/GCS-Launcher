@@ -65,9 +65,9 @@
 		position: relative;
 		padding: 0 0.25rem;
 		border: 0;
-		border-radius: 1rem;
-		height: 1.25rem;
-		width: 2.5rem;
+		border-radius: 3rem;
+		height: 2.25rem;
+		width: 4rem;
 		font: inherit;
 		color: inherit;
 		line-height: inherit;
@@ -88,28 +88,19 @@
 		content: "";
 		top: 0;
 		bottom: 0;
-		left: 0.125rem;
+		left: 0.2rem;
 		margin: auto;
-		height: 1rem;
-		width: 1rem;
+		height: 2rem;
+		width: 2rem;
 		text-align: center;
 		border-radius: 50%;
 		background-color: currentColor;
 		transition: transform 0.2s ease-in-out;
 		transform: scale(0.8);
 	}
-	
-	button:active:before {
-		transition: transform 0.2s ease-in-out;
-		transform: scale(1.0);
-	}
-	
-	button[aria-checked="true"]:active:before {
-		transform: translateX(1.25rem) scale(1.0);
-	}
 
 	button[aria-checked="true"]:before {
-		transform: translateX(1.25rem) scale(0.8);
+		transform: translateX(1.65rem) scale(0.8);
 	}
 
 	button.small {

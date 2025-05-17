@@ -1,7 +1,7 @@
 [Русский](https://github.com/MegaSa1nt/GCS-Client/blob/new/README.md) | English
 
 # GCS-Client
-### Launcher for your GDPS with updating via patches
+### Launcher for your GDPS for Android
 [Launcher backend](https://github.com/MegaSa1nt/GCS-Client-backend) is required for launcher to work
 ### Stack
 Front:

@@ -104,19 +104,13 @@
 		"installingSecondPart": "...presque !",
 		"installingPressInstallFirstPart": "Appuyez sur...",
 		"installingPressInstallSecondPart": "...installer !",
-		
+	
 		"downloadingGame": "Téléchargement du jeu...",
-		"extractingGame": "Extraction du jeu...",
-		"downloadingPatch": "Téléchargement du patch...",
-		"extractingPatch": "Extraction du patch...",
-		"patchingGame": "Installation du patch...",
-		"savingFiles": "Enregistrement des fichiers...",
-		"savingFolders": "Enregistrement des dossiers...",
-		"deletingGame": "Suppression du jeu...",
-		
 		"megabytes": "%1$s Mo",
+		"downloadingGeode": "Téléchargement de Geode...",
+		"extractingGeode": "Extraction de Geode...",
 		"downloadingLauncher": "Téléchargement du launcher...",
-		
+	
 		"files-1": "%1$s fichier",
 		"files-2": "%1$s fichiers",
 		"files-3": "%1$s fichiers"

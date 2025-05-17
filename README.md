@@ -1,7 +1,7 @@
 Русский | [English](https://github.com/MegaSa1nt/GCS-Client/blob/new/README-EN.md)
 
 # GCS-Client
-### Лаунчер для вашей приватки с системой обновлений посредством патчей файлов
+### Лаунчер для вашей приватки на Android
 Для работы обновлений необходим [бэкэнд лаунчера](https://github.com/MegaSa1nt/GCS-Client-backend)
 ### Стэк
 Фронт:

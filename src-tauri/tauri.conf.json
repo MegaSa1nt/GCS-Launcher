@@ -30,7 +30,7 @@
       "allowDowngrades": false
     },
     "targets": ["nsis"],
-	"resources": ["./bin/hpatch.exe", "./updater.exe"]
+	"resources": []
   },
   "productName": "GDPS-Launcher",
   "mainBinaryName": "launcher",
@@ -57,7 +57,7 @@
     ],
 	"withGlobalTauri": true,
     "security": {
-      "csp": null
+      "csp": "default-src blob: data: filesystem: ws: wss: http: https: tauri: http://tauri.localhost 'unsafe-eval' 'unsafe-inline' 'self'"
     }
   }
 }

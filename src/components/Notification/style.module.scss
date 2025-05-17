@@ -42,7 +42,7 @@
 	line-height: 0.9;
 	margin: 0px;
 	display: flex;
-	font-size: 22px;
+	font-size: 20px;
     flex-direction: row;
     align-items: flex-start;
 	grid-gap: 5px;
@@ -51,7 +51,7 @@
 .notificationDescription h3 {
 	color: #c0c0c0;
 	font-weight: 400;
-	font-size: 15px;
+	font-size: 14px;
 	line-height: 1.2;
 	margin: 0px;
 }
@@ -76,13 +76,15 @@
 	font-weight: 400;
 	color: gray;
 	margin-left: auto;
-	cursor: pointer;
+	text-align: right;
 }
 
 .notificationTypeSquare {
 	border-radius: 5px;
-	width: 19px;
-	height: 19px;
+	min-width: 17px;
+	min-height: 17px;
+	width: 17px;
+	height: 17px;
 	background: black;
 }
 

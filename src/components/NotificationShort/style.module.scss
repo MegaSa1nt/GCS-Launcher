@@ -42,7 +42,7 @@
 	line-height: 0.9;
 	margin: 0px;
 	display: flex;
-	font-size: 18px;
+	font-size: 17px;
     flex-direction: row;
     align-items: flex-start;
 	grid-gap: 5px;
@@ -76,7 +76,9 @@
 	font-weight: 400;
 	color: gray;
 	margin-left: auto;
-	cursor: pointer;
+	text-align: right;
+    display: flex;
+    grid-gap: 5px;
 }
 
 .notificationTypeSquare {
