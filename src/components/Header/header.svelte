@@ -28,9 +28,6 @@
 			<p>{username}</p>
 		</div>
 		<div class={style.profileButtonsDiv}>
-			<button class={style.profileButton} on:click={() => goto("/notifications")}>
-				<Bell size={20} color="#FFFFFF"/>
-			</button>
 			<button class={style.profileButton} on:click={() => goto("/settings")}>
 				<Settings size={20} color="#FFFFFF" />
 			</button>
