@@ -88,23 +88,28 @@ body {
 
 .mainPageBlock {
 	display: flex;
+    justify-content: flex-start;
 	flex-direction: column;
+	
 	gap: 18px;
 	height: 100%;
-    justify-content: flex-start;
+	
+	position: relative;
 }
 
 .launchBlock {
-	background-color: #00000015;
+	display: flex;
+	flex-direction: row;
+	align-items: flex-end;
+	justify-content: flex-end;
 	
-	border: solid 1px #FFFFFF15;
-	border-radius: 20px;
+	width: calc(100% - 20px);
 	
-	padding: 15px;
+	gap: 15px;
 	
 	position: absolute;
-    right: 50px;
-    bottom: 50px;
+    right: 20px;
+    bottom: 20px;
 }
 
 .launchContent {
@@ -112,6 +117,13 @@ body {
 	flex-direction: column;
 	
 	gap: 15px;
+	
+	background-color: #00000015;
+	
+	border: solid 1px #FFFFFF15;
+	border-radius: 20px;
+	
+	padding: 15px;
 }
 
 .loadButton {
@@ -178,6 +190,7 @@ body {
 	pointer-events: none;
 	z-index: 2;
 	filter: brightness(0.5);
+    border: 1px solid #bebebe;
 }
 
 @keyframes load-animation {
@@ -251,12 +264,16 @@ body {
 }
 
 [launcher-theme="mica"] .mainPageBlock {
-	background-color: #94949414;
+	background-color: transparent;
 	padding: 20px;
 	border-radius: 10px;
 }
 
 [launcher-theme="mica"] .launchBlock {
+	width: calc(100% - 40px);
+}
+
+[launcher-theme="mica"] .launchContent {
 	background-color: #94949414;
 	border-radius: 10px;
 	padding: 10px;

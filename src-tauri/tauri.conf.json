@@ -34,8 +34,8 @@
   },
   "productName": "GDPS-Launcher",
   "mainBinaryName": "launcher",
-  "version": "2.1.0",
   "identifier": "username.gdps",
+  "version": "2.2.0",
   "plugins": {},
   "app": {
     "windows": [

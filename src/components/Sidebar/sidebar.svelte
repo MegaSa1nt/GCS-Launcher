@@ -46,9 +46,19 @@
 			<a class={style.button} href={"/settings/login"}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
 			</a>
+			<a class={style.button} href={"/settings/login"}>
+				<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
+			</a>
 		{:else}
 			<a class={style.button} href={"/profile-" + sidebarProfileType}>
 				<User color={profileColor} size={30} strokeWidth={2.25} />
+			</a>
+			<a class={style.button} href={"/notifications"}>
+				{#if newNotifications}
+					<BellDot color={notificationsColor} size={30} strokeWidth={2.25} />
+				{:else}
+					<Bell color={notificationsColor} size={30} strokeWidth={2.25} />
+				{/if}
 			</a>
 		{/if}
 	</div>

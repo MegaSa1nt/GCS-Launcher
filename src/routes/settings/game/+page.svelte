@@ -89,22 +89,6 @@
 		<div class={style.settingDiv}>
 			<div class={style.settingDescription}>
 				<h2>
-					{strings.settings.filesIntegrity.title}
-				</h2>
-				<h3>
-					{strings.settings.filesIntegrity.description}
-				</h3>
-			</div>
-			<button disabled={isVerifyDisabled} class={style.settingsButton} on:click={() => library.verifyGameFilesIntegrity()}>
-				<ShieldCheck color="#FFFFFF"/>
-			</button>
-		</div>
-		
-		<hr class={style.settingsHR}>
-		
-		<div class={style.settingDiv}>
-			<div class={style.settingDescription}>
-				<h2>
 					{strings.settings.deleteGame.title}
 				</h2>
 				<h3>

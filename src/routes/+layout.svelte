@@ -3,6 +3,7 @@
 	import Sidebar from '../components/Sidebar/sidebar.svelte';
 	import SettingsSidebar from '../components/SettingsSidebar/settingsSidebar.svelte';
 	import Titlebar from '../components/Titlebar/titlebar.svelte';
+	import Toast from '../components/Toast/toast.svelte';
 	import { onNavigate } from '$app/navigation';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import library from '../libs/library.js';
@@ -61,6 +62,7 @@
 
 <div class="app">
 	<main class={style.main}>
+		<Toast />
 		<Titlebar />
 		{#if !$page.url.pathname.startsWith("/settings")}
 			<Sidebar />

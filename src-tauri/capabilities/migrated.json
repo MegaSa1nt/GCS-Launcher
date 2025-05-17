@@ -17,9 +17,17 @@
     "core:window:allow-hide",
     "core:window:allow-show",
     "core:window:allow-set-effects",
+    "core:window:allow-set-progress-bar",
     "shell:default",
-    "shell:allow-open",
     "fs:default",
+    {
+      "identifier": "opener:allow-open-path",
+      "allow": [
+        {
+          "path": "**"
+        }
+      ]
+    },
     {
       "identifier": "fs:allow-remove",
       "allow": [
@@ -85,6 +93,9 @@
     "sql:allow-execute",
     "notification:default",
     "process:default",
-    "os:default"
+    "os:default",
+    "opener:default",
+    "download:default",
+    "download:allow-create"
   ]
 }

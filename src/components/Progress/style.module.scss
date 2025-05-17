@@ -1,0 +1,64 @@
+.progressBar {
+	display: flex;
+	flex-direction: column;
+	background-color: #00000015;
+	border: solid 1px rgba(255, 255, 255, 0.0823529412);
+	border-radius: 15px;
+	padding: 16px;
+	grid-gap: 5px;
+	width: 100%;
+	backdrop-filter: blur(5px);
+	z-index: 30;
+}
+
+.progressBar h2 {
+	margin: 0px;
+	font-size: 20px;
+	display: flex;
+	grid-gap: 5px;
+	align-items: center;
+}
+
+.progressState {
+	display: flex;
+	justify-content: space-between;
+}
+
+.progressState p {
+	margin: 0px;
+	color: #c0c0c0;
+}
+
+progress {
+  width: 100%;
+  display: block; 
+  background: #202020;
+  transition: 0.2s;
+  border-radius: 500px;
+}
+
+progress::-webkit-progress-bar {
+    background: transparent;
+} 
+
+progress::-webkit-progress-value {  
+  border-radius: 500px;
+  background: linear-gradient(90deg, var(--accent-color) 0%, var(--accent-button-color) 100%);
+  transition: 0.2s;
+  padding: 5px;
+} 
+
+body:has(.progressBar) :global(.content) {
+	padding: 65px 20px 215px 20px;
+}
+
+[launcher-theme="mica"] .progressBar {
+	background-color: #94949414;
+	border-radius: 10px;
+	border: none;
+	padding: 11px;
+}
+
+[launcher-theme="mica"] progress {
+	background: #94949424;
+}

@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 package-lock.json
 src-tauri/Cargo.lock
 /src-tauri/gen
+bun.lockb

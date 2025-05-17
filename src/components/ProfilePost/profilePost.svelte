@@ -66,7 +66,7 @@
 					<LoaderCircle color="#FFFFFF" size={15} strokeWidth={3} />
 				</span>
 			</div>
-			<h4 class={style.profilePostTime}>{library.timeConverter(timestamp, true)}</h4>
+			<h4 class={style.profilePostTime} on:click={() => library.toast(library.timeConverter(timestamp, false))}>{library.timeConverter(timestamp, true)}</h4>
 		</div>
 	</div>
 	{#if profileReplies.length > 0}

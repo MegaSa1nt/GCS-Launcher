@@ -98,8 +98,34 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Установка...",
+		"installingFirstPart": "Сейчас...",
+		"installingSecondPart": "...почти!",
+		"installingPressInstallFirstPart": "Нажмите...",
+		"installingPressInstallSecondPart": "...установить!",
+		
+		"downloadingGame": "Загрузка игры...",
+		"extractingGame": "Распаковка игры...",
+		"downloadingPatch": "Загрузка патча...",
+		"extractingPatch": "Распаковка патча...",
+		"patchingGame": "Применение патчей...",
+		"savingFiles": "Сохранение файлов...",
+		"savingFolders": "Сохранение папок...",
+		"deletingGame": "Удаление игры...",
+		
+		"megabytes": "%1$s МБ",
+		"downloadingLauncher": "Загрузка лаунчера...",
+		
+		"files-1": "%1$s файл",
+		"files-2": "%1$s файла",
+		"files-3": "%1$s файлов"
+	},
+	
 	"settings": {
 		"title": "Көйләүләр",
+		
+		"notLoggedIn": "Войдите в аккаунт!",
 		
 		"launcher": "Лаунчер",
 		"notifications": {
@@ -158,6 +184,7 @@
 			"description": "Как часто лаунчер будет проверять обновления игры"
 		},
 		
+		"account": "Аккаунт",
 		"username": "Никнейм",
 		"password": "Пароль",
 		"loginButton": "Аккаунтка керү",
@@ -170,37 +197,6 @@
 			"title": "Аккаунттан чыгу",
 			"description": "Аккаунттан чыгуны теләгәнегезне раслыйсызмы?",
 			"button": "Чыгу"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "гыйнвар",
-			"february": "февраль",
-			"march": "март",
-			"april": "апрель",
-			"may": "май",
-			"june": "июнь",
-			"july": "июль",
-			"august": "август",
-			"september": "сентябрь",
-			"october": "октябрь",
-			"november": "ноябрь",
-			"december": "декабрь"
-		},
-		"short": {
-			"january": "гыйн",
-			"february": "фев",
-			"march": "март",
-			"april": "апр",
-			"may": "май",
-			"june": "июн",
-			"july": "июл",
-			"august": "авг",
-			"september": "сен",
-			"october": "окт",
-			"november": "ноя",
-			"december": "дек"
 		}
 	}
 }

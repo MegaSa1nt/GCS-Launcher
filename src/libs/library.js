@@ -4,18 +4,23 @@ import { getVersion } from '@tauri-apps/api/app';
 import { getCurrentWindow, Effect } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, BaseDirectory, rename } from '@tauri-apps/plugin-fs';
-import { open, Command } from '@tauri-apps/plugin-shell';
+import { Command } from '@tauri-apps/plugin-shell';
 import Database from '@tauri-apps/plugin-sql';
 import { sendNotification } from '@tauri-apps/plugin-notification';
 import { exit } from '@tauri-apps/plugin-process';
+import { openPath } from '@tauri-apps/plugin-opener';
 import { version } from '@tauri-apps/plugin-os';
+import { toast } from '@zerodevx/svelte-toast';
 import style from './style.module.scss';
 import { printf } from 'fast-printf';
+import { create as download } from 'tauri-plugin-download';
+
 const library = [];
+
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
-import languageStrings from './languages.js';
-let strings = languageStrings[localStorage.language];
+let accountChangeEvent = new Event("accountChange", {bubbles: true});
+let progressChangeEvent = new Event("progressChange", {bubbles: true});
 
 document.addEventListener("languageChange", (event) => strings = languageStrings[localStorage.language]);
 
@@ -76,6 +81,16 @@ library.initializeEvents = async function() {
 	if(typeof window.recursive_check == 'undefined') window.recursive_check = [];
 	if(typeof window.game_folders == 'undefined') window.game_folders = [];
 	if(typeof window.notifications == 'undefined') window.notifications = [];
+	if(typeof window.profile_data == 'undefined') window.profile_data = false;
+	if(typeof window.progress_value == 'undefined') window.progress_value = 0;
+	if(typeof window.progress_max == 'undefined') window.progress_max = 0;
+	if(typeof window.progress_value_text == 'undefined') window.progress_value_text = '';
+	if(typeof window.progress_max_text == 'undefined') window.progress_max_text = '';
+	if(typeof window.progress_title_text == 'undefined') window.progress_title_text = '';
+	if(typeof window.progress_speed_text == 'undefined') window.progress_speed_text = '';
+	if(typeof window.pending_apk == 'undefined') window.pending_apk = '';
+	
+	if(typeof window.notifications == 'undefined') window.notifications = [];
 	const dbPath = await resolve(await appCacheDir(), "files.db")
 	if(typeof window.db == 'undefined') window.db = await Database.load("sqlite:" + dbPath);
 	await db.execute(`CREATE TABLE IF NOT EXISTS 'files' (
@@ -92,7 +107,7 @@ library.initializeEvents = async function() {
 const gameCheckInterval = setInterval(async function() {
 	const settings = await library.getSettings();
 	library.checkProcess(settings.game_exe);
-},	500);
+},	1500);
 
 library.initializeVariables = function() {
 	if(typeof localStorage.update_time == 'undefined') localStorage.update_time = 0;
@@ -105,7 +120,11 @@ library.initializeVariables = function() {
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
-	if(typeof localStorage.use_accent_color == 'undefined') localStorage.use_accent_color = 'false';
+	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://gdicon.oat.zone/icon.png?type=cube&value=1&color1=0&color2=3';
+	if(typeof localStorage.clan_name == 'undefined') localStorage.clan_name = '';
+	if(typeof localStorage.clan_color == 'undefined') localStorage.clan_color = '';
+	if(typeof localStorage.update_type == 'undefined') localStorage.update_type = 'pc';
+	if(typeof localStorage.notifications_check_time == 'undefined') localStorage.notifications_check_time = 0;
 }
 
 library.getSettings = function() {
@@ -113,46 +132,58 @@ library.getSettings = function() {
 	return new Promise(async function(r) {
 		const resourcePath = await resourceDir();
 		r({
-			updates_api_url: "https://updates.gcs.icu/",
-			dashboard_api_url: "https://api.gcs.icu/",
-			gdps_name: "GreenCatsServer",
-			game_exe: "GreenCatsServer.exe",
+			updates_api_url: "https://updates.example.com/",
+			dashboard_api_url: "https://example.com/dashboard/api/",
+			gdps_name: "GDPS",
+			game_exe: "GDPS.exe",
 			
 			update_time: localStorage.update_time,
+			update_type: localStorage.update_type,
 			resource_path: resourcePath
 		});
 	});
 }
-
 library.checkUpdates = function() {
 	return new Promise(async function(r) {
-		if(window.isCheckingUpdate) r(false);
+		if(window.isCheckingUpdate) return r(false);
+		
 		await library.changeIsCheckingUpdateState(true);
+		
 		const settings = await library.getSettings();
+		
 		if(settings.update_time == 0) {
 			console.log('You should install game ;)');
+			
 			await library.changeIsCheckingUpdateState(false);
 			await library.changePendingUpdateState(true);
+			
 			r(false);
 		} else {
-			fetch(settings.updates_api_url + "updates/" + settings.update_time).then(res => res.json()).then(response => {
-				if(response.length == 0) {
-					console.log("No updates available. Latest version!");
-					library.changeIsCheckingUpdateState(false);
-					library.changePendingUpdateState(false);
-					r(true);
-				} else {
+			fetch(`${settings.updates_api_url}updates/${settings.update_type}/${settings.update_time}`).then(res => res.json()).then(async(response) => {
+				if(response && response.updates && response.updates.length > 0) {
 					library.sendNotification(strings.notifications.foundUpdate.title, strings.notifications.foundUpdate.description);
 					console.log("Updates were found!");
-					window.new_updates = response;
+					
+					window.new_updates = response.updates;
+					
 					library.changeIsCheckingUpdateState(false);
 					library.changePendingUpdateState(true);
+					
 					r(false);
+				} else {
+					console.log("No updates available. Latest version!");
+					
+					library.changeIsCheckingUpdateState(false);
+					library.changePendingUpdateState(false);
+					
+					r(true);
 				}
 			}).catch(err => {
 				console.error('Failed checking updates:', err);
+				
 				library.changeIsCheckingUpdateState(false);
 				library.changePendingUpdateState(false);
+				
 				r(false);
 			});
 		}
@@ -161,42 +192,37 @@ library.checkUpdates = function() {
 
 library.installGame = async function() {
 	if(window.isUpdatingGame) return;
+	
 	library.changeUpdatingGameState(true);
 	library.changePendingUpdateState(false);
+	
 	const settings = await library.getSettings();
 	const lastUpdateTimestamp = await library.getLatestUpdateTimestamp();
-	const configPath = await resolve(await appCacheDir() + "/temp.7z");
-	console.log('Starting downloading game...');
-	invoke('download_file', { url: settings.updates_api_url + "download/0", tempPath: configPath}).then(stdout => {
-		if(stdout === null) {
-			console.log('Unpacking game...');
-			invoke("unpack_archive", { archivePath: configPath, extractPath: settings.resource_path}).then(async function(stdout) {
-				if(stdout === null) {
-					console.log('Adding all files to SQL... (that means it also calculates MD5 checksum for all files)');
-					await library.addFolderToSQL(settings.resource_path);
-					library.sendNotification(strings.notifications.gameInstalled.title, strings.notifications.gameInstalled.description);
-					console.log('Game successfully downloaded!');
-					library.changeUpdatingGameState(false);
-					library.cleanTemporaryFiles();
-					localStorage.update_time = lastUpdateTimestamp;
-				} else {
-					console.error('Failed extracting archive:', err);
-					library.changeUpdatingGameState(false);
-					library.cleanTemporaryFiles();
-				}
-			}).catch(err => {				
-				console.error('Failed extracting archive:', err);
-				library.changeUpdatingGameState(false);
-				library.cleanTemporaryFiles();
-			});
-		} else {
-			console.error('Failed downloading archive:', stdout);
-			library.changeUpdatingGameState(false);
-			library.cleanTemporaryFiles();
-		}
-	}).catch(err => {
-		console.error('Failed downloading archive:', err);
+	
+	const tempArchivePath = await resolve(await appCacheDir() + `/${settings.update_type}.zip`);
+	
+	library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}/0`, tempArchivePath, (progress) => {
+		library.changeProgressState(progress.current, progress.total, strings.progress.downloadingGame, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), progress.percent + '%');
+	}).then(async (r) => {
+		await library.unzipArchive(tempArchivePath, settings.resource_path, "Game");
+		await library.addFolderToSQL(settings.resource_path, true);
+		
+		library.changeProgressState(0, 0, '', '', '', '');
+		
+		if(localStorage.update_time == 0) library.sendNotification(strings.notifications.gameInstalled.title, strings.notifications.gameInstalled.description);
+		else library.sendNotification(strings.notifications.gameUpdated.title, strings.notifications.gameUpdated.description);
+		
+		console.log('Game was successfully installed!');
+		localStorage.update_time = lastUpdateTimestamp;
+		
 		library.changeUpdatingGameState(false);
+		library.cleanTemporaryFiles();
+	}).catch(err => {
+		console.error('Failed downloading game:', err);
+		
+		library.changeProgressState(0, 0, '', '', '', '');
+		library.changeUpdatingGameState(false);
+		
 		library.cleanTemporaryFiles();
 	});
 }
@@ -204,10 +230,12 @@ library.installGame = async function() {
 library.cleanTemporaryFiles = async function(patchTimestamp = 0) {
 	const settings = await library.getSettings();
 	const configPath = await appCacheDir();
-	await remove(configPath + "/temp.7z").catch(err => {console.log("Temporary game archive was not found. Nothing to delete!");});
+	
+	await remove(configPath + `/${settings.update_type}.zip`).catch(err => console.log("Temporary game archive was not found. Nothing to delete!"));
+	
 	if(patchTimestamp != 0) {
-		await remove(configPath + "/patch_" + patchTimestamp + ".7z").catch(err => {console.log("Temporary patch archive was not found. 🤨");});
-		await remove(configPath + "/patch_" + patchTimestamp).catch(err => {console.log("Temporary patch folder was not found. 🤨");});
+		await remove(configPath + "/patch_" + patchTimestamp + ".zip").catch(err => console.log("Temporary patch archive was not found."));
+		await remove(configPath + "/patch_" + patchTimestamp).catch(err => console.log("Temporary patch folder was not found."));
 	}
 }
 
@@ -244,121 +272,144 @@ library.changePendingUpdateState = async function(state) {
 library.openOrInstallGame = async function() {
 	if(isGameRunning) return;
 	if(isPendingUpdate) return library.updateGame();
+	
 	clearInterval(gameCheckInterval);
+	
 	const settings = await library.getSettings();
+	
 	await library.changeIsGameStartingState(true);
-	await open(await join(settings.resource_path, settings.game_exe)).then(res => {
+	
+	await openPath(await join(settings.resource_path, settings.game_exe)).then(res => {
 		library.changeIsGameStartingState(false);
 		library.changeIsGameRunningState(true);
-		setTimeout(() => {const gameCheckInterval = setInterval(() => library.checkProcess(settings.game_exe), 500)}, 1250);
+		
+		setTimeout(() => {const gameCheckInterval = setInterval(() => library.checkProcess(settings.game_exe), 1500)}, 2000);
 	}).catch(err => {
 		library.changeIsGameStartingState(false);
 		library.changeIsGameRunningState(false);
+		
 		console.log("Failed to run game:", err);
+		
 		library.installGame();
 	})
 }
 
 library.updateGame = async function() {
 	if(window.isUpdatingGame) return;
+	
 	const settings = await library.getSettings();
 	if(settings.update_time == 0) return library.installGame();
+	
 	library.changePendingUpdateState(false);
 	library.changeUpdatingGameState(true);
+	
 	var i = 0;
 	for(i = 0; i < new_updates.length; i++) {
 		await library.patchGame(new_updates[i]);
 	}
+	
+	library.changeProgressState(0, 0, '', '', '', '');
+	
 	const lastUpdateTimestamp = new_updates[new_updates.length - 1];
+	
 	library.sendNotification(strings.notifications.gameUpdated.title, strings.notifications.gameUpdated.description);
+	
 	console.log('Game successfully updated!');
+	
 	library.changeUpdatingGameState(false);
 	library.cleanTemporaryFiles();
+	
 	localStorage.update_time = lastUpdateTimestamp;
 }
 
-library.getLatestUpdateTimestamp = async function() {
-	const settings = await library.getSettings();
-	return new Promise(r => {
-		fetch(settings.updates_api_url + "lastUpdate").then(res => res.json()).then(response => {
-			r(response.timestamp);
-		}).catch(err => {
-			console.error('Failed getting update time:', err);
-			r(0);
-		});
-	});
-}
-
 library.patchGame = async function(patchTimestamp) {
-	const settings = await library.getSettings();
-	const patchArchivePath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp + ".7z");
-	const patchFolderPath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp);
-	console.log('Downloading patch ' + patchTimestamp + '...');
-	return new Promise(r => {
-		invoke('download_file', { url: settings.updates_api_url + "download/" + patchTimestamp, tempPath: patchArchivePath}).then(stdout => {
-			if(stdout === null) {
-				console.log('Unpacking patch ' + patchTimestamp + '...');
-				invoke("unpack_archive", { archivePath: patchArchivePath, extractPath: patchFolderPath}).then(async function(stdout) {
-					if(stdout === null) {
-						console.log('Patching ' + patchTimestamp + '...');
-						const patchFiles = await library.recursiveReadDir(patchFolderPath, patchFolderPath);
-						recursive_check = [];
-						var i = 0;
-						const patchedFiles = [];
-						const downloadedFiles = [];
-						const deletedFiles = [];
-						for(i = 0; i < patchFiles.length; i++) {
-							var patchFunction = patchFiles[i].slice(-2);
-							var patchFile = patchFiles[i].slice(0, patchFiles[i].length - 2);
-							const patchPath = await join(settings.resource_path, patchFile);
-							const fullPatchPath = await join(patchFolderPath, patchFile + ".p");
-							switch(patchFunction) {
-								case '.p':
-									const check = await Command.create("bin/hpatch.exe", [patchPath, fullPatchPath, patchPath + "_new"], { encoding: "utf-8" }).execute();
-									await remove(patchPath).catch(err => {console.error(err);});
-									await rename(patchPath + "_new", patchPath).catch(err => {console.error(err);});
-									patchedFiles.push(patchFile);
-									console.log("Patched", patchFile);
-									break;
-								case '.m':
-									downloadedFiles.push(patchFile);
-									console.log("Will download", patchFile);
-									break;
-								case '.d':
-									await remove(patchPath).catch(err => {console.error(err);});
-									deletedFiles.push(patchFile);
-									console.log("Removed", patchFile);
-									break;
-							}
-						}
-						if(patchedFiles.length > 0) await library.addFilesToSQL(patchedFiles);
-						if(downloadedFiles.length > 0) {
-							await library.downloadSpecificFiles(downloadedFiles);
-							await library.addFilesToSQL(downloadedFiles);
-						}
-						if(deletedFiles.length > 0) await library.removeFilesFromSQL(deletedFiles);
-						await library.removeEmptyFolders();
-						game_folders = [];
-						library.cleanTemporaryFiles(patchTimestamp);
-						r(true);
-					} else {
-						console.error('Failed extracting archive:', err);
-						library.cleanTemporaryFiles();
-						r(false);
-					}
-				}).catch(err => {				
-					console.error('Failed extracting archive:', err);
-					library.cleanTemporaryFiles();
-					r(false);
-				});
-			} else {
-				console.error('Failed downloading archive:', stdout);
-				library.cleanTemporaryFiles();
-				r(false);
+	return new Promise(async (r) => {
+		const settings = await library.getSettings();
+		
+		const patchArchivePath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp + ".zip");
+		const patchFolderPath = await resolve(await appCacheDir() + "/patch_" + patchTimestamp);
+		
+		console.log(`Downloading patch ${patchTimestamp}...`);
+		library.downloadFile(`${settings.updates_api_url}download/${settings.update_type}/${patchTimestamp}`, patchArchivePath, (progress) => {
+			library.changeProgressState(progress.current, progress.total, strings.progress.downloadingPatch, printf(strings.progress.megabytes, Math.round(progress.current / 104857.6) / 10), printf(strings.progress.megabytes, Math.round(progress.total / 104857.6) / 10), progress.percent + '%');
+		}).then(async (res) => {
+			library.changeUpdatingGameState(true);
+			library.changeIsCheckingUpdateState(false);
+			
+			console.log(`Unzipping patch ${patchTimestamp}...`);
+			await library.unzipArchive(patchArchivePath, patchFolderPath, 'Patch');
+			
+			console.log(`Patching ${patchTimestamp}...`);
+			
+			const patchFiles = await library.recursiveReadDir(patchFolderPath, patchFolderPath);
+			
+			const patchedFiles = [];
+			const downloadedFiles = [];
+			const deletedFiles = [];
+			
+			recursive_check = [];
+			var i = 0;
+			
+			var getPluralCurrent = await library.getPluralType(0);
+			var getPluralTotal = await library.getPluralType(patchFiles.length);
+			
+			var percent = 0;
+			
+			library.changeProgressState(0, patchFiles.length, strings.progress.patchingGame, printf(strings.progress['files-' + getPluralCurrent], 0), printf(strings.progress['files-' + getPluralTotal], patchFiles.length), percent + '%');
+			
+			for(i = 0; i < patchFiles.length; i++) {
+				const patchFunction = patchFiles[i].slice(-2);
+				const patchFile = patchFiles[i].slice(0, patchFiles[i].length - 2);
+				
+				const patchPath = await join(settings.resource_path, patchFile);
+				const fullPatchPath = await join(patchFolderPath, patchFile + patchFunction);
+				
+				switch(patchFunction) {
+					case '.p':
+						const check = await Command.create("bin/hpatch.exe", [patchPath, fullPatchPath, patchPath + "_new"], { encoding: "utf-8" }).execute();
+						
+						await remove(patchPath).catch(err => {console.error(err);});
+						await rename(patchPath + "_new", patchPath).catch(err => console.error("Failed renaming:", err));
+						
+						patchedFiles.push(patchFile);
+						console.log("Patched", patchFile);
+						break;
+					case '.m':
+						await rename(fullPatchPath, patchPath).catch(err => console.error("Failed moving:", err));
+						
+						downloadedFiles.push(patchFile);
+						console.log("Moved", patchFile);
+						break;
+					case '.d':
+						await remove(patchPath).catch(err => {console.error("Failed removing:", err);});
+						
+						deletedFiles.push(patchFile);
+						console.log("Removed", patchFile);
+						break;
+				}
+				
+				getPluralCurrent = await library.getPluralType(i);
+				getPluralTotal = await library.getPluralType(patchFiles.length);
+				
+				percent = await (Math.round((i / patchFiles.length) * 1000) / 10);
+				
+				library.changeProgressState(i, patchFiles.length, strings.progress.patchingGame, printf(strings.progress['files-' + getPluralCurrent], i), printf(strings.progress['files-' + getPluralTotal], patchFiles.length), percent + '%');
 			}
+			
+			if(patchedFiles.length > 0) await library.addFilesToSQL(patchedFiles);
+			if(downloadedFiles.length > 0) await library.addFilesToSQL(downloadedFiles);
+			if(deletedFiles.length > 0) await library.removeFilesFromSQL(deletedFiles);
+			await library.removeEmptyFolders();
+			game_folders = [];
+			
+			library.cleanTemporaryFiles(patchTimestamp);
+			
+			r(true);
 		}).catch(err => {
-			console.error('Failed downloading archive:', err);
+			console.error(`Failed downloading patch ${patchTimestamp}:`, err);
+			
 			library.cleanTemporaryFiles();
+			
 			r(false);
 		});
 	});
@@ -366,12 +417,16 @@ library.patchGame = async function(patchTimestamp) {
 
 library.recursiveReadDir = async function(parent, initialParent) {
 	const dirEntries = await readDir(parent, { baseDir: BaseDirectory.Cache });
+	
 	for(const entry of dirEntries) {
 		const onlyFilePath = parent.substr(initialParent.length + await sep().length);
+		
 		if(entry.isDirectory) {
 			const folderPath = onlyFilePath.length != 0 ? await join(onlyFilePath, entry.name) : entry.name;
 			game_folders.push(folderPath);
+			
 			const dir = await join(parent, entry.name);
+			
 			await library.recursiveReadDir(dir, initialParent);
 		} else {
 			const filePath = onlyFilePath.length != 0 ? await join(onlyFilePath, entry.name) : entry.name;
@@ -381,30 +436,67 @@ library.recursiveReadDir = async function(parent, initialParent) {
 	return recursive_check;
 }
 
-library.addFolderToSQL = async function(folder) {
+library.addFolderToSQL = async function(folder, showProgressBar = false) {
 	const allFiles = await library.recursiveReadDir(folder, folder);
-	await library.addFilesToSQL(allFiles);
-	await library.addGameFoldersToSQL(game_folders);
+	
+	await library.addFilesToSQL(allFiles, showProgressBar);
+	await library.addGameFoldersToSQL(game_folders, showProgressBar);
+	
 	recursive_check = game_folders = [];
 }
 
-library.addFilesToSQL = async function(allFiles) {
+library.addFilesToSQL = async function(allFiles, showProgressBar = false) {
 	const settings = await library.getSettings();
+	
+	if(showProgressBar) {
+		var percent = 0;
+		var getPluralCurrent = await library.getPluralType(0);
+		var getPluralTotal = await library.getPluralType(allFiles.length);
+			
+		library.changeProgressState(0, allFiles.length, strings.progress.savingFiles, printf(strings.progress['files-' + getPluralCurrent], 0), printf(strings.progress['files-' + getPluralTotal], allFiles.length), percent + '%');
+	}
+	
 	var i = 0;
 	for(i = 0; i < allFiles.length; i++) {
-		const fileRelativePath = allFiles[i];
-		const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, fileRelativePath)}) ?? 'MD5 failed';
-		await db.execute("INSERT INTO files (file, md5) VALUES($1, $2) ON CONFLICT(file) DO UPDATE SET md5 = $2", [fileRelativePath, md5]);
+		await db.execute("INSERT INTO files (file, md5) VALUES($1, '') ON CONFLICT(file) DO UPDATE SET md5 = ''", [allFiles[i]]);
+		
+		if(showProgressBar) {
+			percent = await (Math.round((i / allFiles.length) * 1000) / 10);
+			getPluralCurrent = await library.getPluralType(i);
+			getPluralTotal = await library.getPluralType(allFiles.length);
+				
+			library.changeProgressState(i, allFiles.length, strings.progress.savingFiles, printf(strings.progress['files-' + getPluralCurrent], i), printf(strings.progress['files-' + getPluralTotal], allFiles.length), percent + '%');
+		}
 	}
+	
+	library.changeProgressState(0, 0, '', '', '', '');
 }
 
-library.addGameFoldersToSQL = async function(allFolders) {
+library.addGameFoldersToSQL = async function(allFolders, showProgressBar = false) {
 	const settings = await library.getSettings();
+	
+	if(showProgressBar) {
+		var percent = 0;
+		var getPluralCurrent = await library.getPluralType(0);
+		var getPluralTotal = await library.getPluralType(allFolders.length);
+			
+		library.changeProgressState(0, allFolders.length, strings.progress.savingFiles, printf(strings.progress['files-' + getPluralCurrent], 0), printf(strings.progress['files-' + getPluralTotal], allFolders.length), percent + '%');
+	}
+	
 	var i = 0;
 	for(i = 0; i < allFolders.length; i++) {
-		const folderRelativePath = allFolders[i];
-		await db.execute("INSERT INTO folders (folder) VALUES($1) ON CONFLICT(folder) DO UPDATE SET folder = $1", [folderRelativePath]);
+		await db.execute("INSERT INTO folders (folder) VALUES($1) ON CONFLICT(folder) DO UPDATE SET folder = $1", [allFolders[i]]);
+		
+		if(showProgressBar) {
+			percent = await (Math.round((i / allFolders.length) * 1000) / 10);
+			getPluralCurrent = await library.getPluralType(i);
+			getPluralTotal = await library.getPluralType(allFolders.length);
+				
+			library.changeProgressState(i, allFolders.length, strings.progress.savingFolders, printf(strings.progress['files-' + getPluralCurrent], i), printf(strings.progress['files-' + getPluralTotal], allFolders.length), percent + '%');
+		}
 	}
+	
+	library.changeProgressState(0, 0, '', '', '', '');
 }
 
 library.removeFilesFromSQL = async function(allFiles) {
@@ -414,26 +506,52 @@ library.removeFilesFromSQL = async function(allFiles) {
 
 library.uninstallGame = async function() {
 	if(window.isUpdatingGame) return;
+	
 	const settings = await library.getSettings();
-	console.log('Deleting game...');
 	library.changeUpdatingGameState(true);
+	
+	console.log('Deleting game...');
+	
 	const gameFiles = await db.select("SELECT file FROM files");
+	
+	var percent = 0;
+	var getPluralCurrent = await library.getPluralType(0);
+	var getPluralTotal = await library.getPluralType(gameFiles.length);
+				
+	library.changeProgressState(0, gameFiles.length, strings.progress.deletingGame, printf(strings.progress['files-' + getPluralCurrent], 0), printf(strings.progress['files-' + getPluralTotal], gameFiles.length), percent + '%');
+	
 	var i = 0;
 	for(i = 0; i < gameFiles.length; i++) {
 		const gameFile = gameFiles[i].file;
+		
 		await remove(await join(settings.resource_path, gameFile)).catch(err => console.error("File " + gameFile + " was not found."));
+		
+		percent = await (Math.round((i / gameFiles.length) * 1000) / 10);
+		getPluralCurrent = await library.getPluralType(i);
+		getPluralTotal = await library.getPluralType(gameFiles.length);
+				
+		library.changeProgressState(i, gameFiles.length, strings.progress.deletingGame, printf(strings.progress['files-' + getPluralCurrent], i), printf(strings.progress['files-' + getPluralTotal], gameFiles.length), percent + '%');
 	}
+	
 	const gameFolders = await db.select("SELECT folder FROM folders");
 	var i = 0;
 	for(i = 0; i < gameFolders.length; i++) game_folders.push(gameFolders[i].folder);
+	
 	await library.removeEmptyFolders();
+	
 	await db.execute("DELETE FROM files");
 	await db.execute("DELETE FROM folders");
+	
 	localStorage.update_time = 0;
+	
 	library.sendNotification(strings.notifications.gameDeleted.title, strings.notifications.gameDeleted.description);
 	console.log('Game was successfully deleted! ...');
+	
+	library.changeProgressState(0, 0, '', '', '', '');
+	
 	library.changePendingUpdateState(true);
 	library.changeUpdatingGameState(false);
+	
 	library.checkUpdates();
 }
 
@@ -444,6 +562,18 @@ library.removeEmptyFolders = async function() {
 		const folderPath = game_folders[i];
 		remove(await join(settings.resource_path, folderPath), { recursive: false }).catch(err => console.error("Folder " + folderPath + " is not empty/was not found."));
 	}
+}
+
+library.getLatestUpdateTimestamp = async function(extraType = '') {
+	const settings = await library.getSettings();
+	return new Promise(r => {
+		fetch(`${settings.updates_api_url}version/${settings.update_type}${extraType}`).then(res => res.json()).then(response => {
+			r(response.timestamp);
+		}).catch(err => {
+			console.error('Failed getting update time:', err);
+			r(0);
+		});
+	});
 }
 
 library.checkProcess = async function(process) {
@@ -459,60 +589,6 @@ library.checkProcess = async function(process) {
 	});
 }
 
-library.verifyGameFilesIntegrity = async function() {
-	if(window.isUpdatingGame) return;
-	const settings = await library.getSettings();
-	console.log("Verifying game files integrity...");
-	library.changeUpdatingGameState(true);
-	const gameFiles = await db.select("SELECT * FROM files");
-	var i = 0;
-	const failedFiles = [];
-	for(i = 0; i < gameFiles.length; i++) {
-		const gameFile = gameFiles[i].file;
-		try {
-			const md5 = await invoke('get_file_md5', {filePath: await join(settings.resource_path, gameFile)});
-			if(gameFiles[i].md5 != md5) failedFiles.push(gameFile);
-		} catch(e) {
-			console.log('File', gameFile, 'was not found');
-			failedFiles.push(gameFile);
-		}
-	}
-	if(failedFiles.length == 0) {
-		library.changeUpdatingGameState(false);
-		console.log('All files are fine!');
-	} else {
-		console.log("Found damaged files!");
-		await library.downloadSpecificFiles(failedFiles);
-		library.changeUpdatingGameState(false);
-	}
-}
-
-library.downloadSpecificFiles = async function(downloadFiles) {
-	return new Promise(async function(r) {
-		const settings = await library.getSettings();
-		console.log("Downloading some specific files...");
-		const downloadArchivePath = await resolve(await appCacheDir() + "/download.7z");
-		invoke('download_archive', { url: settings.updates_api_url + "files", tempPath: downloadArchivePath, files: JSON.stringify({ files: downloadFiles })}).then(stdout => {
-			if(stdout == null) {
-				console.log('Unpacking downloaded files...');
-				invoke("unpack_archive", { archivePath: downloadArchivePath, extractPath: settings.resource_path}).then(async function(stdout) {
-					if(stdout == null) {
-						console.log('Extracted downloaded files!');
-						await remove(downloadArchivePath).catch(err => {console.error(err);});
-						r(true)
-					} else {
-						console.error('Failed to extract files:', stdout);
-						r(false);
-					}
-				});
-			} else {
-				console.error('Failed to download files:', stdout);
-				r(false);
-			}
-		});
-	});
-}
-
 library.getProfile = function(accountID) {
 	return new Promise(async function(r) {
 		const settings = await library.getSettings();
@@ -524,7 +600,7 @@ library.getProfile = function(accountID) {
 
 library.openGameFolder = async function() {
 	const settings = await library.getSettings();
-	open(settings.resource_path);
+	openPath(settings.resource_path);
 }
 
 library.sendNotification = async function(title, body) {
@@ -533,49 +609,97 @@ library.sendNotification = async function(title, body) {
 }
 
 library.checkIfPlayerIsLoggedIn = async function() {
-	if(!localStorage.auth.length) return false;
+	if(!localStorage.auth || !localStorage.auth.length) return false;
 	const settings = await library.getSettings();
 	fetch(settings.dashboard_api_url + "login.php?auth=" + localStorage.auth).then(r => r.json()).then(response => {
 		if(!response.success) {
 			library.logout();
 			return false;
 		}
+		
+		localStorage.username = response.user;
+		localStorage.color = response.color;
+		localStorage.accountID = response.accountID;
+		localStorage.main_icon = response.mainIcon;
+		localStorage.clan_name = response.clan.name;
+		localStorage.clan_color = response.clan.color;
+		document.dispatchEvent(accountChangeEvent);
 		return true;
 	});
 }
 
+
 library.logout = function() {
-	localStorage.username = '';
 	localStorage.auth = '';
+	localStorage.username = '';
 	localStorage.color = '';
 	localStorage.accountID = 0;
+	localStorage.main_icon = 'https://gdicon.oat.zone/icon.png?type=cube&value=1&color1=0&color2=3';
+	localStorage.clan_name = '';
+	localStorage.clan_color = '';
+	document.dispatchEvent(accountChangeEvent);
 }
 
-library.timeConverter = function(timestamp, min = false) { // This is function from old launcher version, so it was written poor
-	const a = new Date(timestamp * 1000);
-	var months = '';
-	if(!min) months = [strings.months.full.january, strings.months.full.february, strings.months.full.march, strings.months.full.april, strings.months.full.may, strings.months.full.june, strings.months.full.july, strings.months.full.august, strings.months.full.september, strings.months.full.october, strings.months.full.november, strings.months.full.december];
-	else months = [strings.months.short.january, strings.months.short.february, strings.months.short.march, strings.months.short.april, strings.months.short.may, strings.months.short.june, strings.months.short.july, strings.months.short.august, strings.months.short.september, strings.months.short.october, strings.months.short.november, strings.months.short.december];
-	const year = a.getFullYear();
-	const month = months[a.getMonth()];
-	const date = a.getDate();
-	var time = '';
-	if(!min) time = date + ' ' + month + ' ' + year;
-	else {
-		const b = new Date();
-		if(a.getFullYear() == b.getFullYear()) time = date + ' ' + month;
-		else time = date + ' ' + month + ' ' + year;
+library.timeConverter = function(timestamp, min = false) {
+	if(!min) {
+		const time = new Date(timestamp * 1000);
+		const dayNumber = time.getDate();
+		const day = dayNumber < 10 ? '0' + String(dayNumber) : dayNumber;
+		const monthNumber = time.getMonth() + 1;
+		const month = monthNumber < 10 ? '0' + String(monthNumber) : monthNumber;
+		return day + '.' + month + '.' + time.getFullYear();
 	}
-	return time;
+	
+	const currentTime = new Date();
+	var passedTime = Math.round(currentTime.getTime() / 1000) - timestamp;
+	var unitType = '';
+	
+	switch(true) {
+		case passedTime >= 31536000:
+			passedTime = Math.round(passedTime / 31536000);
+			unitType = 'year';
+			break;
+		case passedTime >= 2592000:
+			passedTime = Math.round(passedTime / 2592000);	
+			unitType = 'month';
+			break;
+		case passedTime >= 604800:
+			passedTime = Math.round(passedTime / 604800);
+			unitType = 'week';
+			break;
+		case passedTime >= 86400:
+			passedTime = Math.round(passedTime / 86400);
+			unitType = 'day';
+			break;
+		case passedTime >= 3600:
+			passedTime = Math.round(passedTime / 3600);
+			unitType = 'hour';
+			break;
+		case passedTime >= 60:
+			passedTime = Math.round(passedTime / 60);
+			unitType = 'minute';
+			break;
+		case passedTime >= 0:
+			unitType = 'second';
+			break;
+	}
+	
+	const options = {
+		numeric: "auto",
+		style: "short"
+	}
+	
+	const rtf = new Intl.RelativeTimeFormat(localStorage.language, options);
+	return rtf.format(-1 * passedTime, unitType);
 }
 
 library.checkLauncherUpdates = function() {
 	return new Promise(r => {
 		library.getSettings().then(settings => {		
-			fetch(settings.updates_api_url + "launcher").then(r => r.text()).then(async function(response) {
+			fetch(`${settings.updates_api_url}version/${settings.update_type}-launcher`).then(r => r.text()).then(async function(response) {
 				const version = await getVersion();
 				if(version != response) {
-					open("updater.exe").then(r => {
+					openPath("updater.exe").then(r => {
 						exit(0);
 					});
 				} else {
@@ -616,28 +740,28 @@ library.changeAccentColorSetting = function(doUseAccentColor) {
 
 library.getNotifications = function() {
 	return new Promise(async function(r) {
-		r({ notifies: [] });
-		// if(!localStorage.auth.length) r({ notifies: [] }); // Notifications currently only are part of my GDPS
+		if(!localStorage.auth.length) r({ notifies: [] });
+		
 		const settings = await library.getSettings();
 		fetch(settings.dashboard_api_url + "notify.php?auth=" + localStorage.auth).then(res => res.json()).then(response => {
-			if(!response.success) r({ notifies: [] });
+			if(!response.success || !response.notifies) return r({ notifies: [] });
 			
-			hasNewNotifications = response.notifies.some(notification => !notification.checked);
+			hasNewNotifications = response.notifies.some(notification => !notification.checked && notification.time > localStorage.notifications_check_time);
 			
 			let notificationChangeEvent = new CustomEvent("notificationChange", { detail: response });
 			document.dispatchEvent(notificationChangeEvent);
 			
-			if(isNotificationsLoading) {
-				if(response.counts.new > 0) {
-					if(response.counts.new == 1) {
-						let unreadNotification = response.notifies.filter((notification) => !notification.checked)[0].action;
-						let notificationTitle = library.getNotificationTitle(unreadNotification);
-						library.sendNotification(notificationTitle.title, notificationTitle.description);
-					} else {
-						let getPlural = library.getPluralType(response.counts.new);
-						library.sendNotification(printf(strings.notifications.several['title-' + getPlural], response.counts.new), printf(strings.notifications.several['description-' + getPlural], response.counts.new));
-					}
+			if(hasNewNotifications) {
+				if(response.counts.new == 1) {
+					let unreadNotification = response.notifies.filter((notification) => !notification.checked && notification.time > localStorage.notifications_check_time)[0].action;
+					let notificationTitle = library.getNotificationTitle(unreadNotification);
+					library.sendNotification(notificationTitle.title, notificationTitle.description);
+				} else {
+					let getPlural = library.getPluralType(response.counts.new);
+					library.sendNotification(printf(strings.notifications.several['title-' + getPlural], response.counts.new), printf(strings.notifications.several['description-' + getPlural], response.counts.new));
 				}
+				
+				localStorage.notifications_check_time = Math.round(Date.now() / 1000);
 			}
 			
 			isNotificationsLoading = false;
@@ -721,8 +845,12 @@ library.getNotificationTitle = function(action) {
 
 library.getPluralType = function(number) {
 	let lastCharacter = String(number).slice(-1);
+	
 	if(number == 1) return 1;
-	if((lastCharacter > 1 && lastCharacter < 5) || (number < 10 || number > 21)) return 2;
+	if(number == 0) return 3;
+	
+	if((lastCharacter > 1 && lastCharacter < 5) && (number < 10 || number > 20)) return 2;
+	
 	return 3;
 }
 
@@ -741,10 +869,125 @@ let accentColorChange = listen('accentColorChange', (event) => {
 	`;
 });
 
+library.changeProgressState = function(value, max, titleText, valueText, maxText, speedText) {
+	const percent = (max > 0) ? Math.round((value / max) * 1000) / 10 : 0;
+	
+	const appWindow = getCurrentWindow();
+	appWindow.setProgressBar({progress: Math.round(percent)});
+	
+	window.progress_value = value;
+	window.progress_max = max;
+	window.progress_title_text = titleText;
+	window.progress_value_text = valueText;
+	window.progress_max_text = maxText;
+	window.progress_speed_text = speedText;
+	
+	document.dispatchEvent(progressChangeEvent);
+}
+
+library.unzipArchive = async function(archivePath, targetPath, notificationName = 'Game') {
+	return new Promise(async(r) => {
+		const settings = await library.getSettings();
+		
+		let getPluralCurrent = await library.getPluralType(0);
+		
+		library.changeProgressState(0, 1, strings.progress[`extracting${notificationName}`], printf(strings.progress['files-' + getPluralCurrent], 0), '...', '0%');
+		
+		let fileExtractEvent = listen('fileExtract', async (event) => {
+			const filesCount = event.payload.split('|');
+			
+			getPluralCurrent = await library.getPluralType(filesCount[0]);
+			const getPluralTotal = await library.getPluralType(filesCount[1]);
+			
+			const percent = await (Math.round((filesCount[0] / filesCount[1]) * 1000) / 10);
+			
+			library.changeProgressState(filesCount[0], filesCount[1], strings.progress[`extracting${notificationName}`], printf(strings.progress['files-' + getPluralCurrent], filesCount[0]), printf(strings.progress['files-' + getPluralTotal], filesCount[1]), percent + '%');
+		});
+		
+		invoke('extract_archive', { archivePath: archivePath, outputPath: targetPath + await sep()}).then(e => {
+			library.changeProgressState(0, 0, '', '', '', '');
+			
+			r(true);
+		});		
+	});
+}
+
+library.calculatePercentNumber = async function(percent, totalNumber) {
+	return (percent / 100) * totalNumber;
+}
+
+library.downloadFile = async function(url, savePath, callback) {
+	return new Promise(async (r) => {
+		const fileSize = await library.getURLSize(url);
+		
+		const fileToken = "file-" + Math.random() + "-" + Math.random();
+		const file = await download(fileToken, url, savePath);
+		file.listen(async (updatedDownload) => {
+			const percent = updatedDownload.progress;
+			
+			callback({
+				current: await library.calculatePercentNumber(percent, fileSize),
+				total: fileSize,
+				percent: (Math.round(percent * 10) / 10)
+			});
+			
+			if(updatedDownload.state == 'COMPLETED') r(true);
+		});
+	   
+		file.start();
+	});
+}
+
+library.getURLSize = async function(url) {
+	return await fetch(url, {
+		method: 'OPTIONS'
+	}).then(res => res.text());
+}
+
+library.toast = function(text) {
+	toast.pop();
+	toast.push(text, {
+		duration: 1500,
+		intro: {
+			x: 0,
+			y: -100
+		}
+	});
+}
+
+window.debug = function(type, isTrue) {
+	switch(type) {
+		case 1:
+			library.changeIsCheckingUpdateState(isTrue);
+			break;
+		case 2:
+			library.changeUpdatingGameState(isTrue);
+			break;
+		case 3:
+			library.changeIsGameStartingState(isTrue);
+			break;
+		case 4:
+			library.changeIsGameRunningState(isTrue);
+			break;
+		case 5:
+			library.changePendingUpdateState(isTrue);
+			break;
+		case 6:
+			library.changePendingGeodeUpdateState(isTrue);
+			break;
+	}
+}
+
 library.styles = style;
 
 library.initializeEvents();
 
+library.initializeVariables();
+import languageStrings from './languages.js';
+let strings = languageStrings[localStorage.language];
+
 library.getNotifications();
+
+window.library = library;
 
 export default library;

@@ -98,8 +98,34 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Installing...",
+		"installingFirstPart": "Almost...",
+		"installingSecondPart": "...right now!",
+		"installingPressInstallFirstPart": "Press...",
+		"installingPressInstallSecondPart": "...install!",
+		
+		"downloadingGame": "Downloading game...",
+		"extractingGame": "Extracting game...",
+		"downloadingPatch": "Downloading patch...",
+		"extractingPatch": "Extracting patch...",
+		"patchingGame": "Patching game...",
+		"savingFiles": "Saving files...",
+		"savingFolders": "Saving folders...",
+		"deletingGame": "Deleting game...",
+		
+		"megabytes": "%1$s MB",
+		"downloadingLauncher": "Downloading launcher...",
+		
+		"files-1": "%1$s file",
+		"files-2": "%1$s files",
+		"files-3": "%1$s files"
+	},
+	
 	"settings": {
 		"title": "Settings",
+		
+		"notLoggedIn": "Login to account!",
 		
 		"launcher": "Launcher",
 		"notifications": {
@@ -158,6 +184,7 @@
 			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Username",
 		"password": "Password",
 		"loginButton": "Login to account",
@@ -170,37 +197,6 @@
 			"title": "Logout",
 			"description": "Are you sure you want to logout?",
 			"button": "Logout"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "january",
-			"february": "february",
-			"march": "march",
-			"april": "april",
-			"may": "may",
-			"june": "june",
-			"july": "july",
-			"august": "august",
-			"september": "september",
-			"october": "october",
-			"november": "november",
-			"december": "december"
-		},
-		"short": {
-			"january": "jan",
-			"february": "feb",
-			"march": "mar",
-			"april": "apr",
-			"may": "may",
-			"june": "jun",
-			"july": "jul",
-			"august": "aug",
-			"september": "sep",
-			"october": "oct",
-			"november": "nov",
-			"december": "dec"
 		}
 	}
 }

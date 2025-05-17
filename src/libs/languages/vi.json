@@ -98,8 +98,34 @@
 		}
 	},
 	
+	"progress": {
+		"installing": "Installing...",
+		"installingFirstPart": "Almost...",
+		"installingSecondPart": "...right now!",
+		"installingPressInstallFirstPart": "Press...",
+		"installingPressInstallSecondPart": "...install!",
+		
+		"downloadingGame": "Downloading game...",
+		"extractingGame": "Extracting game...",
+		"downloadingPatch": "Downloading patch...",
+		"extractingPatch": "Extracting patch...",
+		"patchingGame": "Patching game...",
+		"savingFiles": "Saving files...",
+		"savingFolders": "Saving folders...",
+		"deletingGame": "Deleting game...",
+		
+		"megabytes": "%1$s MB",
+		"downloadingLauncher": "Downloading launcher...",
+		
+		"files-1": "%1$s file",
+		"files-2": "%1$s files",
+		"files-3": "%1$s files"
+	},
+	
 	"settings": {
 		"title": "Cài đặt",
+		
+		"notLoggedIn": "Login to account!",
 		
 		"launcher": "Trình khởi chạy",
 		"notifications": {
@@ -143,64 +169,34 @@
 		"game": "Game",
 		"gameFolder": {
 			"title": "Folder của game",
-			"description": "Mở folder của game"
+			"description": "Mở folder của game (cho mấy thanh niên cài geode hoặc Megahack, tùy)"
 		},
 		"filesIntegrity": {
 			"title": "Kiểm tra độ toàn vẹn",
-			"description": "Kiểm tra độ toàn vẹn"
+			"description": "Kiểm tra độ toàn vẹn (thường dùng khi game gặp vấn đề)"
 		},
 		"deleteGame": {
 			"title": "Xóa game",
-			"description": "Xóa game ra khỏi máy tính"
+			"description": "Xóa game ra khỏi máy tính. Nghĩ kỹ trước khi làm"
 		},
 		"updatesInterval": {
-			"title": "Đang kiểm tra cập nhật",
-			"description": "Trình khởi chạy sẽ kiểm tra cập nhật game trong bao lâu"
+			"title": "Checking updates",
+			"description": "How often launcher will check game updates"
 		},
 		
+		"account": "Account",
 		"username": "Tên đăng nhập",
 		"password": "Mật khẩu",
 		"loginButton": "Đăng nhập",
 		"error": {
 			"wrongLoginOrPassword": "Sai tên đăng nhập/mật khẩu",
 			"activateAccount": "Chưa kích hoạt tài khoản",
-			"unexpectedError": "Lỗi không lường trước được"
+			"unexpectedError": "Lỗi không lường trước được (bất ngờ chưa)"
 		},
 		"logout": {
 			"title": "Đăng xuất",
 			"description": "Bạn có muốn đăng xuất không?",
 			"button": "Đăng xuất"
-		}
-	},
-	
-	"months": {
-		"full": {
-			"january": "Tháng 1",
-			"february": "Tháng 2",
-			"march": "Tháng 3",
-			"april": "Tháng 4",
-			"may": "Tháng 5",
-			"june": "Tháng 6",
-			"july": "Tháng 7",
-			"august": "Tháng 8",
-			"september": "Tháng 9",
-			"october": "Tháng 10",
-			"november": "Tháng 11",
-			"december": "Tháng 12"
-		},
-		"short": {
-			"january": "Thg 1,",
-			"february": "Thg 2,",
-			"march": "Thg 3,",
-			"april": "Thg 4,",
-			"may": "Thg 5,",
-			"june": "Thg 6,",
-			"july": "Thg 7,",
-			"august": "Thg 8,",
-			"september": "Thg 9,",
-			"october": "Thg 10,",
-			"november": "Thg 11,",
-			"december": "Thg 12,"
 		}
 	}
 }

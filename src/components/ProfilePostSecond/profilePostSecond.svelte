@@ -47,7 +47,7 @@
 		<div class={style.profilePostStats}>
 			<h2 class={style.profileUsername}>{username}</h2>
 			<div class={style.profilePostLikes}>
-				<h4 class={style.profilePostTime}>{library.timeConverter(timestamp, true)}</h4>
+				<h4 class={style.profilePostTime} on:click={() => library.toast(library.timeConverter(timestamp, false))}>{library.timeConverter(timestamp, true)}</h4>
 			</div>
 		</div>
 		<h3>
