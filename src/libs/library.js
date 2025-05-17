@@ -779,7 +779,7 @@ library.downloadFile = async function(url, savePath, callback) {
 				percent: (Math.round(percent * 10) / 10)
 			});
 			
-			if(updatedDownload.state == 'COMPLETED') r(true);
+			if(updatedDownload.state.toLowerCase() == 'completed') r(true);
 		});
 	   
 		file.start();
