@@ -923,6 +923,8 @@ library.downloadFile = async function(url, savePath, callback) {
 		const fileToken = "file-" + Math.random() + "-" + Math.random();
 		const file = await download(fileToken, url, savePath);
 		file.listen(async (updatedDownload) => {
+			if(updatedDownload.state.toLowerCase() == 'completed') return r(true);
+
 			const percent = updatedDownload.progress;
 			
 			callback({
@@ -930,8 +932,6 @@ library.downloadFile = async function(url, savePath, callback) {
 				total: fileSize,
 				percent: (Math.round(percent * 10) / 10)
 			});
-			
-			if(updatedDownload.state.toLowerCase() == 'completed') r(true);
 		});
 	   
 		file.start();
