@@ -23,10 +23,6 @@
 		updatingAnimation = window.gameUpdatingAnimation;
 	});
 	updatePlayButtonState();
-	
-	let unreadNotifications = window.notifications.filter((notification) => !notification.checked);
-	
-	document.addEventListener("notificationChange", (event) => unreadNotifications = event.detail.notifies.filter((notification) => !notification.checked));
 </script>
 
 <svelte:head>
@@ -47,17 +43,6 @@
 			{/if}
 		</div>
 	</div>
-	{#if unreadNotifications.length > 0}
-		<div class={style.mainPageNotificationsBlock}>
-			<h2 class={style.mainPageNotificationsH2}>
-				{strings.notifications.new}
-			</h2>
-			<hr class={style.notificationsHR}>
-			{#each unreadNotifications as notification, index}
-				<NotificationShort index={index} action={notification.action} timestamp={notification.time} />
-			{/each}
-		</div>
-	{/if}
 	
 	<div class={style.launchBlock}>
 		<Progress />
