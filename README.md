@@ -1,6 +1,6 @@
 # GCS-Client
 ### Это код лаунчера GreenCatsServer
-Присоединяйся к нам! https://gcs.icu
+Присоединяйся к нам! https://socials.gcs.skin
 ### Стэк
 Фронт:
 `SvelteKit`

@@ -120,7 +120,7 @@ library.initializeVariables = function() {
 	if(typeof localStorage.language == 'undefined') localStorage.language = 'en';
 	if(typeof localStorage.updates_interval == 'undefined') localStorage.updates_interval = 1800000;
 	if(typeof localStorage.theme == 'undefined') localStorage.theme = 'main';
-	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
+	if(typeof localStorage.main_icon == 'undefined') localStorage.main_icon = 'https://icons.gcs.skin/icon.png?type=cube&value=1&color1=0&color2=3';
 	if(typeof localStorage.clan_name == 'undefined') localStorage.clan_name = '';
 	if(typeof localStorage.clan_color == 'undefined') localStorage.clan_color = '';
 	if(typeof localStorage.update_type == 'undefined') localStorage.update_type = 'pc';
@@ -132,8 +132,8 @@ library.getSettings = function() {
 	return new Promise(async function(r) {
 		const resourcePath = await resourceDir();
 		r({
-			updates_api_url: "https://updates-new.gcs.icu/",
-			dashboard_api_url: "https://api.gcs.icu/",
+			updates_api_url: "https://updates.gcs.skin/",
+			dashboard_api_url: "https://api.gcs.skin/",
 			gdps_name: "GreenCatsServer",
 			game_exe: "GreenCatsServer.exe",
 			
@@ -634,7 +634,7 @@ library.logout = function() {
 	localStorage.username = '';
 	localStorage.color = '';
 	localStorage.accountID = 0;
-	localStorage.main_icon = 'https://icons.gcs.icu/icon.png?type=cube&value=1&color1=0&color2=3';
+	localStorage.main_icon = 'https://icons.gcs.skin/icon.png?type=cube&value=1&color1=0&color2=3';
 	localStorage.clan_name = '';
 	localStorage.clan_color = '';
 	document.dispatchEvent(accountChangeEvent);
@@ -923,6 +923,8 @@ library.downloadFile = async function(url, savePath, callback) {
 		const fileToken = "file-" + Math.random() + "-" + Math.random();
 		const file = await download(fileToken, url, savePath);
 		file.listen(async (updatedDownload) => {
+			if(updatedDownload.state.toLowerCase() == 'completed') return r(true);
+
 			const percent = updatedDownload.progress;
 			
 			callback({
@@ -930,8 +932,6 @@ library.downloadFile = async function(url, savePath, callback) {
 				total: fileSize,
 				percent: (Math.round(percent * 10) / 10)
 			});
-			
-			if(updatedDownload.state == 'COMPLETED') r(true);
 		});
 	   
 		file.start();
