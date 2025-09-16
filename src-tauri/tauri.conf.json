@@ -11,7 +11,7 @@
     "shortDescription": "Лаунчер для GreenCatsServer.",
     "longDescription": "Лаунчер для GreenCatsServer.",
     "copyright": "GreenCatsServer",
-    "publisher": "MegaSa1nt, GreenCatsServer",
+    "publisher": "GreenCatsServer",
     "icon": [
       "icons/lil.ico"
     ],
@@ -34,7 +34,7 @@
   },
   "productName": "GCS-Launcher",
   "mainBinaryName": "launcher",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "identifier": "sa1nt.gcs",
   "plugins": {},
   "app": {
