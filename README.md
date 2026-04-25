@@ -1,10 +1,1 @@
-# GCS-Client
-### Это код лаунчера GreenCatsServer
-Присоединяйся к нам! https://socials.gcs.skin
-### Стэк
-Фронт:
-`SvelteKit`
-`Vite`
-
-Десктоп:
-`Tauri`
+### [Код лаунчера GreenCatsServer переехал на другой аккаунт](https://github.com/GreenCatsServer/GCS-Launcher/tree/launcher)
