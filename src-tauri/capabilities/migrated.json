@@ -16,6 +16,7 @@
     "fs:allow-remove",
     "fs:allow-rename",
     "fs:allow-exists",
+    "fs:write-all",
     {
       "identifier": "fs:scope",
       "allow": [
@@ -32,6 +33,8 @@
     "process:allow-exit",
     "shell:default",
     "fs:default",
-    "process:default"
+    "process:default",
+    "download:default",
+    "download:allow-create"
   ]
 }

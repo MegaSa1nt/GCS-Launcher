@@ -50,7 +50,7 @@ button {
     align-items: center;
 	height: 100%;
 	width: 100%;
-	justify-content: space-around;
+	justify-content: space-evenly;
 }
 
 .login {
@@ -62,7 +62,7 @@ button {
 }
 
 .titlebar {
-  height: 30px;
+  height: 100%;
   user-select: none;
   display: flex;
   justify-content: flex-end;
@@ -70,7 +70,9 @@ button {
   top: 0;
   right: 0;
   z-index: 3;
-  width: 93%;
+  width: 100%;
+  
+  cursor: move;
 }
 
 .mahbody {
@@ -86,7 +88,6 @@ button {
     animation-duration: 1s;
     animation-iteration-count: infinite;
     animation-timing-function: linear;
-	width: 100px;
 }
 @keyframes rotation {
     0% {
@@ -95,6 +96,10 @@ button {
     100% {
         transform:rotate(360deg);
     }
+}
+
+img {
+	width: 100px;
 }
 
 progress::-webkit-progress-value {  
