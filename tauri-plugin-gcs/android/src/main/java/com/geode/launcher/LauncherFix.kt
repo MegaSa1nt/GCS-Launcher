@@ -13,7 +13,7 @@ object LauncherFix {
 
     external fun setOriginalDataPath(dataPath: String)
 
-    external fun performExceptionsRenaming()
+    external fun enableExceptionsRenaming()
 
-    external fun enableCustomSymbolList(symbolsPath: String)
+    external fun performPatches()
 }

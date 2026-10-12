@@ -110,7 +110,6 @@ class UserDirectoryProvider : DocumentsProvider() {
         }
 
         val name = file.name
-
         cursor.newRow().apply {
             add(DocumentsContract.Document.COLUMN_DOCUMENT_ID, getDocumentIdForFile(file))
             add(DocumentsContract.Document.COLUMN_MIME_TYPE, typeForFile(file))
@@ -118,9 +117,6 @@ class UserDirectoryProvider : DocumentsProvider() {
             add(DocumentsContract.Document.COLUMN_LAST_MODIFIED, file.lastModified())
             add(DocumentsContract.Document.COLUMN_FLAGS, flags)
             add(DocumentsContract.Document.COLUMN_SIZE, file.length())
-            if (file == rootDir) {
-                //add(DocumentsContract.Document.COLUMN_ICON, R.drawable.geode_logo)
-            }
         }
     }
 

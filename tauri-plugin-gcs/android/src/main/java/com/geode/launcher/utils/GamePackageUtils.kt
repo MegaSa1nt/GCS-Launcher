@@ -51,7 +51,8 @@ object GamePackageUtils {
         37L to "2.200",
         38L to "2.205",
         39L to "2.206",
-        40L to "2.2074" // ok
+        40L to "2.2074", // ok
+        41L to "2.2081",
     )
 
     /**
@@ -62,14 +63,25 @@ object GamePackageUtils {
         return gameVersionMap[versionCode] ?: getGameVersionString(packageManager)
     }
 
+    fun getSupportedUnifiedVersion(): String {
+        return gameVersionMap[Constants.SUPPORTED_VERSION_CODE] ?: Constants.SUPPORTED_VERSION_STRING
+    }
+
     fun detectAbiMismatch(context: Context, packageInfo: PackageInfo, loadException: Error): Boolean {
         val abi = LaunchUtils.applicationArchitecture
         val isExtracted =
             packageInfo.applicationInfo!!.flags and ApplicationInfo.FLAG_EXTRACT_NATIVE_LIBS == ApplicationInfo.FLAG_EXTRACT_NATIVE_LIBS
         val isSplit = (packageInfo.applicationInfo?.splitSourceDirs?.size ?: 0) > 1
 
+        val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            packageInfo.longVersionCode
+        } else {
+            @Suppress("DEPRECATION")
+            packageInfo.versionCode.toLong()
+        }
+
         val metadata =
-            "Geometry Dash metadata:\nSplit sources: $isSplit\nExtracted libraries: $isExtracted\nLauncher architecture: $abi"
+            "Geometry Dash metadata:\nSplit sources: $isSplit\nExtracted libraries: $isExtracted\nLauncher architecture: $abi\nGame version: $versionCode"
         Log.i("GeodeLauncher", metadata)
 
         // easiest check! these messages are hardcoded in bionic/linker/linker_phdr.cpp

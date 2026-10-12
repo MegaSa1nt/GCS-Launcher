@@ -10,6 +10,7 @@
     "shell:default",
     "shell:allow-open",
     "fs:default",
+    "fs:write-all",
     {
       "identifier": "fs:allow-remove",
       "allow": [

@@ -1,6 +1,7 @@
 package com.geode.launcher
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -11,13 +12,17 @@ import android.os.Environment
 import android.text.InputType
 import android.util.Log
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import androidx.core.view.updatePadding
 import com.customRobTop.BaseRobTopActivity
 import com.customRobTop.JniToCpp
 import com.geode.launcher.utils.Constants
@@ -26,7 +31,7 @@ import com.geode.launcher.utils.DownloadUtils
 import com.geode.launcher.utils.GamePackageUtils
 import com.geode.launcher.utils.GeodeUtils
 import com.geode.launcher.utils.LaunchUtils
-import org.cocos2dx.lib.Cocos2dxEditText
+import com.geode.launcher.utils.PreferenceUtils
 import org.cocos2dx.lib.Cocos2dxGLSurfaceView
 import org.cocos2dx.lib.Cocos2dxHelper
 import org.cocos2dx.lib.Cocos2dxRenderer
@@ -65,7 +70,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
     private var mHasWindowFocus = false
 
     private var displayMode = DisplayMode.DEFAULT
-    private var mChosenDisplayRate: Float? = null
+    private var mForceRefreshRate = false
     private var mLimitedRefreshRate: Int? = null
     private var mAspectRatio = 0.0f
     private var mScreenZoom = 1.0f
@@ -116,6 +121,13 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
             return
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                mGLSurfaceView?.sendKeyBack()
+            }
+        })
+        mGLSurfaceView?.manualBackEvents = true
     }
 
     private fun createVersionFile() {
@@ -130,9 +142,17 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         returnMessage: String? = null,
         returnExtendedMessage: String? = null
     ) {
-        Log.e("gcs", error.toString())
-        Log.e("gcs", returnMessage.toString())
-        Log.e("gcs", returnExtendedMessage.toString())
+        val launchIntent = packageManager.getLaunchIntentForPackage(packageName)!!.apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+
+            if (error != null && !returnMessage.isNullOrEmpty()) {
+                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_ERROR, error)
+                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_MESSAGE, returnMessage)
+                putExtra(LaunchUtils.LAUNCHER_KEY_RETURN_EXTENDED_MESSAGE, returnExtendedMessage)
+            }
+        }
+
+        startActivity(launchIntent)
     }
 
     private fun tryLoadGame() {
@@ -149,31 +169,59 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         tryLoadLibrary(gdPackageInfo, Constants.COCOS_LIB_NAME)
 
         if (GamePackageUtils.getGameVersionCode(packageManager) >= 39L) {
-            /*
-            val customSymbols = PreferenceUtils.get(this).getBoolean(PreferenceUtils.Key.CUSTOM_SYMBOL_LIST)
-            if (customSymbols) {
-                val symbolFile = File(LaunchUtils.getBaseDirectory(this), "exception_symbols.txt")
-                LauncherFix.enableCustomSymbolList(symbolFile.path)
-            }
-            */
-
             // this fix requires geode v3, which is 2.206+
             // there is a short period in which 2.206 users will still have geode v2, but whatever. ig
-            LauncherFix.performExceptionsRenaming()
+            LauncherFix.enableExceptionsRenaming()
         }
+
+        LauncherFix.performPatches()
 
         loadInternalMods()
 
-        setContentView(createView())
+        val baseView = createView()
+
+        if (!GeodeUtils.handleSafeArea && Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
+            val frameLayoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            val frameLayout = FrameLayout(this)
+            frameLayout.layoutParams = frameLayoutParams
+
+            frameLayout.setOnApplyWindowInsetsListener { v, insets ->
+                val displayInsets = insets.displayCutout
+                if (displayInsets != null) {
+                    v.updatePadding(
+                        left = displayInsets.safeInsetLeft,
+                        top = displayInsets.safeInsetTop,
+                        right = displayInsets.safeInsetRight,
+                        bottom = displayInsets.safeInsetBottom
+                    )
+                } else {
+                    v.updatePadding(
+                        left = 0, top = 0, right = 0, bottom = 0
+                    )
+                }
+                WindowInsets.CONSUMED
+            }
+
+            frameLayout.addView(baseView)
+            setContentView(frameLayout)
+        } else {
+            setContentView(baseView)
+        }
 
         setupPostLibraryLoad(gdPackageInfo)
 
-        try {
+        val geodeFailed = try {
             loadGeodeLibrary()
+            false
         } catch (e: UnsatisfiedLinkError) {
             handleGeodeException(e)
+            true
         } catch (e: Exception) {
             handleGeodeException(e)
+            true
         }
     }
 
@@ -314,7 +362,6 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         return "$sourceDir!/lib/$architecture/"
     }
 
-    @SuppressLint("UnsafeDynamicallyLoadedCode")
     private fun loadGeodeLibrary() {
         // Load Geode if exists
         // bundling the object with the application allows for nicer backtraces
@@ -323,42 +370,54 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             System.loadLibrary("geode")
             return
         } catch (e: UnsatisfiedLinkError) {
-            // but users may prefer it stored with data
-            val geodeFilename = LaunchUtils.geodeFilename
-            val geodePath = File(filesDir.path, geodeFilename)
-            if (geodePath.exists()) {
-                System.load(geodePath.path)
-                return
-            }
-
-            // you know zmx i have 0 clue what this does so im
-            // just gonna like copy the binary from external
-            // also i get 20 million permission denied errors
-            val externalGeodePath = LaunchUtils.getInstalledGeodePath(this)!!
-
-            val copiedPath = File(filesDir.path, "copied")
-            if (copiedPath.exists()) {
-                copiedPath.deleteRecursively()
-            }
-            copiedPath.mkdir()
-
-            val copiedGeodePath = File(copiedPath.path, "Geode.so")
-
-            if (externalGeodePath.exists()) {
-                DownloadUtils.copyFile(
-                    FileInputStream(externalGeodePath),
-                    FileOutputStream(copiedGeodePath)
-                )
-
-                if (copiedGeodePath.exists()) {
-                    println("Loading Geode from ${externalGeodePath.name}")
-                    System.load(copiedGeodePath.path)
-                    return
-                }
-            }
-
-            throw e
+           if (!loadExternalGeode()) {
+               throw e
+           }
         }
+    }
+
+    @SuppressLint("UnsafeDynamicallyLoadedCode")
+    private fun loadExternalGeode(): Boolean {
+        // but users may prefer it stored with data
+        val geodeFilename = LaunchUtils.geodeFilename
+        val geodePath = File(filesDir.path, geodeFilename)
+        if (geodePath.exists()) {
+            println("Loading Geode from ${geodePath.path}")
+            System.load(geodePath.path)
+            return true
+        }
+
+        // you know zmx i have 0 clue what this does so im
+        // just gonna like copy the binary from external
+        // also i get 20 million permission denied errors
+        val externalGeodePath = LaunchUtils.getInstalledGeodePath(this)
+            ?: return false
+
+        val copiedPath = File(filesDir.path, "copied")
+        if (copiedPath.exists()) {
+            copiedPath.deleteRecursively()
+        }
+        copiedPath.mkdir()
+
+        val copiedGeodePath = File(copiedPath.path, "Geode.so")
+
+        if (externalGeodePath.exists()) {
+            DownloadUtils.copyFile(
+                FileInputStream(externalGeodePath),
+                FileOutputStream(copiedGeodePath)
+            )
+
+            if (copiedGeodePath.exists()) {
+                // android 17 fix
+                copiedGeodePath.setWritable(false)
+
+                println("Loading Geode from ${externalGeodePath.name}")
+                System.load(copiedGeodePath.path)
+                return true
+            }
+        }
+
+        return false
     }
 
     private fun createView(): FrameLayout {
@@ -385,7 +444,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        val editText = Cocos2dxEditText(this)
+        val editText = AppCompatEditText(this)
         editText.layoutParams = editTextLayoutParams
         frameLayout.addView(editText)
 
@@ -402,7 +461,14 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         val renderer = Cocos2dxRenderer(glSurfaceView)
         glSurfaceView.setCocos2dxRenderer(renderer)
 
-        editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+        renderer.setFrameRate = mForceRefreshRate
+
+        val frameRate = mLimitedRefreshRate
+        if (frameRate != null) {
+            renderer.limitFrameRate(frameRate)
+        }
+
+        editText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
         glSurfaceView.cocos2dxEditText = editText
 
         return frameLayout
@@ -410,7 +476,7 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
     private fun setupUIState() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE
-        /*
+
         val preferenceUtils = PreferenceUtils.get(this)
 
         displayMode = DisplayMode.fromInt(
@@ -424,21 +490,24 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
         val limitedRefreshRate = preferenceUtils.getInt(PreferenceUtils.Key.LIMIT_FRAME_RATE).takeIf { it != 0 }
         mLimitedRefreshRate = limitedRefreshRate
 
-        val forceRefreshRate = preferenceUtils.getBoolean(PreferenceUtils.Key.FORCE_HRR)
-        if (forceRefreshRate && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            var chosenDisplay = display!!.supportedModes?.maxByOrNull { it.refreshRate }
+        mForceRefreshRate = true
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val chosenDisplay = display.supportedModes?.maxByOrNull { it.refreshRate }
             if (chosenDisplay != null) {
-                var chosenRefreshRate = chosenDisplay.refreshRate
-                println("Forcing a refresh rate of $chosenRefreshRate (display ${chosenDisplay.modeId})")
+                val chosenRefreshRate = chosenDisplay.refreshRate
+                println("setupUIState: Forcing a refresh rate of $chosenRefreshRate (display ${chosenDisplay.modeId})")
 
                 window.attributes.preferredRefreshRate = chosenRefreshRate
-                mChosenDisplayRate = chosenRefreshRate
+            } else {
+                println("setupUIState could not find a display to select refresh rate of...")
             }
         }
-        */
 
         if (displayMode == DisplayMode.FULLSCREEN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+            GeodeUtils.handleSafeArea = true
+        } else {
+            GeodeUtils.handleSafeArea = false
         }
 
         hideSystemUi()
@@ -471,13 +540,13 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
     private fun resumeGame() {
         mIsRunning = true
-        //Cocos2dxHelper.onResume()
+        Cocos2dxHelper.onResume()
         mGLSurfaceView?.onResume()
     }
 
     private fun pauseGame() {
         mIsRunning = false
-        //Cocos2dxHelper.onPause()
+        Cocos2dxHelper.onPause()
         mGLSurfaceView?.onPause()
     }
 
@@ -517,6 +586,8 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             AlertDialog.Builder(this)
                 .setTitle(title)
                 .setMessage(message)
+                // the button shouldn't do anything but close
+                .setPositiveButton("Close") { _, _ -> }
                 .show()
         }
     }
@@ -540,6 +611,14 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
             }
             GeodeUtils.CAPABILITY_TIMESTAMP_INPUT -> {
                 mGLSurfaceView?.sendTimestampEvents = true
+                true
+            }
+            GeodeUtils.CAPABILITY_RICH_INPUT -> {
+                mGLSurfaceView?.enableControllerEvents()
+                true
+            }
+            GeodeUtils.CAPABILITY_RESIZE_CALLBACK -> {
+                mGLSurfaceView?.supportsResizeEvents = true
                 true
             }
             else -> false
@@ -575,6 +654,51 @@ class GeometryDashActivity : AppCompatActivity(), Cocos2dxHelper.Cocos2dxHelperL
 
                 println("Copied internal mod $fileName")
             }
+        }
+    }
+
+    private fun copyGeodeResources() {
+         val resourcesDirectory = LaunchUtils.getGeodeResourcesDirectory(this)
+
+        val pathBase = "geode.loader"
+        val versionFilename = "version"
+
+        val bundledVersion = try {
+            assets.open("$pathBase/$versionFilename").bufferedReader().use {
+                it.readText()
+            }.trimEnd()
+        } catch (_: IOException) {
+            return
+        }
+
+        val versionFile = File(resourcesDirectory, versionFilename)
+        val resourcesVersion = if (versionFile.exists()) {
+            versionFile.readText().trimEnd()
+        } else null
+
+        if (bundledVersion == resourcesVersion) {
+            println("copyGeodeResources: found $resourcesVersion, expected $bundledVersion. No work needs to be done!")
+            return
+        }
+
+        if (resourcesDirectory.exists()) {
+            resourcesDirectory.deleteRecursively()
+        }
+        resourcesDirectory.mkdirs()
+
+        println("copyGeodeResources: found $resourcesVersion, expected $bundledVersion. Copying assets")
+
+        val fileListing = try {
+            assets.list(pathBase)
+        } catch (_: IOException) {
+            return
+        }
+
+        fileListing?.forEach { fileName ->
+            val resourceOutput = File(resourcesDirectory, fileName)
+
+            val resource = assets.open("$pathBase/$fileName")
+            DownloadUtils.copyFile(resource, resourceOutput.outputStream())
         }
     }
 

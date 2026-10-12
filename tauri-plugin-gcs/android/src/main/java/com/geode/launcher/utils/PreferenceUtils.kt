@@ -12,6 +12,12 @@ import androidx.lifecycle.LifecycleOwner
  */
 class PreferenceUtils(private val sharedPreferences: SharedPreferences) {
     companion object {
+        fun get(context: Context): PreferenceUtils {
+            val currentFileKey = ProfileManager.get(context).getCurrentFileKey()
+            val sharedPreferences = context.getSharedPreferences(currentFileKey, Context.MODE_PRIVATE)
+            return get(sharedPreferences)
+        }
+
         fun get(sharedPreferences: SharedPreferences): PreferenceUtils {
             return PreferenceUtils(sharedPreferences)
         }
@@ -20,32 +26,34 @@ class PreferenceUtils(private val sharedPreferences: SharedPreferences) {
     enum class Key {
         LOAD_AUTOMATICALLY,
         UPDATE_AUTOMATICALLY,
-        RELEASE_CHANNEL,
         CURRENT_VERSION_TAG,
         CURRENT_VERSION_TIMESTAMP,
         THEME,
         BLACK_BACKGROUND,
         CURRENT_RELEASE_MODIFIED,
-        LAST_DISMISSED_UPDATE,
         DISMISSED_GJ_UPDATE,
         LAUNCH_ARGUMENTS,
         LIMIT_ASPECT_RATIO,
         DISPLAY_MODE,
-        FORCE_HRR,
-        ENABLE_REDESIGN,
         RELEASE_CHANNEL_TAG,
         DEVELOPER_MODE,
         CLEANUP_APKS,
-        CUSTOM_SYMBOL_LIST,
         CUSTOM_ASPECT_RATIO,
         SCREEN_ZOOM,
         SCREEN_ZOOM_FIT,
-        LIMIT_FRAME_RATE
+        LIMIT_FRAME_RATE,
+        DISABLE_USER_THEME,
+        SELECTED_ICON,
+        WAIT_PERIOD,
+        LAST_UPDATE_CHECK_TIME,
+        LAST_LAUNCHER_UPDATE,
+        DISABLE_UPDATE_CACHE,
+        PREBUNDLED_GEODE_MIGRATION_PERFORMED,
     }
 
     private fun defaultValueForBooleanKey(key: Key): Boolean {
         return when (key) {
-            Key.UPDATE_AUTOMATICALLY, Key.FORCE_HRR -> true
+            Key.UPDATE_AUTOMATICALLY -> true
             else -> false
         }
     }
@@ -53,12 +61,14 @@ class PreferenceUtils(private val sharedPreferences: SharedPreferences) {
     private fun defaultValueForIntKey(key: Key) = when (key) {
         Key.DISPLAY_MODE -> if (this.getBoolean(Key.LIMIT_ASPECT_RATIO)) 1 else 0
         Key.SCREEN_ZOOM -> 100
+        Key.WAIT_PERIOD -> 3
         // people wanted a reset on nightly anyways, so this is a good excuse to do so
         else -> 0
     }
 
     private fun defaultValueForStringKey(key: Key) = when (key) {
         Key.CUSTOM_ASPECT_RATIO -> "16_9"
+        Key.SELECTED_ICON -> "default"
         else -> null
     }
 
@@ -66,27 +76,34 @@ class PreferenceUtils(private val sharedPreferences: SharedPreferences) {
         return when (key) {
             Key.LOAD_AUTOMATICALLY -> "PreferenceLoadAutomatically"
             Key.UPDATE_AUTOMATICALLY -> "PreferenceUpdateAutomatically"
-            Key.RELEASE_CHANNEL -> "PreferenceReleaseChannel"
             Key.CURRENT_VERSION_TAG -> "PreferenceCurrentVersionName"
             Key.CURRENT_VERSION_TIMESTAMP -> "PreferenceCurrentVersionDescriptor"
             Key.THEME -> "PreferenceTheme"
             Key.BLACK_BACKGROUND -> "PreferenceBlackBackground"
             Key.CURRENT_RELEASE_MODIFIED -> "PreferenceReleaseModifiedHash"
-            Key.LAST_DISMISSED_UPDATE -> "PreferenceLastDismissedUpdate"
             Key.DISMISSED_GJ_UPDATE -> "PreferenceDismissedGJUpdate"
             Key.LAUNCH_ARGUMENTS -> "PreferenceLaunchArguments"
             Key.LIMIT_ASPECT_RATIO -> "PreferenceLimitAspectRatio"
             Key.DISPLAY_MODE -> "PreferenceDisplayMode"
-            Key.FORCE_HRR -> "PreferenceForceHighRefreshRate"
-            Key.ENABLE_REDESIGN -> "PreferenceEnableRedesign"
             Key.RELEASE_CHANNEL_TAG -> "PreferenceReleaseChannelTag"
             Key.DEVELOPER_MODE -> "PreferenceDeveloperMode"
             Key.CLEANUP_APKS -> "PreferenceCleanupPackages"
-            Key.CUSTOM_SYMBOL_LIST -> "PreferenceCustomSymbolList"
             Key.CUSTOM_ASPECT_RATIO -> "PreferenceCustomAspectRatio"
             Key.SCREEN_ZOOM -> "PreferenceScreenZoom"
             Key.SCREEN_ZOOM_FIT -> "PreferenceScreenZoomFit"
             Key.LIMIT_FRAME_RATE -> "PreferenceLimitFrameRate"
+            Key.DISABLE_USER_THEME -> "PreferenceDisableUserTheme"
+            Key.SELECTED_ICON -> "PreferenceSelectedIcon"
+            Key.WAIT_PERIOD -> "PreferenceWaitPeriod"
+            Key.LAST_UPDATE_CHECK_TIME -> "PreferenceLastUpdateCheckTime"
+            Key.LAST_LAUNCHER_UPDATE -> "PreferenceLastLauncherUpdate"
+            Key.DISABLE_UPDATE_CACHE -> "PreferenceDisableUpdateCache"
+            Key.PREBUNDLED_GEODE_MIGRATION_PERFORMED -> "PreferencePrebundledGeodeMigrationPerformed"
+            // Key.RELEASE_CHANNEL -> "PreferenceReleaseChannel"
+            // Key.LAST_DISMISSED_UPDATE -> "PreferenceLastDismissedUpdate"
+            // Key.FORCE_HRR -> "PreferenceForceHighRefreshRate"
+            // Key.DISABLE_REDESIGN -> "PreferenceDisableRedesign"
+            // Key.CUSTOM_SYMBOL_LIST -> "PreferenceCustomSymbolList"
         }
     }
 

@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class androidx.work.impl.WorkDatabase_Impl { *; }
+-keep class * extends androidx.work.InputMerger {
+    <init>();
+}
+-keep class * extends androidx.work.ListenableWorker {
+    <init>(android.content.Context, androidx.work.WorkerParameters);
+}
+-keep class * extends androidx.room.RoomDatabase {
+    <init>();
+}
+-keep class org.fmod.** { *; }
+-keepclassmembers class org.fmod.** { *; }
+-keep class org.cocos2dx.lib.** { *; }
+-keep class com.customRobTop.** { *; }

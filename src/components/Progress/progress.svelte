@@ -1,7 +1,6 @@
 <script>
 	import { ArrowDownToLine } from 'lucide-svelte';
     import style from './style.module.scss';
-    import { page } from '$app/stores';
 	import library from '../../libs/library.js';
 	
 	let progressValue = window.progress_value;

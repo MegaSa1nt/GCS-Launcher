@@ -5,6 +5,7 @@ use std::path::Path;
 use std::io::{Read, Seek};
 use zip::read::ZipArchive;
 use tauri::{AppHandle, Emitter};
+use tauri::Manager;
 
 async fn extract_zip<R: Read>(app: AppHandle, reader: R, output_dir: &str) -> Result<(), String> where R: Seek {
     let mut archive = ZipArchive::new(reader).expect("[1] Invalid ZIP file");
@@ -53,7 +54,13 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
 		.plugin(tauri_plugin_gcs::init())
-		.plugin(tauri_plugin_download::init())
+		.plugin(tauri_plugin_download::Builder::new()
+            .on_setup(|app, config| {
+               config.store_dir(app.path().app_local_data_dir()?.join("store"));
+               config.download_dirs([app.path().download_dir()?]);
+               Ok(())
+            })
+            .build(),)
 		.invoke_handler(tauri::generate_handler![extract_archive])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

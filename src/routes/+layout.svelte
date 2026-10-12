@@ -9,7 +9,6 @@
 	import { invoke } from '@tauri-apps/api/core';
 	import { onNavigate } from '$app/navigation';
 	import library from '../libs/library.js';
-	import { page } from '$app/stores';
 
 	invoke("plugin:gcs|openInstallSettings");
 

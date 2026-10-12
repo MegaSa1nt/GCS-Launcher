@@ -48,8 +48,6 @@ object LaunchUtils {
      * Returns the directory that Geode/the game should base itself off of.
      */
     fun getBaseDirectory(context: Context, ignoreProfile: Boolean = false): File {
-        // deprecated, but seems to be the best choice of directory (i forced mat to test it)
-        // also, is getting the first item the correct choice here?? what do they mean
         @Suppress("DEPRECATION")
         val dir = context.externalMediaDirs.first()
 
@@ -58,6 +56,14 @@ object LaunchUtils {
         val noMediaPath = File(dir, ".nomedia")
         noMediaPath.createNewFile()
 
+        val currentProfile = ProfileManager.get(context).getCurrentProfile()
+        if (currentProfile != null && !ignoreProfile) {
+            val profile = File(dir, "profiles/$currentProfile/")
+            profile.mkdirs()
+
+            return profile
+        }
+
         return dir
     }
 
@@ -65,11 +71,21 @@ object LaunchUtils {
         return File(getBaseDirectory(context), "save")
     }
 
-    private const val CRASH_INDICATOR_NAME = "lastSessionDidCrash"
+    val CRASH_INDICATOR_NAMES = setOf("lastSessionDidCrash", "last-pid", "last-crashed")
 
-    private fun getCrashDirectory(context: Context): File {
+    fun getCrashDirectory(context: Context): File {
         val base = getBaseDirectory(context)
         return File(base, "game/geode/crashlogs/")
+    }
+
+    fun getGeodeLogsDirectory(context: Context): File {
+        val base = getBaseDirectory(context)
+        return File(base, "game/geode/logs/")
+    }
+
+    fun getGeodeResourcesDirectory(context: Context): File {
+        val base = getBaseDirectory(context)
+        return File(base, "game/geode/resources/geode.loader/")
     }
 
     fun getLastCrash(context: Context): File? {
@@ -80,7 +96,7 @@ object LaunchUtils {
 
         val children = crashDirectory.listFiles {
             // ignore indicator files (including old file)
-            _, name -> name != CRASH_INDICATOR_NAME && name != "last-pid"
+            _, name -> !CRASH_INDICATOR_NAMES.contains(name)
         }
 
         return children?.maxByOrNull { it.lastModified() }
@@ -88,9 +104,9 @@ object LaunchUtils {
 
     fun lastSessionCrashed(context: Context): Boolean {
         val base = getCrashDirectory(context)
-        val crashIndicatorFile = File(base, CRASH_INDICATOR_NAME)
-
-        return crashIndicatorFile.exists()
+        return CRASH_INDICATOR_NAMES.any {
+            File(base, it).exists()
+        }
     }
 
     enum class LauncherError : Serializable {

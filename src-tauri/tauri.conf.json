@@ -34,7 +34,7 @@
   },
   "productName": "GDPS-Launcher",
   "mainBinaryName": "launcher",
-  "identifier": "username.gdps",
+  "identifier": "com.username.launcher",
   "version": "2.2.0",
   "plugins": {},
   "app": {
@@ -51,7 +51,7 @@
         "theme": "Dark",
         "additionalBrowserArgs": "--disable-features=msWebOOUI,msPdfOOUI,msSmartScreenProtection",
         "transparent": true,
-        "useHttpsScheme": true,
+        "useHttpsScheme": false,
 		"visible": false
       }
     ],

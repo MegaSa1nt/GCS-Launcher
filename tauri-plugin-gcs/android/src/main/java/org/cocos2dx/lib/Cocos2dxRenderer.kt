@@ -5,6 +5,9 @@ import android.os.Build
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
+private const val NANOSECONDS_PER_SECOND = 1000000000L
+private const val NANOSECONDS_PER_MICROSECOND = 1000000L
+
 @Suppress("unused", "KotlinJniMissingFunction")
 class Cocos2dxRenderer(private var handler: Cocos2dxGLSurfaceView) : GLSurfaceView.Renderer {
     companion object {
@@ -37,21 +40,25 @@ class Cocos2dxRenderer(private var handler: Cocos2dxGLSurfaceView) : GLSurfaceVi
         @JvmStatic
         private external fun nativeTextClosed()
 
+        // timestamp was added in 2.208, but the jni method has no required type signature.
+        // it doesn't hurt to unconditionally send one
+
         @JvmStatic
-        private external fun nativeTouchesBegin(id: Int, x: Float, y: Float)
+        private external fun nativeTouchesBegin(id: Int, x: Float, y: Float, timestamp: Double)
 
         @JvmStatic
         private external fun nativeTouchesCancel(
             ids: IntArray,
             xs: FloatArray,
-            ys: FloatArray
+            ys: FloatArray,
+            timestamp: Double,
         )
 
         @JvmStatic
-        private external fun nativeTouchesEnd(id: Int, x: Float, y: Float)
+        private external fun nativeTouchesEnd(id: Int, x: Float, y: Float, timestamp: Double)
 
         @JvmStatic
-        private external fun nativeTouchesMove(ids: IntArray, xs: FloatArray, ys: FloatArray)
+        private external fun nativeTouchesMove(ids: IntArray, xs: FloatArray, ys: FloatArray, timestamp: Double)
 
         @JvmStatic
         private external fun nativeInit(width: Int, height: Int)
@@ -62,6 +69,11 @@ class Cocos2dxRenderer(private var handler: Cocos2dxGLSurfaceView) : GLSurfaceVi
     private var screenHeight = 0
     var sendResizeEvents = false
     var setFrameRate = false
+    private var mAnimationInterval: Long? = null
+
+    fun limitFrameRate(rate: Int) {
+        mAnimationInterval = NANOSECONDS_PER_SECOND/rate
+    }
 
     fun setScreenWidthAndHeight(surfaceWidth: Int, surfaceHeight: Int) {
         screenWidth = surfaceWidth
@@ -77,26 +89,44 @@ class Cocos2dxRenderer(private var handler: Cocos2dxGLSurfaceView) : GLSurfaceVi
         if (setFrameRate && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             handler.updateRefreshRate()
         }
+
+        println("renderer surfaceChanged: ${width}x${height}@${handler.display.refreshRate}fps")
     }
 
     override fun onDrawFrame(gl: GL10?) {
-        nativeRender()
+        val animationInterval = mAnimationInterval
+        if (animationInterval == null) {
+            nativeRender()
+        } else {
+            nativeRender()
+
+            val now = System.nanoTime()
+            val interval = now - this.lastTickInNanoSeconds
+
+            if (interval < animationInterval) {
+                try {
+                    Thread.sleep((animationInterval - interval) / NANOSECONDS_PER_MICROSECOND)
+                } catch (e: Exception) {}
+            }
+
+            lastTickInNanoSeconds = System.nanoTime()
+        }
     }
 
-    fun handleActionDown(id: Int, x: Float, y: Float) {
-        nativeTouchesBegin(id, x, y)
+    fun handleActionDown(id: Int, x: Float, y: Float, timestamp: Double) {
+        nativeTouchesBegin(id, x, y, timestamp)
     }
 
-    fun handleActionUp(id: Int, x: Float, y: Float) {
-        nativeTouchesEnd(id, x, y)
+    fun handleActionUp(id: Int, x: Float, y: Float, timestamp: Double) {
+        nativeTouchesEnd(id, x, y, timestamp)
     }
 
-    fun handleActionCancel(ids: IntArray, xs: FloatArray, ys: FloatArray) {
-        nativeTouchesCancel(ids, xs, ys)
+    fun handleActionCancel(ids: IntArray, xs: FloatArray, ys: FloatArray, timestamp: Double) {
+        nativeTouchesCancel(ids, xs, ys, timestamp)
     }
 
-    fun handleActionMove(ids: IntArray, xs: FloatArray, ys: FloatArray) {
-        nativeTouchesMove(ids, xs, ys)
+    fun handleActionMove(ids: IntArray, xs: FloatArray, ys: FloatArray, timestamp: Double) {
+        nativeTouchesMove(ids, xs, ys, timestamp)
     }
 
     fun handleKeyDown(keyCode: Int) {

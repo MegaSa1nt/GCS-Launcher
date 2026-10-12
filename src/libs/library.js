@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { appCacheDir, resolve, downloadDir, join, sep, cacheDir } from '@tauri-apps/api/path';
 import { getVersion } from '@tauri-apps/api/app';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { remove, readDir, readFile, writeFile, create, BaseDirectory, rename, mkdir } from '@tauri-apps/plugin-fs';
 import { open, Command } from '@tauri-apps/plugin-shell';
@@ -11,10 +12,11 @@ import { toast } from '@zerodevx/svelte-toast';
 import style from './style.module.scss';
 import { printf } from 'fast-printf';
 import fetchProgress from 'fetch-progress';
-import { create as download } from 'tauri-plugin-download';
+import { get as download, DownloadStatus, hasAction, DownloadAction } from 'tauri-plugin-download';
 
 const library = [];
 
+const appWindow = getCurrentWindow();
 let playButtonStateChangeEvent = new Event("playButtonStateChange", {bubbles: true});
 let themeChangeEvent = new Event("themeChange", {bubbles: true});
 let accountChangeEvent = new Event("accountChange", {bubbles: true});
@@ -552,13 +554,20 @@ library.checkLauncherUpdates = function() {
 		library.getSettings().then(settings => {		
 			fetch(`${settings.updates_api_url}version/${settings.update_type}-launcher`).then(r => r.text()).then(async function(response) {
 				const version = await getVersion();
-				if(version != response) {
-					r(false);
-				} else {
-					r(true);
+				const versionRegex = /(\d)\.(\d)\.(\d)/gm;
+				
+				if(response.match(versionRegex) == null) {
+					console.log("checkUpdatesError", `Updates backend returned incorrect version: ${response}`);
+					
+					return r(true);
 				}
-			}).catch(e => {
-				r(true);
+				
+				if(version != response) return r(false);
+				else return r(true);
+			}).catch(err => {
+				console.log("checkUpdatesError", err);
+				
+				return r(true);
 			});
 		});
 	});
@@ -581,7 +590,7 @@ library.changeLauncherTheme = function(theme) {
 
 library.getNotifications = function() {
 	return new Promise(async function(r) {
-		if(!localStorage.auth.length) r({ notifies: [] });
+		return r({ notifies: [] }); // No notifications in GDPS core
 		
 		const settings = await library.getSettings();
 		fetch(settings.dashboard_api_url + "notify.php?auth=" + localStorage.auth).then(res => res.json()).then(response => {
@@ -766,23 +775,43 @@ library.calculatePercentNumber = async function(percent, totalNumber) {
 
 library.downloadFile = async function(url, savePath, callback) {
 	return new Promise(async (r) => {
-		const fileSize = await library.getURLSize(url);
+		console.log("[1] Before creating download");
+		const file = await download(savePath);
 		
-		const fileToken = "file-" + Math.random() + "-" + Math.random();
-		const file = await download(fileToken, url, savePath);
-		file.listen(async (updatedDownload) => {
-			if(updatedDownload.state.toLowerCase() == 'completed') return r(true);
-
-			const percent = updatedDownload.progress;
+		console.log("[2] After creating download");
+		await file.listen(async (updatedDownload) => {
+			console.log("[4] File progress");
+			
+			if(updatedDownload.status.toLowerCase() == 'completed') return r(true);
+			if(updatedDownload.status.toLowerCase() == 'idle') updatedDownload.start();
 			
 			callback({
-				current: await library.calculatePercentNumber(percent, fileSize),
-				total: fileSize,
-				percent: (Math.round(percent * 10) / 10)
+				current: updatedDownload.receivedBytes,
+				total: updatedDownload.totalBytes,
+				percent: Math.round(updatedDownload.progress * 10) / 10
 			});
 		});
-	   
-		file.start();
+		console.log("[3] Before switch");
+		
+		switch(file.status) {
+			case "pending":
+				console.log("[5] Switch: pending");
+				await file.create(url);
+				break;
+			case "paused":
+				console.log("[6] Switch: paused");
+				await file.resume();
+				break;
+			case "failed":
+				console.log("[8] Switch: failed");
+				await file.cancel();
+				
+				return await library.downloadFile(url, savePath, callback);
+			default:
+				console.log("[7] Switch: start");
+				if(typeof file.start != "undefined") await file.start();
+				break;
+		}
 	});
 }
 

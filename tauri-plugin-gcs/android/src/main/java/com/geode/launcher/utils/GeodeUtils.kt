@@ -7,6 +7,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.hardware.lights.Light
+import android.hardware.lights.LightState
+import android.hardware.lights.LightsRequest
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -16,13 +20,14 @@ import android.os.VibratorManager
 import android.provider.DocumentsContract
 import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.util.Log
+import android.view.InputDevice
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.Keep
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import com.geode.launcher.UserDirectoryProvider
 import com.geode.launcher.activityresult.GeodeOpenFileActivityResult
 import com.geode.launcher.activityresult.GeodeOpenFilesActivityResult
 import com.geode.launcher.activityresult.GeodeSaveFileActivityResult
@@ -34,6 +39,8 @@ import kotlin.system.exitProcess
 @Suppress("unused", "KotlinJniMissingFunction")
 object GeodeUtils {
     private lateinit var activity: WeakReference<AppCompatActivity>
+    var handleSafeArea: Boolean = false
+
     private lateinit var openFileResultLauncher: ActivityResultLauncher<GeodeOpenFileActivityResult.OpenFileParams>
     private lateinit var openDirectoryResultLauncher: ActivityResultLauncher<Uri?>
     private lateinit var openFilesResultLauncher: ActivityResultLauncher<GeodeOpenFilesActivityResult.OpenFileParams>
@@ -47,9 +54,8 @@ object GeodeUtils {
 
     fun setContext(activity: AppCompatActivity) {
         this.activity = WeakReference(activity)
-
         openFileResultLauncher = activity.registerForActivityResult(GeodeOpenFileActivityResult()) { uri ->
-            if(uri != null) {
+            if (uri != null) {
                 val path = FileUtils.getRealPathFromURI(activity, uri)
                 if (path != null) {
                     selectFileCallback(path)
@@ -59,7 +65,6 @@ object GeodeUtils {
 
             failedCallback()
         }
-
         openDirectoryResultLauncher = activity.registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) {
             if (it != null) {
                 val path = FileUtils.getRealPathFromURI(activity, it)
@@ -67,13 +72,8 @@ object GeodeUtils {
                     selectFileCallback(path)
                     return@registerForActivityResult
                 }
-
             }
             failedCallback()
-        }
-
-        requestPermissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
-            permissionCallback(isGranted)
         }
         openFilesResultLauncher = activity.registerForActivityResult(GeodeOpenFilesActivityResult()) { result ->
             if (result.isEmpty()) {
@@ -90,7 +90,6 @@ object GeodeUtils {
             selectFilesCallback(paths)
             return@registerForActivityResult
         }
-
         saveFileResultLauncher = activity.registerForActivityResult(GeodeSaveFileActivityResult()) { uri ->
             if (uri != null) {
                 val path = FileUtils.getRealPathFromURI(activity, uri)
@@ -100,6 +99,9 @@ object GeodeUtils {
                 }
             }
             failedCallback()
+        }
+        requestPermissionLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            permissionCallback(isGranted)
         }
 
         internalRequestPermissionsLauncher = activity.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -174,24 +176,18 @@ object GeodeUtils {
         val context = activity.get()!!
 
         val pathFile = File(path)
-        val baseDirectory = LaunchUtils.getBaseDirectory(context)
+        val baseDirectory = LaunchUtils.getBaseDirectory(context, true)
         val isInternalPath = pathFile.startsWith(baseDirectory)
 
         val intent = if (isInternalPath) {
-            // TODO: figure out how to get this to point to the path it should be pointing at
-            // (the best i got was pointing at a file)
-            // val relativePath = pathFile.relativeTo(baseDirectory)
+            val relativePath = pathFile.relativeTo(baseDirectory)
+            val uri = DocumentsContract.buildDocumentUri(
+                "com.android.externalstorage.documents",
+                "primary:Android/media/${context.packageName}/$relativePath"
+            )
 
             Intent(Intent.ACTION_VIEW).apply {
-                data = DocumentsContract.buildRootUri(
-                    "${context.packageName}.user", UserDirectoryProvider.ROOT
-                )
-
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
-                        Intent.FLAG_GRANT_PREFIX_URI_PERMISSION or
-                        Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-                )
+                setDataAndType(uri, DocumentsContract.Document.MIME_TYPE_DIR)
             }
         } else {
             Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
@@ -228,7 +224,7 @@ object GeodeUtils {
             } else {
                 val intent = Intent(
                     ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                    Uri.fromParts("package", "com.username.launcher", null)
+                    Uri.fromParts("package", Constants.LAUNCHER_PACKAGE_NAME, null)
                 )
 
                 internalRequestAllFilesLauncher.launch(intent)
@@ -362,12 +358,16 @@ object GeodeUtils {
     }
 
     @JvmStatic
-    fun getLauncherVersion(): Int {
-        return 1
+    fun getGameVersionCode(): Long {
+        activity.get()?.run {
+            return GamePackageUtils.getGameVersionCode(packageManager)
+        }
+
+        return 0L
     }
 
     fun isGeodeUri(uri: Uri): Boolean {
-        return "com.geode.launcher.user" == uri.authority
+        return "${Constants.LAUNCHER_PACKAGE_NAME}.user" == uri.authority
     }
 
     private const val INTERNAL_PERMISSION_PREFIX = "geode.permission_internal"
@@ -386,7 +386,7 @@ object GeodeUtils {
                     Manifest.permission.WRITE_EXTERNAL_STORAGE
                 )
 
-                return permissions.all {
+                permissions.all {
                     ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
                 }
             }
@@ -432,11 +432,22 @@ object GeodeUtils {
     }
 
     // vibration
+
+    /**
+     * If vibration is supported on the device.
+     */
     @JvmStatic
     fun vibrateSupported(): Boolean = getVibrator()?.hasVibrator() == true
 
+    /**
+     * Vibrates for the given amount of time.
+     */
     @JvmStatic
     fun vibrate(ms: Long) {
+        if (ms == 0L) {
+            getVibrator()?.cancel()
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             getVibrator()?.vibrate(VibrationEffect.createOneShot(ms, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {
@@ -445,6 +456,10 @@ object GeodeUtils {
         }
     }
 
+    /**
+     * Vibrates with the given pattern.
+     * @see android.os.VibrationEffect.createWaveform
+     */
     @JvmStatic
     fun vibratePattern(pattern: LongArray, repeat: Int) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -452,6 +467,19 @@ object GeodeUtils {
         } else {
             @Suppress("DEPRECATION")
             getVibrator()?.vibrate(pattern, repeat)
+        }
+    }
+
+    @JvmStatic
+    fun getScreenInsets(): IntArray? {
+        if (!handleSafeArea || Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+            return null
+        }
+
+        return activity.get()?.run {
+            val displayCutout = window.decorView.rootWindowInsets?.displayCutout ?: return null
+
+            intArrayOf(displayCutout.safeInsetLeft, displayCutout.safeInsetBottom, displayCutout.safeInsetRight, displayCutout.safeInsetTop)
         }
     }
 
@@ -467,7 +495,12 @@ object GeodeUtils {
     @JvmStatic
     fun getLaunchArguments(): String? {
         activity.get()?.apply {
-            val args = additionalLaunchArguments
+            val preferences = PreferenceUtils.get(this)
+
+            val userArgs = preferences.getString(PreferenceUtils.Key.LAUNCH_ARGUMENTS)
+            val args = if (!userArgs.isNullOrEmpty()) {
+                listOf(userArgs) + additionalLaunchArguments
+            } else additionalLaunchArguments
 
             return args.joinToString(" ")
         }
@@ -481,6 +514,8 @@ object GeodeUtils {
 
     const val CAPABILITY_EXTENDED_INPUT = "extended_input"
     const val CAPABILITY_TIMESTAMP_INPUT = "timestamp_inputs"
+    const val CAPABILITY_RICH_INPUT = "internal_callbacks_v2"
+    const val CAPABILITY_RESIZE_CALLBACK = "resize_callbacks"
 
     private var capabilityListener: WeakReference<CapabilityListener?> = WeakReference(null)
 
@@ -488,6 +523,10 @@ object GeodeUtils {
         capabilityListener = WeakReference(listener)
     }
 
+    /**
+     * Reports that the game client supports a feature.
+     * These features typically require callbacks into the game, so ensure that the required methods are registered first.
+     */
     @JvmStatic
     fun reportPlatformCapability(capability: String?): Boolean {
         if (capability.isNullOrEmpty()) {
@@ -497,11 +536,216 @@ object GeodeUtils {
         return capabilityListener.get()?.onCapabilityAdded(capability) == true
     }
 
+    /**
+     * Determines if any gamepad or joystick input devices are connected.
+     * This is useful during start, but tracking inputDeviceAdded events is better during runtime.
+     */
+    @JvmStatic
+    fun controllersConnected(): Int {
+        val deviceIds = InputDevice.getDeviceIds()
+        return deviceIds.count {
+            InputDevice.getDevice(it)?.run {
+                sources and InputDevice.SOURCE_GAMEPAD == InputDevice.SOURCE_GAMEPAD || sources and InputDevice.SOURCE_JOYSTICK == InputDevice.SOURCE_JOYSTICK
+            } ?: false
+        }
+    }
+
+    @JvmStatic
+    fun getConnectedDevices(): IntArray = InputDevice.getDeviceIds()
+
+    @JvmStatic
+    fun getDevice(deviceId: Int): InputDevice? = InputDevice.getDevice(deviceId)
+
+    @JvmStatic
+    fun getDeviceBatteryCapacity(deviceId: Int): Float {
+        val device = InputDevice.getDevice(deviceId) ?: return 0.0f
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            device.batteryState.capacity
+        } else {
+            0.0f
+        }
+    }
+
+    @JvmStatic
+    fun deviceHasBattery(deviceId: Int): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return false
+        }
+
+        val device = InputDevice.getDevice(deviceId) ?: return false
+        return device.batteryState.isPresent
+    }
+
+    @JvmStatic
+    fun getDeviceBatteryStatus(deviceId: Int): Int {
+        val device = InputDevice.getDevice(deviceId) ?: return 0
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            device.batteryState.status
+        } else {
+            0
+        }
+    }
+
+    @JvmStatic
+    fun getDeviceLightsCount(deviceId: Int): Int {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return 0
+        }
+
+        val device = InputDevice.getDevice(deviceId) ?: return 0
+        val lightsManager = device.lightsManager
+
+        return lightsManager.lights.size
+    }
+
+    // this is based on paddleboat's api
+    @JvmStatic
+    fun getLightType(deviceId: Int): Int {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return 0
+        }
+
+        val device = InputDevice.getDevice(deviceId) ?: return 0
+        val lightsManager = device.lightsManager
+
+        var flags = 0
+        lightsManager.lights.forEach { light ->
+            if (light.type == Light.LIGHT_TYPE_PLAYER_ID) {
+                flags = flags or 1
+            } else if (light.hasRgbControl()) {
+                flags = flags or 2
+            }
+        }
+
+        return flags
+    }
+
+    /**
+     * Sets the color for a device.
+     * @return false if the given device does not exist or setting lights was otherwise unsuccessful
+     */
+    @JvmStatic
+    fun setDeviceLightColor(deviceId: Int, color: Int, type: Int): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return false
+        }
+
+        val device = InputDevice.getDevice(deviceId) ?: return false
+        val lightsManager = device.lightsManager
+
+        val lights = lightsManager.lights
+        if (lights.isEmpty()) {
+            return false
+        }
+
+        val actedLights = lights.count { light ->
+            val state = LightState.Builder()
+
+            if (light.type == Light.LIGHT_TYPE_PLAYER_ID && (type and 1 == 1)) {
+                state.setPlayerId(color)
+            } else if (light.hasRgbControl() && (type and 2 == 2)) {
+                state.setColor(color)
+            } else {
+                return@count false
+            }
+
+            val request = LightsRequest.Builder()
+                    .addLight(light, state.build())
+                    .build()
+
+            lightsManager.openSession()
+                .requestLights(request)
+
+            true
+        }
+
+        return actedLights > 0
+    }
+
+    @JvmStatic
+    fun getDeviceHapticsCount(deviceId: Int): Int {
+        val device = InputDevice.getDevice(deviceId) ?: return 0
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            return if (device.vibrator.hasVibrator()) 1 else 0
+        }
+
+        val vibratorManager = device.vibratorManager
+        val vibratorIds = vibratorManager.vibratorIds
+        return vibratorIds.size
+    }
+
+    private fun performVibration(vibrator: Vibrator?, durationMs: Long, intensity: Int) {
+        vibrator?.apply {
+            if (intensity == 0) {
+                cancel()
+            } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val vibrationEffect = VibrationEffect.createOneShot(durationMs, intensity)
+                    vibrate(vibrationEffect)
+                } else {
+                    vibrate(durationMs)
+                }
+            }
+        }
+    }
+
+    /**
+     * Vibrates a given device. Set motorIdx == -1 to vibrate all available motors on a device.
+     */
+    @JvmStatic
+    fun vibrateDevice(deviceId: Int, durationMs: Long, intensity: Int, motorIdx: Int): Boolean {
+        val device = InputDevice.getDevice(deviceId) ?: return false
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibratorManager = device.vibratorManager
+            val vibratorIds = vibratorManager.vibratorIds
+
+            if (motorIdx == -1) {
+                vibratorIds.forEach {
+                    val vibrator = vibratorManager.getVibrator(it)
+                    performVibration(vibrator, durationMs, intensity)
+                }
+            } else {
+                val deviceId = vibratorIds.getOrNull(motorIdx) ?: return false
+                val vibrator = vibratorManager.getVibrator(deviceId)
+                performVibration(vibrator, durationMs, intensity)
+            }
+        } else {
+            val vibrator = device.vibrator
+            performVibration(vibrator, durationMs, intensity)
+        }
+
+        return true
+    }
+
+    @JvmStatic
+    fun getConnectivityManager(): ConnectivityManager? = activity.get()?.run {
+        getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    }
+
     external fun nativeKeyUp(keyCode: Int, modifiers: Int)
     external fun nativeKeyDown(keyCode: Int, modifiers: Int, isRepeating: Boolean)
     external fun nativeActionScroll(scrollX: Float, scrollY: Float)
     external fun resizeSurface(width: Int, height: Int)
 
-    // represents the timestamp of the next input callback, in nanoseconds (most events don't send it, but it's there)
+    /**
+     * Gives the timestamp of the next input callback, in nanoseconds.
+     * Enable this by sending the "timestamp_inputs" platform capability.
+     * @see reportPlatformCapability
+     */
     external fun setNextInputTimestamp(timestamp: Long)
+
+    const val TOUCH_TYPE_BEGIN = 0
+    const val TOUCH_TYPE_MOVE = 1
+    const val TOUCH_TYPE_END = 2
+    const val TOUCH_TYPE_CANCEL = 3
+
+    external fun internalKeyEvent(timestamp: Long, deviceId: Int, eventSource: Int, keyCode: Int, modifiers: Int, isDown: Boolean, repeatCount: Int)
+    external fun internalTouchEvent(timestamp: Long, deviceId: Int, eventSource: Int, eventType: Int, ids: IntArray, xs: FloatArray, ys: FloatArray)
+    external fun internalScrollEvent(timestamp: Long, deviceId: Int, eventSource: Int, scrollX: Float, scrollY: Float)
+    external fun internalJoystickEvent(timestamp: Long, deviceId: Int, eventSource: Int, leftX: FloatArray, leftY: FloatArray, rightX: FloatArray, rightY: FloatArray, hatX: FloatArray, hatY: FloatArray, leftTrigger: FloatArray, rightTrigger: FloatArray)
+
+    external fun inputDeviceAdded(deviceId: Int)
+    external fun inputDeviceChanged(deviceId: Int)
+    external fun inputDeviceRemoved(deviceId: Int)
 }

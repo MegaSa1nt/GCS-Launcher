@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { Home, User, Bell, BellDot } from 'lucide-svelte';
     import style from './style.module.scss';
-    import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
+    import { page } from '$app/state';
+	import { goto, afterNavigate } from '$app/navigation';
 	import library from '../../libs/library.js';
 	import PlayButtonIcon from '../../components/PlayButtonIcon/playButtonIcon.svelte';
 	import languageStrings from '../../libs/languages.js';
@@ -20,7 +20,7 @@
 	export let sidebarProfileType = profileTypes[localStorage.profile_type];
 
     function getButtonColor(path: string): string {
-        return path == $page.url.pathname ? colors.active : colors.none;
+        return path == page.url.pathname ? colors.active : colors.none;
     };
     
     let homeColor = getButtonColor("/");
@@ -35,7 +35,7 @@
 		notificationsColor = getButtonColor("/notifications");
     };
 
-    page.subscribe(() => {
+    afterNavigate(() => {
         updateButtonColors();
 		sidebarProfileType = profileTypes[localStorage.profile_type];
     });
